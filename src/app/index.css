@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+}
+
+h1 {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 700;
+}
+
+h2 {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 600;
+}
+
+.openSansRegular{
+  font-family: 'Open Sans', sans-serif ;
+  font-weight: 400;
+}
+
+.openSansSemiBold {
+  font-family: 'Open Sans', sans-serif ;
+  font-weight: 600;
+}
+
+.openSansBold {
+  font-family: 'Open Sans', sans-serif ;
+  font-weight: 700;
+}
+
+/* nav */
+
+.blure_div_on_open_nav {
+  position: absolute;
+  z-index: 8;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 40%;
+  visibility: hidden;
+}
+
+#navContent {
+  position: relative;
+  z-index: 100;
+}
+
+#navbarTop {
+  background-color: #2563EB;
+  padding: 18px 20px 18px;
+  z-index: 10;
+}
+
+#sidebarWrapper {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  min-width: 250px;
+  max-width: 250px;
+  min-height: 100vh;
+  color: white;
+}
+
+#sidebarWrapper ul {
+  list-style: none;
+}
+
+#sidebarWrapper ul li {
+  margin-bottom: 1em;
+}
+
+#sidebarWrapper ul li a{
+  color: white;
+  text-decoration: none;
+}
+
+#sidebar {
+  position: fixed;
+  margin-left: -250px;
+  min-width: 250px;
+  max-width: 250px;
+  min-height: 100vh;
+  background-color: #2563EB;
+  width: 100%;
+  transition: margin-left 0.5s ease;
+  z-index: 10;
+}
+
+#sidebar.active {
+  margin-left: 0px;
+}
+
+/* sidebar calendar */
+
+
+.vertical-datepicker-container .react-datepicker {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  background-color:#F4F4F4;
+  height: 100vh;
+  padding: 2em;
+  width: 300px;
+  border-radius: 0;
+}
+
+@media screen and (max-width: 576px) {
+  .vertical-datepicker-container .react-datepicker{
+    width: auto;
+  }
+}
+
+.vertical-datepicker-container .react-datepicker__month-container{
+  margin-bottom: 2em;
+  box-shadow: 0px 6px 40px rgba(147, 147, 147, 0.2);
+}
+
+.react-datepicker__month-container .react-datepicker__header {
+  background-color: #f4f4f4;
+}
+
+.react-datepicker__month-container .react-datepicker__month {
+  background-color: white;
+  margin: 0;
+  padding: 0.4em;
+}
+
+.react-datepicker__month-container .react-datepicker__header  .react-datepicker__current-month{
+  color: #2563EB;
+  padding-bottom: 0.5em;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-names {
+  background-color: white;
+  margin-bottom: -10px;
+}
+
+.react-datepicker__month-container .react-datepicker__header .react-datepicker__day-names div{
+  color: #2563EB;
+  font-family: 'Open Sans', sans-serif ;
+  font-weight: 600;
+  font-size: 14px;
+}
