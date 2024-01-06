@@ -34,13 +34,13 @@ export async function POST(req:Request) {
       if(match){
         console.log("match")
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string, {
-          expiresIn: "1m",
+          expiresIn: "50m",
         });
         return NextResponse.json({ token });
       }
       else{
         console.error({message: "error"})
-        return NextResponse.json({message: 'error 500'}, {status: 500})
+        return NextResponse.json({message: 'Wrong Password'}, {status: 401})
       }
  
     }

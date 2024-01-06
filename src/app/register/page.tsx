@@ -23,8 +23,6 @@ let initialValues = {
     passwordRepeat: ''
 }
 
-
-
 const RegisterForm: React.FC = () => {
 
     const [passwordState, setPasswordState] = useState("show")
@@ -83,6 +81,24 @@ const RegisterForm: React.FC = () => {
     
     return(
 
+        <Box 
+        sx={{
+            width: "100vw", 
+            height: "100vh - 71px",
+            display: "flex", 
+            alignItems: {
+                md: "normal",
+                sm: "center",
+                xs: "center"
+            },
+            justifyContent: {
+                md: "center",
+                sm: "center",
+                xs: "center"
+            },
+            paddingTop: "4em"
+        }}
+        >
         
         <Paper
         square={false}
@@ -90,18 +106,31 @@ const RegisterForm: React.FC = () => {
             display: "flex",
             outline: 
             {
-                lg: `2px solid ${colors.secondaryLightBlue}` ,
+                lg: `2px solid ${colors.primaryBlue}` ,
+                md: `2px solid ${colors.primaryBlue}` ,
                 sm: "none",
             },
-            padding: "2em 5em 2em",
+            padding:{
+                lg: "2em 5em 2em",
+                md: "2em 5em 2em",
+                sm: "auto"
+            },
             flexDirection:"column",
-            boxShadow: "none"
-            // alignItems: "center",
-            // justifyContent: "center",
+            boxShadow: "none",
+            alignItems: "center",
+            justifyContent: "center",
+            width: {
+                sm: "100vw",
+                lg: "15em",
+                md: "15em"
+            }
+
         }}
 
         >
-                <form onSubmit={formik.handleSubmit}>
+                <form onSubmit={formik.handleSubmit} style={{marginBottom: "1em",
+                //  alignItems: "center", display: "flex",  flexDirection:"column",justifyContent: "center"
+                }}>
                     <div 
                     style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection:"column",}}
                     >
@@ -132,10 +161,11 @@ const RegisterForm: React.FC = () => {
                             onBlur={formik.handleBlur}
                             style={{
                                 marginTop: "1em",
+                                minWidth: "267px",
                              }}
                             onClick={() => setEmailError("")}
                         />
-                        {formik.errors.email && formik.touched.email ? <div>{formik.errors.email}</div> :<div>{emailError}</div>}
+                        {formik.errors.email && formik.touched.email ? <div style={{textAlign: "left", marginTop: "0.5em"}}>{formik.errors.email}</div> :<div>{emailError}</div>}
                         <TextField
                             label="username"
                             name="username"
@@ -145,6 +175,7 @@ const RegisterForm: React.FC = () => {
                             onBlur={formik.handleBlur}
                             style={{
                                 marginTop: "1em",
+                                minWidth: "267px",
                              }}
                             />
                         {formik.errors.username && formik.touched.username ? <div>{formik.errors.username}</div> : null}
@@ -180,7 +211,7 @@ const RegisterForm: React.FC = () => {
                             onBlur={formik.handleBlur}
                             autoComplete="off"
                             style={{
-                                marginTop: "0.5em",
+                                marginTop: "1em",
                              }}
                              InputProps={{
                                 endAdornment: (
@@ -196,7 +227,7 @@ const RegisterForm: React.FC = () => {
                     </div>
         
                     <div
-                    style={{display: "flex", alignItems:"center", marginBottom:"2em"}}
+                    style={{display: "flex", alignItems:"center", marginBottom:"2em", marginTop: "1em"}}
                     >
                         <Checkbox/>
                         <div className="openSansRegular">
@@ -205,32 +236,35 @@ const RegisterForm: React.FC = () => {
                        
                     </div>
         
-                    <div>
-                        Already have account?
-                        <Link
-                        href="/login"
-                        >
-                            Log in
-                        </Link>
-                    </div>
-        
-                    <Button
-                    variant="contained"
-                    type="submit"
-                    sx={{
-                        backgroundColor: `${colors.primaryBlue}`
-                    }}
-                    >
-                        <div className="openSansSemiBold">
-                            Register
-                        </div>
-                       
-        
-                    </Button>
-            </form>
-            
 
+                        
+                    <div style={{ display: "flex", justifyContent: "center"}}>
+                        <Button
+                        variant="contained"
+                        type="submit"
+                        sx={{
+                            backgroundColor: `${colors.primaryBlue}`,
+                        }}
+                        >
+                            <div className="openSansSemiBold">
+                                Register
+                            </div>
+                        </Button>
+                    </div>
+
+            </form>
+
+
+            <div>
+                Already have account? 
+                <Link
+                href="/login"
+                >
+                    Log in
+                </Link>
+            </div>
         </Paper>
+        </Box>
     )
 }
 

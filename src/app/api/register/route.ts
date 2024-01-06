@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import jwt from 'jsonwebtoken'
 
 
+
 export async function POST(req:Request) {
     const body = await req.json()
 
@@ -38,16 +39,31 @@ export async function POST(req:Request) {
               const userId = getUser.rows[0].id
 
 
-              if(!userId || userId == undefined)
-              {
-                throw new Error("no user id")
-              }
+            if(!userId || userId == undefined)
+            {
+              throw new Error("no user id")
+            }
 
-              const token = jwt.sign({ userId }, process.env.JWT_SECRET as string, {
-                expiresIn: "1m",
-              });
-              
-              return NextResponse.json({ token });
+            const newUserAchievements = await client.sql`
+            SELECT Achievement_id FROM Achievements
+            WHERE stars = 0
+            `;
+            
+            newUserAchievements.rows.forEach(async (row) => {
+                try{
+                  await client.sql`INSERT INTO user_Achievements ( Achievement_id, User_id ) VALUES (${row.achievement_id}, ${userId})`
+
+                }
+                catch(error){
+                  console.log(error, "error adding achievements to new user")
+                }
+            });
+
+            const token = jwt.sign({ userId }, process.env.JWT_SECRET as string, {
+              expiresIn: "1m",
+            });
+            
+            return NextResponse.json({ token });
             
           } catch (error) {
             console.error('Error registering user:', error);
@@ -55,3 +71,8 @@ export async function POST(req:Request) {
           }
 
 }
+
+// async function AddInitialAchievemts(userId: string,  AchievementId: number) {
+//   const query = `INSERT INTO user_Achievements ( Achievement_id, User_id ) VALUES (${AchievementId}, ${userId})`
+//   return await query
+// }

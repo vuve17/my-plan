@@ -10,7 +10,7 @@ const AchievementStars: React.FC<AchievementStarsProps> = ({ starCount }) => {
 
         <CardMedia
         component="img"
-        image={`./svg/achievements/achievement-stars/${starCount}-star.svg`}
+        image={`/svg/achievements/achievement-stars/${starCount}-star.svg`}
         className={`${starCount}-star`}
         sx={{
             position: {

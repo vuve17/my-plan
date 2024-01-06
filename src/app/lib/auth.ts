@@ -1,9 +1,11 @@
 import { jwtVerify, SignJWT } from "jose"
+import { JWTPayload } from "jose"
 
-interface UserJwtPayload {
-    //jti - JWT ID, iat - Issued At
+interface UserJwtPayload extends JWTPayload {
+    //jti - JWT ID, iat - Issued At, sub - subject (id)
     jti: string,
-    iat: number
+    iat: number,
+    userId: string
 }
 
 export const getJwtSecretKey = ()  => {

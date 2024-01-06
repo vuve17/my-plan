@@ -11,4 +11,11 @@ export type UserDb = {
     password: string
 }
 
+export type Achievement = {
+    id: number,
+    name: string;
+    image: string;
+    description: string;
+    stars: 0 | 1 | 2 | 3;
+}
 

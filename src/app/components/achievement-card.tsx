@@ -1,18 +1,10 @@
 import React from "react";
 import { Box, Card, CardActions, CardContent, CardMedia, Typography, Grid } from '@mui/material';
 import AchievementStars from "./achievement-stars";
+import { Achievement } from "../lib/types";
 
 
-interface AchievementCardProps {
-    name: string,
-    image: string,
-    description: string,
-    stars: 0 | 1 |2 | 3,
-}
-
-
-
-const AchievementCard: React.FC<AchievementCardProps> = ({...props}) => {
+const AchievementCard: React.FC<Achievement> = ({...props}) => {
     return(
 
                     <Card variant="outlined" 
@@ -71,9 +63,10 @@ const AchievementCard: React.FC<AchievementCardProps> = ({...props}) => {
                                         component="img"      
                                         sx={{
                                             objectFit: "cover",
-                                            zIndex: "3",           
+                                            zIndex: "3", 
                                         }}
-                                        image={`./svg/achievements/achievement-thumbnails/${props.image}`}
+                                        image={`/svg/achievements/achievement-thumbnails/${props.image}`}
+                                        alt={props.image}
                                         />
         
                                     </Box>

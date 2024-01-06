@@ -7,6 +7,7 @@ import {Backdrop, Box, TextField, Button, IconButton, Paper, Grid, OutlinedInput
 import colors from '../ui/colors';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { stringify } from "querystring";
 
 
 let registerSchema = Yup.object().shape({
@@ -25,6 +26,7 @@ let initialValues = {
 const LogInForm: React.FC = () => {
 
     const [passwordState, setPasswordState] = useState("show")
+    const [passwordError, setPasswordError] = useState("")
     const router = useRouter()
 
     const HandlePasswordState = () => {
@@ -55,6 +57,11 @@ const LogInForm: React.FC = () => {
 
                 }
                 else{
+                    if(response.status === 401)
+                    {
+                        const data = await response.json()
+                        setPasswordError(data.message)
+                    }
                     throw new Error('Log in failed');
                 }
             } catch (error) {
@@ -66,25 +73,55 @@ const LogInForm: React.FC = () => {
     
     return(
 
-        
+        <Box 
+        sx={{
+            width: "100vw", 
+            height: "100vh - 71px",
+            display: "flex", 
+            alignItems: {
+                md: "normal",
+                sm: "center",
+                xs: "center"
+            },
+            justifyContent: {
+                md: "center",
+                sm: "center",
+                xs: "center"
+            },
+            paddingTop: "4em"
+        }}
+        >
         <Paper
         square={false}
         sx={{
             display: "flex",
             outline: 
             {
-                lg: `2px solid ${colors.secondaryLightBlue}` ,
+                lg: `2px solid ${colors.primaryBlue}` ,
+                md: `2px solid ${colors.primaryBlue}` ,
                 sm: "none",
             },
-            padding: "2em 5em 2em",
+            padding:{
+                lg: "2em 5em 2em",
+                md: "2em 5em 2em",
+                sm: "auto"
+            },
             flexDirection:"column",
-            boxShadow: "none"
-            // alignItems: "center",
-            // justifyContent: "center",
+            boxShadow: "none",
+            alignItems: "center",
+            justifyContent: "center",
+            width: {
+                sm: "100vw",
+                lg: "15em",
+                md: "15em"
+            }
+
         }}
 
         >
-                <form onSubmit={formik.handleSubmit}>
+                <form onSubmit={formik.handleSubmit}
+                style={{marginBottom: "1em"}}
+                >
                     <div 
                     style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection:"column",}}
                     >
@@ -115,6 +152,7 @@ const LogInForm: React.FC = () => {
                             onBlur={formik.handleBlur}
                             style={{
                                 marginTop: "1em",
+                                minWidth: "267px",
                              }}
                         />
                         {formik.errors.email && formik.touched.email ? <div>{formik.errors.email}</div> :null}
@@ -127,6 +165,7 @@ const LogInForm: React.FC = () => {
                             onBlur={formik.handleBlur}
                             style={{
                                 marginTop: "1em",
+                                minWidth: "267px",
                              }}
                             />
                         {formik.errors.username && formik.touched.username ? <div>{formik.errors.username}</div> :null}
@@ -137,6 +176,7 @@ const LogInForm: React.FC = () => {
                             value={formik.values.password}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
+                            onClick={() => setPasswordError("")}
                             autoComplete="off"
                             style={{
                                 marginTop: "1em",
@@ -151,12 +191,12 @@ const LogInForm: React.FC = () => {
                                 )
                             }}
                         />
-                        {formik.errors.password && formik.touched.password ? <div>{formik.errors.password}</div> :null}
+                        {formik.errors.password && formik.touched.password ? <div>{formik.errors.password}</div> :<div>{passwordError}</div>}
 
                     </div>
         
                     <div
-                    style={{display: "flex", alignItems:"center", marginBottom:"2em"}}
+                    style={{display: "flex", alignItems:"center", marginBottom:"2em", marginTop: "1em"}}
                     >
                         <Checkbox/>
                         <div className="openSansRegular">
@@ -164,33 +204,38 @@ const LogInForm: React.FC = () => {
                         </div>
                        
                     </div>
-        
-                    <div>
-                        Don t have account?
-                        <Link
-                        href="/register"
+
+                    <div style={{ display: "flex", justifyContent: "center"}}>
+                        <Button
+                        variant="contained"
+                        type="submit"
+                        sx={{
+                            backgroundColor: `${colors.primaryBlue}`
+                        }}
                         >
-                            Register
-                        </Link>
+                            <div className="openSansSemiBold">
+                                Log in
+                            </div>
+                        
+            
+                        </Button>
                     </div>
+
+
         
-                    <Button
-                    variant="contained"
-                    type="submit"
-                    sx={{
-                        backgroundColor: `${colors.primaryBlue}`
-                    }}
-                    >
-                        <div className="openSansSemiBold">
-                            Log in
-                        </div>
-                       
-        
-                    </Button>
+
             </form>
             
-
+            <div style={{marginTop: "1em"}}>
+                Don t have account?
+                <Link
+                href="/register"
+                >
+                    Register
+                </Link>
+            </div>
         </Paper>
+        </Box>
     )
 }
 
