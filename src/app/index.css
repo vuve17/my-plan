@@ -101,7 +101,8 @@ h2 {
   flex-direction: column;
   align-items: center;
   background-color:#F4F4F4;
-  height: 100vh;
+  /* height: calc(100vh - var(--navbar-height)); */
+  height: 100%;
   padding: 2em;
   width: 300px;
   border-radius: 0;
@@ -110,6 +111,7 @@ h2 {
 @media screen and (max-width: 576px) {
   .vertical-datepicker-container .react-datepicker{
     width: auto;
+    height: 100%;
   }
 }
 
@@ -143,4 +145,87 @@ h2 {
   font-family: 'Open Sans', sans-serif ;
   font-weight: 600;
   font-size: 14px;
+}
+
+/* scheduler */
+
+.dan li div{
+  position:relative;
+  border: 2px solid rgb(50, 151, 185);
+  height: 3em;
+  width: 8em;
+  text-align: center;
+  z-index: 2;
+}
+
+.dan{
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dan_header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  font-weight: bold;
+  z-index: 3;
+}
+
+.dan_header div{
+display: flex;
+justify-content: center;
+align-items: center;
+}
+#vrijeme {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  padding-right: 60em;
+  position: absolute;
+}
+
+
+#vrijeme li div{
+  height: 3em;
+  width: 8em;
+}
+
+#schedule_days{
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+#wrapper{
+  width: 70em;
+  margin: auto;
+  padding-top: 20px;
+}
+
+#schedule::-webkit-scrollbar {
+  width: 6px;
+  background-color: transparent;
+  }
+
+
+#schedule_header{
+  text-align: center;
+  width: fit-content;
+  margin: auto;
+  position: sticky;
+  padding-bottom: 5px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#schedule{
+  border: 2px solid transparent;
+  height: 35.5em;
+  margin: auto;
+  border-radius: 20px;
+  overflow-y: scroll;
+  scrollbar-color: transparent transparent;
+  
 }
