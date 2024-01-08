@@ -1,40 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import jwt from 'jsonwebtoken';
-import { verifyAuth } from '../../lib/auth';
+import { getUserId } from '../../lib/auth';
 import { db } from '@vercel/postgres';
 import { Achievement } from "@/app/lib/types";
 
 async function getAchievements(userId:string) {
-    const achievements: Achievement[] = []
     const client = await db.connect()
-    const achievements_id = await client.sql`
-    SELECT Achievement_id FROM user_achievements
-    WHERE User_id = ${userId}
-    `
-    const promises = achievements_id.rows.map(async (row) => {
-        const newAchievement = await client.sql`
-            SELECT * FROM achievements
-            WHERE Achievement_id = ${row.achievement_id}
-        `;
-        const new_ach: Achievement = newAchievement.rows.pop() as Achievement;
-        return new_ach;
-    });
-
-    const results = await Promise.all(promises);
-    achievements.push(...results);
-
+    const result = await client.sql`
+        SELECT * FROM achievements
+        WHERE id IN (    
+            SELECT Achievement_id FROM user_achievements
+            WHERE User_id = ${userId}
+        )
+    `;
+    const achievements: Achievement[] = result.rows as Achievement[];
     return achievements;
 }
 
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
     try {
-        console.log("api try")
-        const token = request.cookies.get("token")?.value  
-        if(!token){
-            throw new Error("Cookie not found")
-        }   
-        const userId = await verifyAuth(token)
-        const achievementsArray = await getAchievements(userId.userId)
+        const token = request.cookies.get("token")?.value as string; 
+        const userId = await getUserId(token) as string;
+        const achievementsArray = await getAchievements(userId)
         console.log(achievementsArray)
         return NextResponse.json({achievementsArray: achievementsArray}, {status: 200});
     } catch (error) {

@@ -14,15 +14,14 @@ export const getJwtSecretKey = ()  => {
     if(!secret || secret.length === 0){
         throw new Error('no secret found')
     }
-
     return secret
 }
 
-export const verifyAuth =async (token:string) => {
-    try{
+export const getUserId = async (token:string) => {
+    try {
         const verified = await jwtVerify(token, new TextEncoder().encode(getJwtSecretKey()))
-        return verified.payload as UserJwtPayload
+        return verified.payload.userId as string;
     } catch (error) {
-        throw new Error("your token has expired")
+        return;
     }
 }

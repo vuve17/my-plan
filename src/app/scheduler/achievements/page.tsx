@@ -17,7 +17,7 @@ const AchievementPage: React.FC = () => {
             try {
                 console.log("try")
                 const response = await fetch('/api/achievements', {
-                    method: 'POST',
+                    method: 'GET',
                 });
                 if (response.ok) {
                     const jsonResponse = await response.json();
@@ -37,29 +37,52 @@ const AchievementPage: React.FC = () => {
         }
     }, [achievements]);
 
-    setTimeout(() => {
-        console.log(achievements)
-    }, 2000)
+
     return (
-        <>
-            <Grid container>
+        <div style={{display: "flex", justifyContent: "center"}}>
+            <Grid container 
+            sx={{
+                margin: {
+                    lg: "2em",
+                    sm: "1em",
+                    xs: "1em 0.5em"
+                },
+                maxWidth: "1500px"
+            }}
+            // spacing={3}
+            >
                 {loading ? (
                 <p>Loading...</p>
             ) : (
-                    achievements.map((achievement, index) => (
-                        <Grid item key={index} lg={3} md={4} sm={6} xs={6}>
+                    achievements.map((achievement) => (
+                        
+                        <Grid item key={achievement.id} lg={3} md={4} sm={6} xs={6}
+                        onClick={()=> console.log(achievement.id)}
+                        sx={{
+                            marginBottom: {
+                                lg: "1em",
+                                sm: "1em",
+                                xs: "1em"
+                            },
+                            display: "flex",
+                            justifyContent: "center",
+                        }}
+                
+                        >
                             <AchievementCard 
+                                key={achievement.id}
                                 id={achievement.id}
                                 name={achievement.name} 
                                 image={achievement.image} 
                                 description={achievement.description} 
                                 stars={achievement.stars}
                             />
-                        </Grid>
+                    </Grid>
+
                     ))
                 )}
             </Grid>
-        </>
+        </div>
     );
 
 }

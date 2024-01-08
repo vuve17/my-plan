@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { db  } from '@vercel/postgres';
-import type { User } from '@/app/lib/types';
+import type { RegisterParams } from '@/app/lib/types';
 import { NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
 import jwt from 'jsonwebtoken'
@@ -10,7 +10,7 @@ import jwt from 'jsonwebtoken'
 export async function POST(req:Request) {
     const body = await req.json()
 
-      const {email, username, password} : User = await {
+      const {email, username, password} : RegisterParams = await {
         ...body
       }
       
@@ -45,13 +45,13 @@ export async function POST(req:Request) {
             }
 
             const newUserAchievements = await client.sql`
-            SELECT Achievement_id FROM Achievements
+            SELECT id FROM Achievements
             WHERE stars = 0
             `;
             
             newUserAchievements.rows.forEach(async (row) => {
                 try{
-                  await client.sql`INSERT INTO user_Achievements ( Achievement_id, User_id ) VALUES (${row.achievement_id}, ${userId})`
+                  await client.sql`INSERT INTO user_Achievements ( id, User_id ) VALUES (${row.id}, ${userId})`
 
                 }
                 catch(error){

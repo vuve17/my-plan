@@ -1,24 +1,21 @@
 'use client'
 
 import React, { useState } from "react";
-import { Form, Formik, useFormik } from 'formik';
+import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {Backdrop, Box, TextField, Button, IconButton, Paper, Grid, OutlinedInput, InputLabel, Checkbox, InputAdornment} from '@mui/material';
 import colors from '../ui/colors';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { stringify } from "querystring";
 
 
 let registerSchema = Yup.object().shape({
     email: Yup.string().email('Please eneter valid email').required('Email is required'),
-    username: Yup.string().min(4).max(50).required("Username is required"),
     password: Yup.string().min(6).required('Password is required'),
 })
 
 let initialValues = {
     email: '',
-    username: '',
     password: '',
 }
 
@@ -44,28 +41,18 @@ const LogInForm: React.FC = () => {
         initialValues: initialValues,
         validationSchema: registerSchema,
         onSubmit: async (values) => {
-            try {
-                const response = await fetch('/api/log-in', {
-                    method: 'POST',
-                    body: JSON.stringify(values)
-                });
-    
-                if (response.ok) {
-                    const { token } = await response.json();
-                    document.cookie = `token=${token}; path=/`;
-                    router.push("/scheduler");
+            const response = await fetch('/api/log-in', {
+                method: 'POST',
+                body: JSON.stringify(values)
+            });
 
-                }
-                else{
-                    if(response.status === 401)
-                    {
-                        const data = await response.json()
-                        setPasswordError(data.message)
-                    }
-                    throw new Error('Log in failed');
-                }
-            } catch (error) {
-                console.error('Error registering user:', error);
+            if (response.ok) {
+                const { token } = await response.json();
+                document.cookie = `token=${token}; path=/`;
+                router.push("/scheduler");
+            } else{
+                const data = await response.json()
+                setPasswordError(data.message)
             }
         },
     })
@@ -156,19 +143,6 @@ const LogInForm: React.FC = () => {
                              }}
                         />
                         {formik.errors.email && formik.touched.email ? <div>{formik.errors.email}</div> :null}
-                        <TextField
-                            label="username"
-                            name="username"
-                            type="text"
-                            value={formik.values.username}
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            style={{
-                                marginTop: "1em",
-                                minWidth: "267px",
-                             }}
-                            />
-                        {formik.errors.username && formik.touched.username ? <div>{formik.errors.username}</div> :null}
                         <TextField
                             label="password"
                             name="password"

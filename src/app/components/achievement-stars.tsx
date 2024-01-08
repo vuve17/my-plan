@@ -16,17 +16,17 @@ const AchievementStars: React.FC<AchievementStarsProps> = ({ starCount }) => {
             position: {
                 lg: "absolute",
                 md: "absolute",
-                sm: "relative"
+                sm: "absolute"
             },
             width: {
                 lg: "69.82px",
                 sm: "69.82px",
-                xs: "60px",
+                xs: "74px",
             },
             height:{
                 lg: "42px",
                 sm: "43px",
-                xs: "38px",
+                xs: "43px",
             },
             zIndex: "4",
             bottom: {
@@ -37,6 +37,10 @@ const AchievementStars: React.FC<AchievementStarsProps> = ({ starCount }) => {
             marginBottom:{
                 md:"0",
                 xs: "1em"
+            },
+            '@media (max-width:475px)': {
+                marginBottom: '8px',
+                bottom: "1em"
             },
             
         }}

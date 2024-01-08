@@ -1,21 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyAuth } from "./app/lib/auth";
+import { getUserId } from "./app/lib/auth";
 
 
 export async function middleware(request: NextRequest){
-
-    const token = request.cookies.get("token")?.value  
-    
-    const verifyedToken = token && verifyAuth(token).catch((error) => {
-        console.log(error)
-    })
-
-    if(!token)
-    {
+    const token = request.cookies.get("token")?.value as string;
+    const userId = await getUserId(token);
+    console.log(token)
+    if (!userId) {
         return NextResponse.redirect(new URL('/login', request.url))
-    }
-    if(verifyedToken){
-        return 
     }
    
 };
