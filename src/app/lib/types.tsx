@@ -25,3 +25,12 @@ export type Achievement = {
     stars: 0 | 1 | 2 | 3;
 }
 
+export type Task = {
+    title: string,
+    startDate: Date,
+    startTime: string ,
+    endDate: Date,
+    endTime: string,
+    description: string,
+}
+

@@ -4,70 +4,118 @@ import React, { useState, useEffect, useRef, forwardRef, useMemo, memo } from "r
 import { Form, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import {Backdrop, Box, TextField, Button, Paper, Grid, OutlinedInput, InputLabel} from '@mui/material';
-import DatePicker from 'react-datepicker';
 import DatePickerInput from "./input-date-picker";
+import moment from "moment";
+import Cookies from "js-cookie";
+import getTasks from "../lib/fetch-user-tasks";
 
 interface CreateTaskModalProps {
     cancel: () => void,
+    date?: Date,
+    time?: string,
+}
+
+function createTime(time: string | undefined) {
+    if(time)
+    {
+        const formattedTime = time.length === 1 ? `0${time}:00` : `${time}:00`;;
+        return formattedTime
+
+    }
+    else{
+        return undefined
+    }
+}
+
+function createEndTime(time: string | undefined) {
+    if(time){
+        const incrementTime = Number(time) + 1;
+        const endTime = createTime(incrementTime.toString())
+        return endTime
+    }
+    else{
+        return undefined
+    }
+
 }
 
 let newTaskSchema = Yup.object().shape({
-    title: Yup.string().max(50).min(1).default("Title").required("Title is required"),
-    // startDate: Yup.string().matches(/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/).required(),
-    
-    startDate: Yup.date().required(),
-    startTime: Yup.string().matches(/^([01][0-9]|2[0-3]):[0-5][0-9]$/).required(),
-
-
-    // endDate: Yup.string().matches(/^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/).required().when('startDate', (startDate, schema) => {
-    //     return startDate && schema.min(startDate, 'End date must be later than or equal to start date');
-    //   }),
-    endDate: Yup.date().required().when('startDate', (startDate, schema) => {
+    title: Yup.string().max(50).min(1).required("Title is required"),
+    startDate: Yup.date().required("Start Date is required"),
+    endDate: Yup.date().required("End Date is required").when('startDate', (startDate, schema) => {
         return startDate && schema.min(startDate)
     }),
-    endTime: Yup.string().matches(/^([01][0-9]|2[0-3]):[0-5][0-9]$/).required(),
+
+    startTime: Yup
+    .string()
+    .matches(/^([01][0-9]|2[0-3]):[0-5][0-9]$/)
+    .required("Start time is required")
+    .test("is-earlier", "Start time should be earlier than end time", function(value) {
+      const { endTime } = this.parent;
+      return moment(value, "HH:mm").isSameOrBefore(moment(endTime, "HH:mm"));
+    }),
+    endTime: Yup
+    .string()
+    .matches(/^([01][0-9]|2[0-3]):[0-5][0-9]$/)
+    .required("end time cannot be empty")
+    .test("is-greater", "End time should be greater than start time", function(value) {
+      const { startTime } = this.parent;
+      return moment(value, "HH:mm").isSameOrAfter(moment(startTime, "HH:mm"));
+    }),
+
     descripton: Yup.string().max(255).min(0),
+
+    // taskType: Yup.string().required().oneOf(['chore', 'task']).strict(true),
     // event: Yup.boolean().required(),
     // chore: Yup.boolean().required(),
-    taskType: Yup.string().required().oneOf(['chore', 'task']).strict(true),
-
 })
 
-
-
-
-
-
-const initialValues = {
-    title: "",
-    startDate: "Thu Dec 07 2023 00:00:00 GMT+0100 (srednjoeuropsko standardno vrijeme)",
-    startTime: "08:00",
-    endDate: "Thu Dec 07 2023 00:00:00 GMT+0100 (srednjoeuropsko standardno vrijeme)",
-    endTime: "09:00",
-    description: "",
-    test: ""
-}
-
-const onSubmit = () => {
-    console.log("submited");
-}
+const currentDate = new Date();
+const startHours = currentDate.getHours();
+const endHours = startHours + 1;
+const currentStartTime = startHours.toString().padStart(2, '0') + ":00";
+const currentEndTime = endHours.toString().padStart(2, '0') + ":00";
 
 const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
-
+    
     const backDropRef = useRef<HTMLDivElement>(null)
+    const startTime = createTime(props.time)
+    const endTime =  createEndTime(props.time)
     const formik = useFormik({
-        initialValues : initialValues,
-        // validationSchema: newTaskSchema,
-        onSubmit,
+        initialValues : {
+            title: "",
+            startDate: props.date || currentDate,
+            startTime: startTime || currentStartTime ,
+            endDate: props.date ||  currentDate,
+            endTime: endTime || currentEndTime,
+            description: "",
+        },
+        validationSchema: newTaskSchema,
+        onSubmit: async (values) => {
+            const token = Cookies.get("token")
+            const response = await fetch('/api/create-task', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`, 
+                },
+                body: JSON.stringify(values)
+            });
+            if(response.ok){
+                props.cancel();
+                getTasks()
+                console.log("created")
+            }
+        }
     })
+
+
 
     const HandleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
         if (backDropRef.current === event.target) {
             props.cancel();
-            console.log(event.target)
         }
     }
-    // console.log(formik.values)
 
     return(
         <Box
@@ -75,6 +123,10 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
             height="100vh"
             
             sx={{
+                position: "fixed", 
+                top: 0, 
+                left: 0,
+                zIndex:100,
                 display: "flex",
                 alignItems: 'center',
                 justifyContent: "center"
@@ -119,6 +171,8 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                     
                                 }}
                                 />
+                             {formik.errors.title && formik.touched.title ? <div>{formik.errors.title}</div> :null}
+
                             </Grid >
     
     
@@ -157,9 +211,11 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                                     <DatePickerInput 
                                                     name="datePickerInputStartDate"
                                                     value={formik.values.startDate}
-                                                    onChange={(date) => formik.setFieldValue('startDate', date)} 
+                                                    onChange={(date) => {formik.setFieldValue('startDate', date); formik.handleChange}}
                                                     
                                                      />
+                                                    {formik.errors.startDate && formik.touched.startDate ? <div>{String(formik.errors.startDate)}</div> : null}
+
                                                 </Grid>
                                                 <Grid item
                                                 lg={12}
@@ -171,9 +227,10 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                                     value={formik.values.startTime} 
                                                     onBlur={formik.handleBlur}
                                                     onChange={formik.handleChange}
-                                                    
                                                     />
                                                 </Grid>
+                                                {formik.errors.startTime && formik.touched.startTime ? <div>{formik.errors.startTime}</div> :null}
+
                                             </Grid>
                                         </Grid >
     
@@ -206,9 +263,11 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                                 >
                                                     <DatePickerInput
                                                     name="datePickerInputEndDate" 
-                                                    value={new Date(formik.values.endDate)}
-                                                    onChange={(date) => formik.setFieldValue('endDate', date)}
+                                                    value={formik.values.endDate}
+                                                    onChange={(date) => {formik.setFieldValue('endDate', date); formik.handleChange}}
                                                     />
+                                                    {formik.errors.endDate && formik.touched.endDate ? <div>{String(formik.errors.endDate)}</div> : null}
+
                                                 </Grid>
                                                 <Grid item
                                                 lg={12}
@@ -222,6 +281,9 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                                     onChange={formik.handleChange}
                                                     
                                                     />
+
+                                                    {formik.errors.endTime && formik.touched.endTime ? <div>{formik.errors.endTime}</div> :null}
+
                                                 </Grid>
                                             </Grid>
                                         </Grid >

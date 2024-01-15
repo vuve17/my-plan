@@ -13,7 +13,7 @@ interface CustomInputButtonProps {
 }
 
 interface DatePickerInputProps {
-  value?: string|Date,
+  value?: Date,
   name?: string,
   onChange: (value: Date) => void,
 }
@@ -62,7 +62,7 @@ const formatButtonValue = (date: Date) => {
 
 const DatePickerInput: React.FC<DatePickerInputProps> = ({ value, onChange }) => {
     
-  const [startDate, setStartDate] = useState(value ? new Date() : new Date());
+  const [startDate, setStartDate] = useState(value || new Date());
   const [buttonValue, setButtonValue] = useState<string | undefined>(formatButtonValue(startDate));
 
 

@@ -104,9 +104,10 @@ h2 {
   /* height: calc(100vh - var(--navbar-height)); */
   height: 100%;
   padding: 2em;
-  width: 300px;
+  width: 350px;
   border-radius: 0;
 }
+
 
 @media screen and (max-width: 576px) {
   .vertical-datepicker-container .react-datepicker{
@@ -130,6 +131,16 @@ h2 {
   padding: 0.4em;
 }
 
+/* .react-datepicker__month-container .react-datepicker__month .react-datepicker__week{
+  width: 12vw
+}
+
+.react-datepicker__month-container .react-datepicker__month 
+.react-datepicker__week .react-datepicker__day{
+  display: inline-block;
+  width: 100%;
+} */
+
 .react-datepicker__month-container .react-datepicker__header  .react-datepicker__current-month{
   color: #2563EB;
   padding-bottom: 0.5em;
@@ -148,15 +159,6 @@ h2 {
 }
 
 /* scheduler */
-
-.dan li div{
-  position:relative;
-  border: 2px solid rgb(50, 151, 185);
-  height: 3em;
-  width: 8em;
-  text-align: center;
-  z-index: 2;
-}
 
 .dan{
   list-style: none;
@@ -177,20 +179,7 @@ display: flex;
 justify-content: center;
 align-items: center;
 }
-#vrijeme {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  text-align: center;
-  padding-right: 60em;
-  position: absolute;
-}
 
-
-#vrijeme li div{
-  height: 3em;
-  width: 8em;
-}
 
 #schedule_days{
   display: flex;
@@ -199,7 +188,7 @@ align-items: center;
 }
 
 #wrapper{
-  width: 70em;
+  width: 100%;
   margin: auto;
   padding-top: 20px;
 }
@@ -209,23 +198,3 @@ align-items: center;
   background-color: transparent;
   }
 
-
-#schedule_header{
-  text-align: center;
-  width: fit-content;
-  margin: auto;
-  position: sticky;
-  padding-bottom: 5px;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-#schedule{
-  border: 2px solid transparent;
-  height: 35.5em;
-  margin: auto;
-  border-radius: 20px;
-  overflow-y: scroll;
-  scrollbar-color: transparent transparent;
-  
-}

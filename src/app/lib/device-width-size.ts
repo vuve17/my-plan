@@ -1,6 +1,8 @@
+'use client'
+
 import { useState, useEffect } from "react"
 
-const useDeviceSize: () => number = () => {
+export const useDeviceSize: () => number = () => {
 
     const [width, setWidth] = useState(window.innerWidth)
   
@@ -18,6 +20,10 @@ const useDeviceSize: () => number = () => {
   
     return width
   
-  }
+}
+
+export const useRenderOnDeviceWidth = (width: number) => {
+  const device = window.matchMedia(`(max-width: ${width}px)`).matches
+  return device
+}
   
-export default useDeviceSize 

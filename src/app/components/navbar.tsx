@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useState } from 'react';
-import '../index.css';
 import NavLinks from '../ui/nav-links';
 
 const NavBar: React.FC = () => {

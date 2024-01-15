@@ -4,6 +4,7 @@ const colors = {
     darkGrey: "#808080",
     lightGrey: "#C6C6C6",
     ultraLightGrey: "#F4F4F4",
+    white: "#FFFFFF",
     tasks: {
         event: {
             Text: "#166534",
