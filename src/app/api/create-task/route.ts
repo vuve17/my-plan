@@ -25,7 +25,6 @@ export async function POST(request: NextRequest){
         INSERT INTO tasks (title, start_date, end_date, start_time, end_time, description, user_id)
         VALUES 
         (${title}, ${startDate}, ${endDate}, ${startTime}, ${endTime}, ${description}, ${userId});
-
         `
         return NextResponse.json({message: "created"}, {status: 201})
     }

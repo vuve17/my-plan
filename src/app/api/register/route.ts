@@ -1,3 +1,5 @@
+'use server'
+
 import bcrypt from 'bcrypt';
 import { db  } from '@vercel/postgres';
 import type { RegisterParams } from '@/app/lib/types';
