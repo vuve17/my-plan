@@ -4,6 +4,7 @@ import { getUserId } from "@/app/lib/auth";
 import { db } from "@vercel/postgres";
 import { NextRequest, NextResponse } from 'next/server';
 import { Task } from "@/app/lib/types";
+import { headers } from 'next/headers'
 
 export async function POST(request: NextRequest){
     const client = await db.connect()
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest){
     description
     } = await {...body }
     
-    const authorizationHeader = request.headers.get('authorization');
+    const authorizationHeader = headers().get("authorization");
     const token = authorizationHeader ? authorizationHeader.replace("Bearer ", "") : null;
     if(token){
         const userId = await getUserId(token)

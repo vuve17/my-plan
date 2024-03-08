@@ -1,7 +1,6 @@
 'use client'
 
 import DatePicker, { registerLocale } from 'react-datepicker';
-import { useDeviceSize } from '../lib/device-width-size';
 import React, { useState, useEffect} from 'react';
 import enGB from 'date-fns/locale/en-GB';
 import 'react-datepicker/dist/react-datepicker.css'
@@ -20,28 +19,28 @@ const SidebarCalendars:React.FC<sidebarCalendarsProps> = ({...props}) => {
   const [startDate, setStartDate] = useState<Date | null>(new Date());
   const [visibleMonths, setVisibleMonths] = useState<number>(props.device ? 5 : 3);
   const [scrolledToBottom, setScrolledToBottom] = useState<boolean>(false);
-    
 
-//  staviti device var u useEffect hook tako se makne error
-
-    const handleScroll = () => {
-
-      if ((window.innerHeight + window.scrollY >= document.body.offsetHeight * 0.8) && props.device) {
-        console.log("scroll")
-        setVisibleMonths((prevVisibleMonths) => prevVisibleMonths + 5)
-        setScrolledToBottom(true)
-      }
-      else {
-        setScrolledToBottom(false);
-      }
-    };
 
     useEffect(() => {
+
+      const handleScroll = () => {
+
+        if ((window.innerHeight + window.scrollY >= document.body.offsetHeight * 0.8) && props.device) {
+          console.log("scroll")
+          setVisibleMonths((prevVisibleMonths) => prevVisibleMonths + 5)
+          setScrolledToBottom(true)
+        }
+        else {
+          setScrolledToBottom(false);
+        }
+      };
+
+      console.log(scrolledToBottom)
       window.addEventListener('scroll', handleScroll);
       return () => {
         window.removeEventListener('scroll', handleScroll);
       };
-    }, [scrolledToBottom]);
+    }, [props.device, scrolledToBottom]);
 
     useEffect(() => {
       const nextButton = document.querySelector(' .react-datepicker__navigation-icon--next');
@@ -50,7 +49,7 @@ const SidebarCalendars:React.FC<sidebarCalendarsProps> = ({...props}) => {
         nextButton.removeAttribute('class');
         prevButton.removeAttribute('class');
       }
-    })
+    }, [])
 
     return (
       <div className='vertical-datepicker-container'>
@@ -64,7 +63,7 @@ const SidebarCalendars:React.FC<sidebarCalendarsProps> = ({...props}) => {
           previousMonthButtonLabel={<PreviousArrow/>}
           nextMonthButtonLabel={<NextArrow/>}
         />
-        {!props.device ? <TaskMenu /> : null}
+        {/* {!props.device ? <TaskMenu /> : null} */}
       </div>
     );
   };

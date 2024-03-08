@@ -2,16 +2,30 @@ import React, { useState } from 'react';
 import { Button, Box, Grid} from '@mui/material';
 import colors from '../ui/colors'
 import CreateTaskModal from './create-task-modal';
-
+import Image from 'next/image';
 
 const customGridItemStyle = {
     display: "flex",
-    marginTop: "10px",
-    marginBottom: "10px",
-    padding: "0",
-    justifyContent: "center",
+    paddingTop: {
+        xs: "14px",
+        sm: "14px",
+        lg: "10px",
+    },
+    paddingBottom: {
+        xs: "14px",
+        sm: "14px",
+        lg: "10px",
+    },
+    padding: "auto",
+    justifyContent: "space-evenly",
     alignItems: "center",
 };
+
+const smallDeviceStyle = {
+    position: "fixed",
+    bottom: 0,
+    left: 0,
+}
 
 const customButtonStyle = {
     backgroundColor: "white",
@@ -27,7 +41,11 @@ const customButtonStyle = {
     }
 };
 
-const TaskMenu:React.FC = () => {
+interface TaskMenuProps {
+    device: boolean
+}
+
+const TaskMenu:React.FC<TaskMenuProps> = ({...props}) => {
     const [showTaskModal, setTaskModalState] = useState(false)
 
 
@@ -43,14 +61,15 @@ const TaskMenu:React.FC = () => {
             width={{
                 lg: "350px",
                 md: "350px",
-                sm: "350px",
-                xs: "100%"
+                sm: "100vw",
+                xs: "100vw"
             }}
             sx={{
-                backgroundColor: `${colors.primaryBlue}`
+                backgroundColor: `${colors.primaryBlue}`,
+                ...(props.device && {...smallDeviceStyle})
             }}
             >
-                <Grid container>
+                <Grid container spacing={1}>
                     <Grid item lg={3} sm={3} xs={3}
                         sx={{
                             ...customGridItemStyle
@@ -62,7 +81,12 @@ const TaskMenu:React.FC = () => {
                         }}
                         onClick={handleTaskModalState}
                         >
-                            <img src="../svg/add-task.svg" alt="Add task" />
+                            <Image 
+                            src="../svg/add-task.svg" 
+                            alt="Add task" 
+                            width={40}
+                            height={40}
+                            />
                         </Button>
                     </Grid>
                     <Grid item lg={3} sm={3} xs={3}
@@ -75,7 +99,12 @@ const TaskMenu:React.FC = () => {
                             ...customButtonStyle
                         }}
                         >
-                            <img src="../svg/graph.svg" alt="Statistics" />
+                            <Image
+                             src="../svg/graph.svg" 
+                             alt="Statistics"
+                             width={40}
+                             height={40}
+                              />
                         </Button>
                     </Grid>
                     <Grid item lg={3} sm={3} xs={3}
@@ -88,7 +117,12 @@ const TaskMenu:React.FC = () => {
                             ...customButtonStyle
                         }}
                         >
-                            <img src="../svg/stars.svg" alt="Achievements" />
+                            <Image
+                             src="../svg/stars.svg" 
+                             alt="Statistics"
+                             width={40}
+                             height={40}
+                              />                        
                         </Button>
                     </Grid>
                     <Grid item lg={3} sm={3} xs={3}
@@ -101,8 +135,13 @@ const TaskMenu:React.FC = () => {
                             ...customButtonStyle
                         }}
                         >
-                            <img src="../svg/share-calendar.svg" alt="Add task" />
-                        </Button>
+                            <Image
+                             src="../svg/share-calendar.svg" 
+                             alt="Statistics"
+                             width={40}
+                             height={40}
+                              />                      
+                          </Button>
                     </Grid>
                     
                 </Grid>

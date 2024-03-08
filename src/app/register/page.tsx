@@ -7,7 +7,9 @@ import {Backdrop, IconButton, Box, TextField, Button, Paper, InputAdornment, Gri
 import colors from '../ui/colors';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
+export const dynamic = 'force-dynamic'
 
 let registerSchema = Yup.object().shape({
     email: Yup.string().email('Please eneter valid email').required('Email is required'),
@@ -143,13 +145,14 @@ const RegisterForm: React.FC = () => {
                         }}
                         >
                             Register
-                            <img src="\svg\register-person.svg"
-                            alt="person SVG"
-                            style={{
-                                width: "40px",
-                                height:  "40px",
-                                marginLeft: "10px"
-                            }}
+                            <Image
+                                src="\svg\register-person.svg"
+                                alt="person SVG"
+                                width={40}
+                                height={40}
+                                style={{
+                                    marginLeft: "10px"
+                                }}
                             />
                         </h1>
                         <TextField
@@ -194,7 +197,12 @@ const RegisterForm: React.FC = () => {
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton onClick={HandlePasswordState}>
-                                            <img src={`/svg/eye-password-${passwordState}.svg`} alt={`${passwordState} password`} />
+                                            <Image
+                                             src={`/svg/eye-password-${passwordState}.svg`} 
+                                             alt={`${passwordState} password`} 
+                                             width={20}
+                                             height={20}
+                                             />
                                         </IconButton>
                                     </InputAdornment>
                                 )
@@ -217,7 +225,12 @@ const RegisterForm: React.FC = () => {
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton onClick={HandlePasswordRepeatState}>
-                                            <img src={`/svg/eye-password-${passwordRepeatState}.svg`} alt={`${passwordRepeatState} password`} />
+                                            <Image
+                                                src={`/svg/eye-password-${passwordRepeatState}.svg`}
+                                                alt={`${passwordRepeatState} password`} 
+                                                width={20}
+                                                height={20}
+                                            />
                                         </IconButton>
                                     </InputAdornment>
                                 )

@@ -7,7 +7,9 @@ import {Backdrop, Box, TextField, Button, IconButton, Paper, Grid, OutlinedInput
 import colors from '../ui/colors';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
+export const dynamic = 'force-dynamic'
 
 let registerSchema = Yup.object().shape({
     email: Yup.string().email('Please eneter valid email').required('Email is required'),
@@ -42,6 +44,7 @@ const LogInForm: React.FC = () => {
         validationSchema: registerSchema,
         onSubmit: async (values) => {
             const response = await fetch('/api/log-in', {
+                // cache: 'no-store',
                 method: 'POST',
                 body: JSON.stringify(values)
             });
@@ -121,11 +124,11 @@ const LogInForm: React.FC = () => {
                         }}
                         >
                             Log in
-                            <img src="\svg\login-person.svg"
+                            <Image src="\svg\login-person.svg"
                             alt="person SVG"
+                            width={40}
+                            height={40}
                             style={{
-                                width: "40px",
-                                height:  "40px",
                                 marginLeft: "10px"
                             }}
                             />
@@ -159,7 +162,12 @@ const LogInForm: React.FC = () => {
                                 endAdornment: (
                                     <InputAdornment position="end">
                                         <IconButton onClick={HandlePasswordState}>
-                                            <img src={`/svg/eye-password-${passwordState}.svg`} alt={`${passwordState} password`} />
+                                            <Image
+                                             src={`/svg/eye-password-${passwordState}.svg`} 
+                                             alt={`${passwordState} password`} 
+                                             width={20}
+                                             height={20}
+                                             />
                                         </IconButton>
                                     </InputAdornment>
                                 )

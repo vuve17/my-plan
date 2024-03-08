@@ -8,9 +8,8 @@ import CreateTaskModal from "./create-task-modal";
 import ScheduleTask from "./scheduler-task";
 
 interface currentDisplayDateProps {
-    newDate?: Date,
+    selectedDate?: Date,
     smallDevice?: boolean
-    selected?: Date
 }
 
 // function appendChild(){
@@ -45,13 +44,13 @@ function getChosenDateTime(divId: string) {
   }
   
 
-const Scheduler : React.FC<currentDisplayDateProps> = ({...props}) => {
+const SchedulerSmall : React.FC<currentDisplayDateProps> = ({...props}) => {
     
     const scheduleHeaderRef = useRef<HTMLDivElement>(null);
     const [taskModalDate, setTaskModalDate] = useState<Date | undefined>(undefined);
     const [taskModalTime, setTaskModalTime] = useState<string | undefined>(undefined);
     const [showTaskModal, setTaskModalState] = useState(false);
-    const [selectedDate, setSelectedDate] = useState<Date>(props.selected || new Date())
+    const [selectedDate, setSelectedDate] = useState<Date>(props.selectedDate || new Date())
 
     const handleTaskModalState = (id: string) => {
         const dateTime = getChosenDateTime(id)
@@ -60,14 +59,15 @@ const Scheduler : React.FC<currentDisplayDateProps> = ({...props}) => {
         setTaskModalState(!showTaskModal)
     }
 
-
-
-
+    console.log(selectedDate)
     const startOfWeek = new Date(selectedDate);
     startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay() + (selectedDate.getDay() === 0 ? 7 : 1))
     const endOfWeek = new Date(selectedDate);
     endOfWeek.setDate(startOfWeek.getDate() + 6)
     const day_of_week = selectedDate.getDay();
+
+    console.log(startOfWeek, endOfWeek)
+
   
     const scheduleHeader = `${startOfWeek.getDate()}. - ${endOfWeek.getDate()}. ${endOfWeek.toLocaleString('en', {
       month: 'long',
@@ -117,8 +117,7 @@ const Scheduler : React.FC<currentDisplayDateProps> = ({...props}) => {
         const current_day = day.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'numeric' });
         const daySchedule = [];
         for (let j = 0; j < 24; j++) {
-            const current_day_hour = `${(day.getMonth() + 1).toString().padStart(2, '0')}${day.getDate().toString().padStart(2, '0')}${day.getFullYear()}_${j}`;            
-            daySchedule.push(
+            const current_day_hour = `${(day.getMonth() + 1).toString().padStart(2, '0')}${day.getDate().toString().padStart(2, '0')}${day.getFullYear()}_${j}`;            daySchedule.push(
                 <li key={current_day_hour} >
                     <Box 
                     onClick={(event) => {
@@ -144,10 +143,16 @@ const Scheduler : React.FC<currentDisplayDateProps> = ({...props}) => {
         }
 
         schedule.push(
-            <ul className="dan" key={current_day}
+            <Box 
+            className="dan" 
+            key={current_day}
+            sx={{
+                backgroundColor: colors.white, zIndex: 5,
+                padding: "5 5 5 5"
+            }}
             >
                 <li className="dan_header"
-                style={{backgroundColor: colors.white, zIndex: 5,
+                style={{
                 }}
                 >
                     <Box
@@ -164,6 +169,7 @@ const Scheduler : React.FC<currentDisplayDateProps> = ({...props}) => {
                         },
                         textAlign: "center",
                         zIndex: 5,
+                        
                         // paddingleft: {
                         //     lg: "auto",
                         //     md: "1em",
@@ -175,7 +181,7 @@ const Scheduler : React.FC<currentDisplayDateProps> = ({...props}) => {
                     </Box>     
                 </li>
                 {daySchedule}
-            </ul>
+            </Box>
         );
     }
 
@@ -205,11 +211,14 @@ const Scheduler : React.FC<currentDisplayDateProps> = ({...props}) => {
             <div >{scheduleHeader}</div>
             <div >{scheduleHeader}</div>
         </Box>
+        <Box id="wrapper"
+        >
          <Box id="schedule"
             sx={{
             height:{
                 sm: "100%",
-                lg: `calc(100vh - 100px )`,
+                lg: `calc(100vh - 71px )`,
+
             },
             margin: "auto",
             overflowY: "scroll",
@@ -219,11 +228,9 @@ const Scheduler : React.FC<currentDisplayDateProps> = ({...props}) => {
             
              <Box id="schedule_days"
              sx={{
-                position:"fixed",
-                top: "100px",
                 height:{
                     sm: "100%",
-                    lg: `calc(100vh - 100px - ${scheduleHeaderRef})`
+                    lg: `calc(100vh - 71px - ${scheduleHeaderRef})`
                 }
              }}
              
@@ -258,11 +265,12 @@ const Scheduler : React.FC<currentDisplayDateProps> = ({...props}) => {
                 
                </Box>
              </Box>
-         {props.smallDevice ? <TaskMenu device={props.smallDevice}/> : null }
+         </Box>
+         {/* {props.smallDevice ? <TaskMenu device={props.smallDevice}/> : null } */}
         </div>
     </>
 
     )
 }
 
-export default Scheduler
+export default SchedulerSmall

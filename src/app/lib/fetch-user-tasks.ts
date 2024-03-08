@@ -2,6 +2,8 @@
 
 import Cookies from "js-cookie"
 
+export const dynamic = 'force-dynamic'
+
 export default async function getTasks() {
     const token = Cookies.get("token")
     const response = await fetch('/api/get-tasks', {
@@ -19,6 +21,6 @@ export default async function getTasks() {
         }
     }
     else{
-        console.error("failer to fetch tasks")
+        console.error("failed to fetch tasks")
     }
 }

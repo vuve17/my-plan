@@ -9,6 +9,8 @@ import moment from "moment";
 import Cookies from "js-cookie";
 import getTasks from "../lib/fetch-user-tasks";
 
+export const dynamic = 'force-dynamic'
+
 interface CreateTaskModalProps {
     cancel: () => void,
     date?: Date,
@@ -103,7 +105,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
             });
             if(response.ok){
                 props.cancel();
-                getTasks()
+                console.log(getTasks())
                 console.log("created")
             }
         }

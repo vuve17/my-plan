@@ -10,11 +10,13 @@ const colors = {
             Text: "#166534",
             Background: "#BBF7D0",
             Stroke: "#15803D",
+            TimeBackground: "#DCFCE7"
         },
         chore: {
             Text: "#1E3A8A",
             Background: "#9CD4ED",
             Stroke: "#1E3A8A",
+            TimeBackground: "#BFDBFE"
         },
         multiple: {
             Text: "#9A3412",

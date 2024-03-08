@@ -5,6 +5,7 @@ import { Grid } from '@mui/material';
 import AchievementCard from '@/app/components/achievement-card';
 import { Achievement } from '@/app/lib/types';
 
+export const dynamic = 'force-dynamic'
 
 const AchievementPage: React.FC = () => {
 

@@ -1,3 +1,5 @@
+'use client'
+
 import React from "react";
 import { Box, Card, CardActions, CardContent, CardMedia, Typography, Grid, useMediaQuery } from '@mui/material';
 import AchievementStars from "./achievement-stars";

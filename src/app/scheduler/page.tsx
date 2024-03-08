@@ -1,20 +1,30 @@
 'use client'
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import SidebarCalendars from "../components/calendars-sidebar";
 import Scheduler from "../components/scheduler";
+import { useEffect, useState } from "react";
+import SidebarCalendars from "../components/calendars-sidebar";
 
-
+export const dynamic = 'force-dynamic'
 
 function ProtectedPage() {
+  const[windowWidth, setWindowWidth] = useState<boolean>()
+  function handleWindowWidth(window: boolean){
+    setWindowWidth(window)
+  }
 
-  const smallDevice = window.matchMedia('(max-width: 576px)').matches
+  useEffect( function getWindow()
+  {
+    const smallDevice = window.matchMedia('(max-width: 576px)').matches
+    handleWindowWidth(smallDevice)
+    console.log(smallDevice)
+  }
+  ,[])
   return (
+
     <div style={{ display: "flex", flexDirection: "row"}}>
-      {!smallDevice ? <SidebarCalendars/> : null}
+      {!windowWidth ? <SidebarCalendars/> : null}
       <Scheduler
-      smallDevice={smallDevice}
+      // smallDevice={smallDevice}
       />
     </div>
   )

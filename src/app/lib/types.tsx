@@ -26,6 +26,7 @@ export type Achievement = {
 }
 
 export type Task = {
+    id: number,
     title: string,
     startDate: Date,
     startTime: string ,

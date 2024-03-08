@@ -1,9 +1,8 @@
-'use server'
-
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 
+export const dynamic = 'force-dynamic'
 
 interface MyJwtPayload {
     exp: number;
@@ -36,7 +35,6 @@ export async function GET() {
         }
       );
     } else {
-      // If the token is valid, return some protected data.
       return NextResponse.json(
         { data: "Protected data" },
         {

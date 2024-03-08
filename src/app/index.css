@@ -52,27 +52,23 @@ h2 {
   z-index: 10;
 }
 
-#sidebarWrapper {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  position: fixed;
-  min-width: 250px;
-  max-width: 250px;
-  min-height: 100vh;
-  color: white;
-}
 
-#sidebarWrapper ul {
+
+#sidebar ul {
   list-style: none;
 }
 
-#sidebarWrapper ul li {
+#sidebar ul li {
   margin-bottom: 1em;
 }
 
-#sidebarWrapper ul li a{
+#sidebarCollapse{
+  border: none; 
+  background: none;
+  padding: 0; 
+}
+
+#sidebar ul li a{
   color: white;
   text-decoration: none;
 }
@@ -171,7 +167,6 @@ h2 {
   top: 0;
   background-color: white;
   font-weight: bold;
-  z-index: 3;
 }
 
 .dan_header div{
@@ -187,14 +182,9 @@ align-items: center;
   position: relative;
 }
 
-#wrapper{
-  width: 100%;
-  margin: auto;
-  padding-top: 20px;
-}
 
-#schedule::-webkit-scrollbar {
+/* #schedule::-webkit-scrollbar {
   width: 6px;
   background-color: transparent;
-  }
+} */
 

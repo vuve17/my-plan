@@ -3,11 +3,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { db } from "@vercel/postgres";
 import { getUserId } from "@/app/lib/auth";
+import { headers } from "next/headers";
 
 
 export async function GET(request: NextRequest) {
     const client = await db.connect()
-    const authorizationHeader = request.headers.get('authorization');
+    const authorizationHeader = headers().get('authorization');
     const token = authorizationHeader ? authorizationHeader.replace("Bearer ", "") : null;
     console.log("token: ",token)
     if(token){
