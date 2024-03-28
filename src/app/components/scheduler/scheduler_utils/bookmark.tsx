@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Box } from '@mui/material';
-import { Source_Serif_4 } from '@next/font/google';
+import { Source_Serif_4 } from "next/font/google";
 
 interface BookmarkProps {
     value: boolean | null;
