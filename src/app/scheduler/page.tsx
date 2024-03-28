@@ -3,6 +3,7 @@
 import Scheduler from "../components/scheduler";
 import { useEffect, useState } from "react";
 import SidebarCalendars from "../components/calendars-sidebar";
+import UserScheduler from "../components/scheduler/user-scheduler";
 
 export const dynamic = 'force-dynamic'
 
@@ -23,7 +24,7 @@ function ProtectedPage() {
 
     <div style={{ display: "flex", flexDirection: "row"}}>
       {!windowWidth ? <SidebarCalendars/> : null}
-      <Scheduler
+      <UserScheduler
       // smallDevice={smallDevice}
       />
     </div>

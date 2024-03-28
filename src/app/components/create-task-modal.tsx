@@ -3,26 +3,48 @@
 import React, { useState, useEffect, useRef, forwardRef, useMemo, memo } from "react";
 import { Form, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
-import {Backdrop, Box, TextField, Button, Paper, Grid, OutlinedInput, InputLabel} from '@mui/material';
+import {Backdrop, Box, TextField, Button, Paper, Grid, OutlinedInput, InputLabel, Snackbar, IconButton } from '@mui/material';
 import DatePickerInput from "./input-date-picker";
 import moment from "moment";
 import Cookies from "js-cookie";
 import getTasks from "../lib/fetch-user-tasks";
+import Bookmark from './scheduler/scheduler_utils/bookmark';
+
 
 export const dynamic = 'force-dynamic'
+
+// const timeType = /^([01][0-9]|2[0-3]):[0-5][0-9]$/
 
 interface CreateTaskModalProps {
     cancel: () => void,
     date?: Date,
     time?: string,
+    openSnackbar: () => void,
+    snackbarText: (text: string) => void
 }
 
-function createTime(time: string | undefined) {
+function TimeHours(time: string) {
+
+    return Number(time.slice(0,2))
+}
+
+function TimeMinutes(time: string) {
+    const minutes = Number(time.slice(3, 5))
+    return minutes
+}
+
+function setDateTime (date: Date, time: string) {
+    const newDate = new Date(date)
+    newDate.setHours(TimeHours(time)+1)
+    newDate.setMinutes(TimeMinutes(time))
+    return newDate
+}
+
+function createStartTime(time: string | undefined) {
     if(time)
     {
         const formattedTime = time.length === 1 ? `0${time}:00` : `${time}:00`;;
         return formattedTime
-
     }
     else{
         return undefined
@@ -32,13 +54,12 @@ function createTime(time: string | undefined) {
 function createEndTime(time: string | undefined) {
     if(time){
         const incrementTime = Number(time) + 1;
-        const endTime = createTime(incrementTime.toString())
+        const endTime = createStartTime(incrementTime.toString())
         return endTime
     }
     else{
         return undefined
     }
-
 }
 
 let newTaskSchema = Yup.object().shape({
@@ -79,9 +100,9 @@ const currentStartTime = startHours.toString().padStart(2, '0') + ":00";
 const currentEndTime = endHours.toString().padStart(2, '0') + ":00";
 
 const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
-    
+
     const backDropRef = useRef<HTMLDivElement>(null)
-    const startTime = createTime(props.time)
+    const startTime = createStartTime(props.time)
     const endTime =  createEndTime(props.time)
     const formik = useFormik({
         initialValues : {
@@ -94,22 +115,62 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
         },
         validationSchema: newTaskSchema,
         onSubmit: async (values) => {
-            const token = Cookies.get("token")
-            const response = await fetch('/api/create-task', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`, 
-                },
-                body: JSON.stringify(values)
-            });
-            if(response.ok){
-                props.cancel();
-                console.log(getTasks())
-                console.log("created")
+            try {
+                const { 
+                    startTime, 
+                    endTime, 
+                    ...sentData 
+                } = values;
+
+                sentData.startDate = setDateTime(sentData.startDate, startTime)
+                sentData.endDate = setDateTime(sentData.endDate, endTime)
+
+                console.log("After conversion:");
+                console.log("sentData.startDate:", sentData.startDate);
+                console.log("sentData.endDate:", sentData.endDate);
+
+                const token = Cookies.get("token");
+                console.log(sentData)
+                const response = await fetch('/api/create-task', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`, 
+                    },
+                    body: JSON.stringify({
+                        description: sentData.description,
+                        title: sentData.title,
+                        startDate: sentData.startDate.toISOString().replace("T", " "),
+                        endDate: sentData.endDate.toISOString().replace("T", " "),
+                    })
+                });
+
+                if (response.ok) {
+                    props.snackbarText(sentData.title)
+                    props.openSnackbar()
+                    props.cancel();
+                    console.log(getTasks());
+                    console.log("created");
+                } 
+                else {
+                    props.snackbarText(sentData.title)
+                    props.openSnackbar()
+                    throw new Error('Failed to create task');
+                }
+            }
+            catch (error) {
+                props.snackbarText('Error creating task')
+                props.openSnackbar()
+                console.error('Error creating task:', error);
+                
+                // Handle the error here, such as displaying a message to the user
             }
         }
+
     })
+
+
+
 
 
 
@@ -134,8 +195,12 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                 justifyContent: "center"
             }}
         >
+
+
+
             <Backdrop open={true} onClick={HandleBackdropClick} ref={backDropRef}
             >
+
                 <Paper
                     square={false}
                     elevation={3}
@@ -152,8 +217,11 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                     }}
                 >
                     <form onSubmit={formik.handleSubmit} autoComplete="off">
+
                         <Grid container spacing={4}>
-    
+                        <Bookmark
+                            value={true}
+                        />
                             <Grid item lg={12} sm={12} xs={12}>
                                 <TextField 
                                     value={formik.values.title}
@@ -217,8 +285,9 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                                     
                                                      />
                                                     {formik.errors.startDate && formik.touched.startDate ? <div>{String(formik.errors.startDate)}</div> : null}
-
+                                                    
                                                 </Grid>
+                                                {/* 1 error za date */}
                                                 <Grid item
                                                 lg={12}
                                                 sm={12}

@@ -1,12 +1,13 @@
 'use client'
 
 import React, {useRef, useState} from "react";
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, IconButton, Snackbar, Alert } from '@mui/material';
 import colors from "@/app/ui/colors";
 import CreateTaskModal from "../create-task-modal";
-import { NextArrow, PreviousArrow } from '../scheduler-navigation-arrows';
+import { NextArrow, PreviousArrow } from './scheduler_utils/scheduler-navigation-arrows';
 import UserSchedulerColumn from "./user-scheduler-column";
 import TimeTable from "./user-scheduler-day-time";
+import CloseIcon from '@mui/icons-material/Close';
 
 interface schedulerProps {
     selected?: Date
@@ -40,6 +41,7 @@ function getChosenDateTime(divId: string) {
     return { date, time };
 }
 
+
 const UserScheduler : React.FC<schedulerProps> = ({...props}) => {
 
 
@@ -48,6 +50,9 @@ const UserScheduler : React.FC<schedulerProps> = ({...props}) => {
     const [taskModalTime, setTaskModalTime] = useState<string | undefined>(undefined);
     const [showTaskModal, setTaskModalState] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date>(props.selected || new Date())
+    const [snackbarState, setSnackbarState] = useState(false);
+    const [snackbarText, setSnackbarText] = useState<string>("");
+    const [snackbarAlertState, setSnackbarAlertState] = useState<"success" | "warning" | "error">("success");
 
     const handleTaskModalState = (id: string) => {
         const dateTime = getChosenDateTime(id)
@@ -56,6 +61,31 @@ const UserScheduler : React.FC<schedulerProps> = ({...props}) => {
         setTaskModalState(!showTaskModal)
     }
 
+    const handleSnackbarOpen = () => {
+        setSnackbarState(true)
+    }
+
+    const handleSnackbarClose = () => {
+        setSnackbarState(false)
+    }
+
+    const handleSnackbarText = (text: string) => {
+        setSnackbarText(text)
+    }
+
+
+    const action = (
+        <React.Fragment>
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleSnackbarClose}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        </React.Fragment>
+      );
 
     //staviti sve ovo u 1 line (da se ne ponavlja)
     const startOfWeek = new Date(selectedDate);
@@ -82,6 +112,7 @@ const UserScheduler : React.FC<schedulerProps> = ({...props}) => {
             />
         )
     }
+
   
     const scheduleHeader = `${startOfWeek.getDate()}. - ${endOfWeek.getDate()}. ${endOfWeek.toLocaleString('en', {
       month: 'long',
@@ -94,7 +125,28 @@ const UserScheduler : React.FC<schedulerProps> = ({...props}) => {
                 cancel={() => setTaskModalState(!showTaskModal)}
                 date={taskModalDate}
                 time={taskModalTime}
+                openSnackbar={handleSnackbarOpen}
+                snackbarText={handleSnackbarText}
             />}
+
+
+            <Snackbar
+                open={snackbarState}
+                autoHideDuration={5000}
+                onClose={handleSnackbarClose}
+                message={snackbarText}
+                // TransitionComponent={SlideTransition}
+            >
+                <Alert
+                    // onClose={handleClose}
+                    severity={snackbarAlertState}
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                    action={action}
+                >
+                    {snackbarText}
+                </Alert>
+            </Snackbar>
 
             <Box
             sx={{

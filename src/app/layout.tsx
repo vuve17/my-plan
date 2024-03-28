@@ -1,5 +1,6 @@
 import NavBar from "./components/navbar";
-import './index.css'
+import './index.css';
+import Head from "next/head";
 
 export const dynamic = 'force-dynamic'
 

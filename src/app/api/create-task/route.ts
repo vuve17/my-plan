@@ -12,25 +12,24 @@ export async function POST(request: NextRequest){
     const {
     title,
     startDate,
-    startTime,
     endDate,
-    endTime,
     description
     } = await {...body }
     
     const authorizationHeader = headers().get("authorization");
     const token = authorizationHeader ? authorizationHeader.replace("Bearer ", "") : null;
     if(token){
+        // sql injection :(
         const userId = await getUserId(token)
         await client.sql`
-        INSERT INTO tasks (title, start_date, end_date, start_time, end_time, description, user_id)
+        INSERT INTO tasks (title, start_date, end_date, description, user_id)
         VALUES 
-        (${title}, ${startDate}, ${endDate}, ${startTime}, ${endTime}, ${description}, ${userId});
+        (${title}, ${startDate}, ${endDate}, ${description}, ${userId});
         `
         return NextResponse.json({message: "created"}, {status: 201})
     }
     else{
-        console.log("bad")
+        console.log("create task aborted in api/create-task")
         return NextResponse.json({message: "something went wrong"},{status: 500})
     }
 }

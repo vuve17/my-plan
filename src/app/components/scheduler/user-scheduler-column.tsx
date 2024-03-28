@@ -49,7 +49,7 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
                         backgroundColor: colors.white, 
                         zIndex: 5,
                         width:"13.5%",
-                        border: "2px solid red",                        
+                        border: "2px solid red",                       
                     }}
                 >
                     <Box
