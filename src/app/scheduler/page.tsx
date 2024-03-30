@@ -1,32 +1,38 @@
 'use client'
-
-import Scheduler from "../components/scheduler";
 import { useEffect, useState } from "react";
-import SidebarCalendars from "../components/calendars-sidebar";
+import SidebarCalendars from "../components/calendar/calendars-sidebar";
 import UserScheduler from "../components/scheduler/user-scheduler";
+// import dynamic from "next/dynamic";
 
 export const dynamic = 'force-dynamic'
 
+// const Scheduler = dynamic(()=> import('../components/scheduler/user-scheduler'), {
+//   ssr:false,
+// })
+
+// const Calendar = dynamic(()=> import("../components/calendar/calendars-sidebar"), {
+//   ssr:false,
+// })
+
 function ProtectedPage() {
-  const[windowWidth, setWindowWidth] = useState<boolean>()
-  function handleWindowWidth(window: boolean){
-    setWindowWidth(window)
-  }
+  // const [windowWidth, setWindowWidth] = useState<boolean>(() => window.innerWidth <= 576)
 
-  useEffect( function getWindow()
-  {
-    const smallDevice = window.matchMedia('(max-width: 576px)').matches
-    handleWindowWidth(smallDevice)
-    console.log(smallDevice)
-  }
-  ,[])
+  // useEffect(() => {
+  //   function handleResize() {
+  //     setWindowWidth(window.innerWidth <= 576)
+  //   }
+  //   handleResize()
+
+  //   window.addEventListener('resize', handleResize)
+
+  //   return () => window.removeEventListener('resize', handleResize)
+  // }, [])
+
   return (
-
     <div style={{ display: "flex", flexDirection: "row"}}>
-      {!windowWidth ? <SidebarCalendars/> : null}
-      <UserScheduler
-      // smallDevice={smallDevice}
-      />
+      {/* {!windowWidth ? <Scheduler/>  : <Calendar/>} */}
+      {/* <SidebarCalendars /> */}
+      <UserScheduler />
     </div>
   )
 }

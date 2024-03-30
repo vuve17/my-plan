@@ -56,7 +56,10 @@ const TaskMenu:React.FC<TaskMenuProps> = ({...props}) => {
 
     return(
         <>
-            {showTaskModal && <CreateTaskModal cancel={handleTaskModalState}/>}
+            {/* {showTaskModal && 
+            <CreateTaskModal cancel={handleTaskModalState}
+            
+            />} */}
             <Box
             width={{
                 lg: "350px",

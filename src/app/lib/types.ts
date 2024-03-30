@@ -31,6 +31,7 @@ export type Task = {
     startDate: Date,
     endDate: Date,
     description: string,
+    taskType: boolean
 }
 
 

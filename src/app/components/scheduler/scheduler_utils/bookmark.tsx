@@ -3,8 +3,10 @@ import { Box } from '@mui/material';
 import { Source_Serif_4 } from "next/font/google";
 
 interface BookmarkProps {
+    error?: string,
     value: boolean | null;
-    onClick?: () => void;
+    onClickChore: () => void;
+    onClickEvent: () => void;
 }
 
 const SourceSerif4 = Source_Serif_4({
@@ -21,15 +23,16 @@ const bookmarkStyle = {
     minHeight: "100px",
     height: "100px",
     boxSizing: "border-box",
-    border: "1px solid #000",
     borderBottom: "25px solid transparent",
     borderTop: "none",
     zIndex: "5",
     fontSize: "24px",
-    color: "white"
+    color: "white",
+    // backgroundColor: "#0081D1"
 };
 
 const Bookmark: React.FC<BookmarkProps> = ({...props}) => {
+    
     const [selectedValue, setSelectedValue] = useState<boolean | null>(null);
     const choreBookmarkRef = useRef<HTMLDivElement>(null);
     const eventBookmarkRef = useRef<HTMLDivElement>(null);
@@ -51,7 +54,7 @@ const Bookmark: React.FC<BookmarkProps> = ({...props}) => {
     const animateBookmark = (element: HTMLElement | null, finalHeight: number) => {
         if (element) {
             const initialHeight = element.clientHeight;
-            console.log(initialHeight, " ", finalHeight)
+            // console.log(initialHeight, " ", finalHeight)
             if (initialHeight !== finalHeight) {
                 let currentHeight = initialHeight;
                 const interval = setInterval(() => {

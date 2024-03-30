@@ -2,7 +2,7 @@
 
 import React, {useEffect, useState} from "react";
 import TaskMenu from "@/app/components/task-menu";
-import SidebarCalendars from "../components/calendars-sidebar";
+import SidebarCalendars from "../components/calendar/calendars-sidebar";
 
 export const dynamic = 'force-dynamic'
 

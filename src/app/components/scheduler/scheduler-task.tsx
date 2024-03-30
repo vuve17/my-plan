@@ -31,7 +31,7 @@ const Task: React.FC<taskProps> = ({...props}) => {
         <Box
         
         sx={{
-            //promijeniti with na 50% ili 100% ovisno o broju taskova
+            //promijeniti witdh na 50% ili 100% ovisno o broju taskova
             width:"100%",
         }}  
         onClick={openTaskModal}

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Grid } from '@mui/material';
-import AchievementCard from '@/app/components/achievement-card';
+import AchievementCard from '@/app/components/scheduler/achievements/achievement-card';
 import { Achievement } from '@/app/lib/types';
 
 export const dynamic = 'force-dynamic'

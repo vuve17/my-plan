@@ -2,8 +2,8 @@
 
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
-import colors from "../ui/colors";
-import { Task } from "../lib/types";
+import colors from "../../../ui/colors";
+import { Task } from "../../../lib/types";
 
 interface TaskProps extends Task {
     onClick: () => void,
@@ -61,7 +61,7 @@ const ScheduleTask: React.FC<TaskProps> = ({...props}) => {
                 right: 0
             }}
             >
-                {props.startTime + " - " + props.endTime}
+
             </Box>
         </Box>
     )

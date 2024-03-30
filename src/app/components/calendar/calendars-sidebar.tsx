@@ -4,8 +4,10 @@ import DatePicker, { registerLocale } from 'react-datepicker';
 import React, { useState, useEffect} from 'react';
 import enGB from 'date-fns/locale/en-GB';
 import 'react-datepicker/dist/react-datepicker.css'
-import TaskMenu from './task-menu';
+import TaskMenu from '../task-menu';
 import { PreviousArrow, NextArrow } from './calendar-navigation-arrows';
+
+export const dynamic = 'force-dynamic'
 
 registerLocale('en-gb', enGB);
 
@@ -62,6 +64,10 @@ const SidebarCalendars:React.FC<sidebarCalendarsProps> = ({...props}) => {
           calendarClassName='datepicker-sidebar'
           previousMonthButtonLabel={<PreviousArrow/>}
           nextMonthButtonLabel={<NextArrow/>}
+
+          // minDate={}
+          // maxDate={}
+
         />
         {/* {!props.device ? <TaskMenu /> : null} */}
       </div>

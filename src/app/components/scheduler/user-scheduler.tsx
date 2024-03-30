@@ -10,7 +10,8 @@ import TimeTable from "./user-scheduler-day-time";
 import CloseIcon from '@mui/icons-material/Close';
 
 interface schedulerProps {
-    selected?: Date
+    selected?: Date,
+    // windowWidth: boolean,
 }
 
 const width = {

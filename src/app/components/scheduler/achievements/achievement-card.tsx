@@ -3,7 +3,7 @@
 import React from "react";
 import { Box, Card, CardActions, CardContent, CardMedia, Typography, Grid, useMediaQuery } from '@mui/material';
 import AchievementStars from "./achievement-stars";
-import { Achievement } from "../lib/types";
+import { Achievement } from "../../../lib/types";
 
 // interface AchievementKey extends Achievement {
 //     key: number
@@ -16,7 +16,6 @@ const AchievementCard: React.FC<Achievement> = ({...props}) => {
     const displayDescription = isSmallScreen ? 
     (description.length > 55 ? `${description.slice(0, 55)}...` : description) :
     description;
-
 
     return(
 
