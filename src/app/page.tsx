@@ -2,7 +2,7 @@
 
 import React from 'react';
 import CustomTestInput from "./components/test/custom-input-test";
-import UserScheduler from './components/scheduler/user-scheduler.tsx'
+import UserScheduler from './components/scheduler/user-scheduler'
 
 export const dynamic = "force-dynamic"
 
