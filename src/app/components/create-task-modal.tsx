@@ -4,11 +4,12 @@ import React, { useState, useEffect, useRef, forwardRef, useMemo, memo } from "r
 import { Form, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import {Backdrop, Box, TextField, Button, Paper, Grid, OutlinedInput, InputLabel, Snackbar, IconButton } from '@mui/material';
-import DatePickerInput from "./input-date-picker";
+import DatePickerInput from "./calendar/input-date-picker";
 import moment from "moment";
 import Cookies from "js-cookie";
 import getTasks from "../lib/fetch-user-tasks";
 import Bookmark from './scheduler/scheduler_utils/bookmark';
+import { Source_Serif_4 } from "next/font/google";
 
 
 export const dynamic = 'force-dynamic'
@@ -62,6 +63,28 @@ function createEndTime(time: string | undefined) {
     }
 }
 
+const SourceSerif4 = Source_Serif_4({
+    weight: "700",
+    subsets: ['latin'],
+});
+
+const bookmarkStyle = {
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "0",
+    minHeight: "100px",
+    height: "100px",
+    boxSizing: "border-box",
+    borderBottom: "25px solid transparent",
+    borderTop: "none",
+    zIndex: "5",
+    fontSize: "24px",
+    color: "white",
+    // backgroundColor: "#0081D1"
+};
+
 let newTaskSchema = Yup.object().shape({
     title: Yup.string().max(50).min(1).required("Title is required"),
     startDate: Yup.date().required("Start Date is required"),
@@ -87,10 +110,9 @@ let newTaskSchema = Yup.object().shape({
     }),
 
     descripton: Yup.string().max(255).min(0),
+    taskType: Yup.boolean().required("Task type is required"),
 
     // taskType: Yup.string().required().oneOf(['chore', 'task']).strict(true),
-    // event: Yup.boolean().required(),
-    // chore: Yup.boolean().required(),
 })
 
 const currentDate = new Date();
@@ -104,6 +126,52 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
     const backDropRef = useRef<HTMLDivElement>(null)
     const startTime = createStartTime(props.time)
     const endTime =  createEndTime(props.time)
+    const [bookmarkValue, setBookmarkValue] = useState<boolean | null>(null);
+    const choreBookmarkRef = useRef<HTMLDivElement>(null);
+    const eventBookmarkRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (bookmarkValue === true) {
+            animateBookmark(choreBookmarkRef.current, 100); 
+            animateBookmark(eventBookmarkRef.current, 150); 
+        } else if (bookmarkValue === false) {
+            animateBookmark(eventBookmarkRef.current, 100); 
+            animateBookmark(choreBookmarkRef.current, 150); 
+        } else {
+            animateBookmark(choreBookmarkRef.current, 100); 
+            animateBookmark(eventBookmarkRef.current, 100);
+        }
+
+        console.log("effect value: ", bookmarkValue)
+    }, [bookmarkValue]);
+
+    const animateBookmark = (element: HTMLElement | null, finalHeight: number) => {
+        if (element) {
+            const initialHeight = element.clientHeight;
+            console.log("initial height: ",initialHeight, "final height: ", finalHeight)
+            if (initialHeight !== finalHeight) {
+                let currentHeight = initialHeight;
+                const interval = setInterval(() => {
+                    if (currentHeight < finalHeight && finalHeight > initialHeight) {
+                        currentHeight += 1;
+                    } else if (currentHeight > finalHeight && finalHeight < initialHeight) {
+                        currentHeight -= 1;
+                    } else {
+                        clearInterval(interval);
+                    }
+                    element.style.height = currentHeight + "px";
+                }, 10);
+            }
+        }
+    };
+
+    const handleBookmarkClick = ( newValue: boolean | null) => {
+        setBookmarkValue(newValue);
+        formik.setFieldValue('taskType', newValue)
+        console.log("newValue: ", newValue)
+    };
+
+    
     const formik = useFormik({
         initialValues : {
             title: "",
@@ -112,10 +180,16 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
             endDate: props.date ||  currentDate,
             endTime: endTime || currentEndTime,
             description: "",
+            taskType: null
         },
         validationSchema: newTaskSchema,
-        onSubmit: async (values) => {
+        onSubmit: async (values, { setErrors }) => {
             try {
+
+                if (values.taskType === null && formik.submitCount > 0) {
+                    setErrors({ taskType: 'Task type is required' });
+                    return;
+                }
                 const { 
                     startTime, 
                     endTime, 
@@ -124,10 +198,6 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
 
                 sentData.startDate = setDateTime(sentData.startDate, startTime)
                 sentData.endDate = setDateTime(sentData.endDate, endTime)
-
-                console.log("After conversion:");
-                console.log("sentData.startDate:", sentData.startDate);
-                console.log("sentData.endDate:", sentData.endDate);
 
                 const token = Cookies.get("token");
                 console.log(sentData)
@@ -142,6 +212,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                         title: sentData.title,
                         startDate: sentData.startDate.toISOString().replace("T", " "),
                         endDate: sentData.endDate.toISOString().replace("T", " "),
+                        taskType: sentData.taskType
                     })
                 });
 
@@ -162,17 +233,10 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                 props.snackbarText('Error creating task')
                 props.openSnackbar()
                 console.error('Error creating task:', error);
-                
-                // Handle the error here, such as displaying a message to the user
             }
         }
 
     })
-
-
-
-
-
 
     const HandleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
         if (backDropRef.current === event.target) {
@@ -219,10 +283,66 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                     <form onSubmit={formik.handleSubmit} autoComplete="off">
 
                         <Grid container spacing={4}>
-                        <Bookmark
-                            value={true}
-                        />
-                            <Grid item lg={12} sm={12} xs={12}>
+
+                                <Box
+                                    sx={{
+                                        position: "absolute",
+                                        transform: "translate(700%, -10%)",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        height: "200px"
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            flexDirection: "row",
+                                            width: "100px",
+                                            height: "150px"
+                                        }}
+                                    >
+                                        <Box
+                                            data-name="taskType"
+                                            id="choreBookmark"
+                                            ref={choreBookmarkRef}
+                                            className={SourceSerif4.className}
+                                            sx={{
+                                                ...bookmarkStyle,
+                                                borderLeft: `30px solid #0081D1`,
+                                                borderRight: `30px solid #0081D1`,
+                                                marginRight: "20px"
+                                            }}
+                                            onClick={() => {
+                                                handleBookmarkClick( bookmarkValue === false ? null : false)
+                                                // formik.setFieldValue('taskType', bookmarkValue)
+                                                // console.log("onClick: ", bookmarkValue)
+                                            }}
+                                            > C </Box>
+
+                                        <Box
+                                            data-name="taskType"
+                                            id="eventBookmark"
+                                            ref={eventBookmarkRef}
+                                            className={SourceSerif4.className}
+                                            sx={{
+                                                ...bookmarkStyle,
+                                                borderLeft: `30px solid #3CE239`,
+                                                borderRight: `30px solid #3CE239`,
+                                            }}
+                                            onClick={() => {
+                                                handleBookmarkClick( bookmarkValue === true ? null : true)
+                                                // formik.setFieldValue('taskType', bookmarkValue)
+                                                // console.log("onClick: ", bookmarkValue)
+                                            }}
+                                        >
+                                            E
+                                       </Box>
+                                    </Box>
+                                    {formik.errors.taskType && formik.touched.taskType ? <div>{formik.errors.taskType}</div> : null}
+
+                                </Box>
+                            <Grid item  xl={8} lg={8} md={8} sm={12} xs={12}
+                            >
                                 <TextField 
                                     value={formik.values.title}
                                     onBlur={formik.handleBlur}
@@ -235,7 +355,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                         xs: "100%",
                                         sm: "70%",
                                         lg: "70%",
-                                        xl: "50rem",
+                                        xl: "70%",
     
                                     },
                                     
@@ -293,7 +413,8 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                                 sm={12}
                                                 xs={12}
                                                 >
-                                                    <input type="time" 
+                                                    <input 
+                                                    type="time" 
                                                     name="startTime" 
                                                     value={formik.values.startTime} 
                                                     onBlur={formik.handleBlur}
@@ -394,7 +515,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                     justifyContent: "space-between"
                                 }}
                             >
-                                <Button variant="text" name="advancedSettingBtn">
+                                <Button variant="text" name="advancedSettingsBtn">
                                     Advanced Settings
                                 </Button>
                             </Grid >
@@ -421,6 +542,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                     variant="contained" 
                                     sx={{backgroundColor: "red", marginRight: "1em"}}
                                     name="cancleBtn"
+                                    color="error"
                                     onClick={props.cancel}
                                 >
                                     Cancel
