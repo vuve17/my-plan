@@ -59,20 +59,25 @@ const RegisterForm: React.FC = () => {
                     body: JSON.stringify(values)
                 });
     
-                if (response.ok) {
-                    const { token } = await response.json();
-                    document.cookie = `token=${token}; path=/`;
-                    router.push("/scheduler");
-                }
-                else{
-                    console.log(values)
-                    if(response.status === 409)
-                    {
-                        const data = await response.json(); // Parse response body as JSON
-                        const errorMessage = data.message;
-                        setEmailError(errorMessage)
+                if (!response.ok) {
+                    console.log("Response OK");
+                    console.log("Response error:", response.status, response.statusText);
+                    const data = await response.json();
+                    console.log("Error message:", data.message);
+                    setEmailError(data.message);
+                } else {
+                    console.log("Response OK");
+                    const { refreshToken, accessToken, message} = await response.json();
+                    console.log(refreshToken, " ", accessToken)
+                    console.log(message)
+                    if (refreshToken && accessToken) {
+                        document.cookie = `refreshToken=${refreshToken};  path=/`;
+                        document.cookie = `accessToken=${accessToken}; path=/`;
+                        router.push("/scheduler");
+                    } else {
+                        console.log("Else set pass error: Bad keys - frontend message");
+                        setEmailError("Bad keys - frontend message");
                     }
-                    throw new Error('Failed to register');
                 }
             } catch (error) {
                 console.error('Error registering user:', error);

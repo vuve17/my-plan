@@ -142,13 +142,11 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
             animateBookmark(eventBookmarkRef.current, 100);
         }
 
-        console.log("effect value: ", bookmarkValue)
     }, [bookmarkValue]);
 
     const animateBookmark = (element: HTMLElement | null, finalHeight: number) => {
         if (element) {
             const initialHeight = element.clientHeight;
-            console.log("initial height: ",initialHeight, "final height: ", finalHeight)
             if (initialHeight !== finalHeight) {
                 let currentHeight = initialHeight;
                 const interval = setInterval(() => {
@@ -168,7 +166,6 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
     const handleBookmarkClick = ( newValue: boolean | null) => {
         setBookmarkValue(newValue);
         formik.setFieldValue('taskType', newValue)
-        console.log("newValue: ", newValue)
     };
 
     
@@ -199,7 +196,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                 sentData.startDate = setDateTime(sentData.startDate, startTime)
                 sentData.endDate = setDateTime(sentData.endDate, endTime)
 
-                const token = Cookies.get("token");
+                const token = Cookies.get("refreshToken");
                 console.log(sentData)
                 const response = await fetch('/api/create-task', {
                     method: 'POST',
@@ -269,6 +266,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                     square={false}
                     elevation={3}
                     sx={{
+                        position: "relative",
                         width:
                         {
                             lg: "50vw",
@@ -287,7 +285,9 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                 <Box
                                     sx={{
                                         position: "absolute",
-                                        transform: "translate(700%, -10%)",
+                                        // transform: "translate(-20%, -10%)",
+                                        right: "50px",
+                                        top: "-10px",
                                         display: "flex",
                                         flexDirection: "column",
                                         height: "200px"

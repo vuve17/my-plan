@@ -34,4 +34,29 @@ export type Task = {
     taskType: boolean
 }
 
+export type KeyResult = |
+{   refreshKey?: string;
+    accessKey?: string;
+    result: string;
+    message: string;   
+    // keysArray?: string[]
+    userId?:  string
+}
+
+export type createToken = 
+| {
+    success: true,
+    token : string
+  } 
+| {
+    success : false
+}
+
+export type KeysInDb = |
+{
+    refreshToken: string,
+    accessToken: string,
+} | {
+    message: string
+}
 

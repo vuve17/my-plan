@@ -20,7 +20,9 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({...props}) => {
                 }}
             id={props.id}
             sx={{
-                height: "10%",
+                height: {
+                    xs: "6em"
+                },
                 textAlign: "center",
                 zIndex: 5,
                 borderBottom: `1px solid ${colors.lightGrey}`,

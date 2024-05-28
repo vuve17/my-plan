@@ -47,9 +47,10 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
                     sx={{
                         position: "relative",
                         backgroundColor: colors.white, 
-                        zIndex: 5,
-                        width:"13.5%",
-                        border: "2px solid red",                       
+                        zIndex: 10,
+                        width:"13.5%",   
+                        borderBottom: `1px solid ${colors.secondaryLightBlue}`,
+                        borderLeft:  props.colNumber === 0 ? 'none' : `1px solid ${colors.secondaryLightBlue}`,                  
                     }}
                 >
                     <Box
@@ -58,9 +59,11 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        backgroundColor: colors.white, 
                         justifyContent: "center",
                         position: "sticky",
-                        border: "1px solid black",
+                        borderBottom: `1px solid ${colors.secondaryLightBlue}`,
+                        borderLeft:  props.colNumber === 0 ? 'none' : `1px solid ${colors.secondaryLightBlue}`,  
                         height: {
                           ...danHeaderHeight
                         },
@@ -68,14 +71,21 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
                         zIndex: 5,
                     }}
                     >
-                        <div>
+                        <div style={{ color: `${colors.lightBlack}`}}>
                             {props.headingDayName}
                         </div>
-                        <div>
+                        <div style={{ color: `${colors.lightBlack}`}}>
                             {props.headingDate}
                         </div>
                     </Box>   
-                    {daySchedule}  
+                    <Box
+                    sx={{
+
+                    }}
+                    >
+                        {daySchedule} 
+                    </Box>
+                    
                 </Box>
     )
 }

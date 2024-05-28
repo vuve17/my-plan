@@ -21,7 +21,6 @@ let initialValues = {
     password: '',
 }
 
-
 const LogInForm: React.FC = () => {
 
     const [passwordState, setPasswordState] = useState("show")
@@ -37,8 +36,6 @@ const LogInForm: React.FC = () => {
         }
     }
 
-
-
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: registerSchema,
@@ -48,14 +45,26 @@ const LogInForm: React.FC = () => {
                 method: 'POST',
                 body: JSON.stringify(values)
             });
+             
 
-            if (response.ok) {
-                const { token } = await response.json();
-                document.cookie = `token=${token}; path=/`;
-                router.push("/scheduler");
-            } else{
-                const data = await response.json()
-                setPasswordError(data.message)
+            if (!response.ok) {
+                console.log("Response error:", response.status, response.statusText);
+                const data = await response.json();
+                console.log("Error message:", data.message);
+                setPasswordError(data.message);
+            } else {
+                console.log("Response not OK");
+                const { refreshToken, accessToken, message} = await response.json();
+                console.log(refreshToken, " ", accessToken)
+                console.log(message)
+                if (refreshToken && accessToken) {
+                    document.cookie = `refreshToken=${refreshToken};  path=/`;
+                    document.cookie = `accessToken=${accessToken}; path=/`;
+                    router.push("/scheduler");
+                } else {
+                    console.log("Else set pass error: Bad keys - frontend message");
+                    setPasswordError("Bad keys - frontend message");
+                }
             }
         },
     })

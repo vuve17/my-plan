@@ -17,6 +17,7 @@ const formatButtonValue = (date: Date) => {
             month: '2-digit',
             day: '2-digit',
         }).split('/').join('/');
+        
         return formattedDate;
     }
     return "null";
@@ -24,7 +25,6 @@ const formatButtonValue = (date: Date) => {
 
 const CalendarCustomInput: React.FC<CalendarCustomInputProps> = ({ value, onClick }) => {
     const formattedValue = formatButtonValue(value);
-
     return (
         <button style={{ backgroundColor: "red" }}
         onClick={() => onClick}

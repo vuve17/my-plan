@@ -9,6 +9,8 @@ import UserSchedulerColumn from "./user-scheduler-column";
 import TimeTable from "./user-scheduler-day-time";
 import CloseIcon from '@mui/icons-material/Close';
 
+export const dynamic = 'force-dynamic'
+
 interface schedulerProps {
     selected?: Date,
     // windowWidth: boolean,
@@ -198,6 +200,7 @@ const UserScheduler : React.FC<schedulerProps> = ({...props}) => {
                     id="schedule"
                     sx={{
                         display:"flex",
+                        alignItems: "flex-start",
                         height:{
                             sm: "100%",
                             lg: `calc(100vh - 142px )`,
@@ -207,8 +210,6 @@ const UserScheduler : React.FC<schedulerProps> = ({...props}) => {
                             ...width
                         },
                         margin: "auto",
-                        overflowY: "scroll",
-                        // scrollbarColor: "transparent transparent"
                     }}
                 >
                     <TimeTable height={columnHeight}/>

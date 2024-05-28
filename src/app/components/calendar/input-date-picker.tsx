@@ -5,12 +5,17 @@ import DatePicker, { registerLocale }  from 'react-datepicker';
 import enGB from 'date-fns/locale/en-GB';
 import 'react-datepicker/dist/react-datepicker.css';
 import CalendarCustomInput from "./calendar-custom-input";
+import colors from "@/app/ui/colors";
+
+
+export const dynamic = 'force-dynamic'
 
 registerLocale('en-gb', enGB);
 
+//redux?
 
 interface DatePickerInputProps {
-  value: Date,
+  value?: Date,
   name?: string,
   onChange: (value: Date) => void,
 }
@@ -25,89 +30,41 @@ const formatButtonValue = (date: Date) => {
 
     return formattedDate
   }
-  
 };
 
-// const CustomInputButton: React.FC<CustomInputButtonProps> = React.memo(
-//   forwardRef<HTMLButtonElement, CustomInputButtonProps>(({ stringValue, onClick }, ref) => {
-//     const stringValueRef = useRef<string | undefined>(undefined);
 
-//     useEffect(() => {
-//       stringValueRef.current = stringValue;
-//     }, [stringValue]);
 
-//     return (
-//       <button
-//         className="example-custom-input"
-//         onClick={onClick}
-//         ref={ref}
-//       >
-//         {stringValueRef.current}
-//       </button>
-//     );
-//   })
-// );
+const CustomButton = forwardRef(({ value, onClick }: any, ref :any) => {
 
-// const CustomInputButton: React.FC<CustomInputButtonProps> = React.memo(
+  // console.log("value: ", value)
+  // console.log("type: ", typeof(value))
 
-//   forwardRef<HTMLButtonElement, CustomInputButtonProps>(({ stringValue, onClick }, ref) => (
-//     <button className="example-custom-input" onClick={onClick} ref={ref}>
-//       {stringValue}
-//     </button>
-//   ))
-// );
+  return (
+          <input
+              style={{
+                  padding: "8px",
+                  width: "70px",
+                  backgroundColor: colors.primaryBlue,
+                  color: 'white',
+                  borderRadius: "6%",
+                  border: "0px",
+                  fontWeight: "600"
+              }}
+              type="text"
+              value={value}
+              onClick={onClick}
+              ref={ref}
+          />
+  );
+});
 
+CustomButton.displayName = "customDatePickerButton"
 
 
 const DatePickerInput: React.FC<DatePickerInputProps> = ({ value, onChange }) => {
     
   const [startDate, setStartDate] = useState(value || new Date());
   const [buttonValue, setButtonValue] = useState<string | undefined>(formatButtonValue(startDate));
-
-  // const CustomButtonInput = forwardRef(({ 
-  //   onClick, value: Date }: CustomButtonInputProps, 
-  //   ref) => (
-  //   <CalendarCustomInput onClick={onClick} value={value} forwardedRef={ref} />
-  // ));
-
-  // CustomButtonInput.displayName = "CustomButtonInput";
-
-
-  // const ref = createRef<HTMLInputElement>();
-
-  // const CustomButtonInput = useMemo(() => 
-  //   forwardRef<HTMLInputElement, unknown>(({ ...rest }) => (
-  //         <CalendarCustomInput onClick={onclick} value={value} ref={ref} />
-  //   )), [] )
-  
-  // const CustomButtonInput = forwardRef((props, ref) => {
-  //   const shadowProps = props as CustomButtonInputProps;
-  //   const shadowRef = ref as ForwardedRef<HTMLButtonElement>; // Or `HtmlInputElement`, or anything you need 
-  //   return (
-  //   <CalendarCustomInput onClick={onclick} value={value} ref={ref} />
-  //   );
-  // });
-
-  // const ref = createRef<HTMLInputElement>();  
-  // CustomButtonInput.displayName = "CustomButtonInput";
-
-  interface CustomButtonInputProps {
-    value: Date;
-    onClick: () => void;
-  }
-
-  // const CustomButtonInput = useMemo(() => 
-  // forwardRef<HTMLInputElement, CustomButtonInputProps>(function Search({ value, onClick }, ref) {
-  //   return <CalendarCustomInput onClick={onClick} value={value} ref={ref} />;
-  // }), []
-  // )
-  
-  const CustomButtonInput: React.FC<CustomButtonInputProps> = ({ value, onClick }) => {
-    return (
-      <CalendarCustomInput onClick={onClick} value={value} />
-    );
-  };
-
   
 
   useEffect(() => {
@@ -126,16 +83,13 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({ value, onChange }) =>
   };
 
   return (
-  <div>
-      <label>
           <DatePicker
             selected={startDate}
             onChange={(date: Date) => handleDateChange(date)}
             locale="en-gb"
-            // customInput={<CustomButtonInput />}
+            customInput={<CustomButton />}
+            minDate={new Date()}
           />
-      </label>
-  </div>
   );
 
 }

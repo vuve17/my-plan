@@ -2,17 +2,20 @@
 import { useEffect, useState } from "react";
 import SidebarCalendars from "../components/calendar/calendars-sidebar";
 import UserScheduler from "../components/scheduler/user-scheduler";
-// import dynamic from "next/dynamic";
+import dynamic from "next/dynamic";
 
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'
 
-// const Scheduler = dynamic(()=> import('../components/scheduler/user-scheduler'), {
-//   ssr:false,
-// })
 
-// const Calendar = dynamic(()=> import("../components/calendar/calendars-sidebar"), {
-//   ssr:false,
-// })
+const Scheduler = dynamic(
+  () => import('../components/scheduler/user-scheduler'),
+  { ssr: false },
+)
+
+const CalendarSideMenu = dynamic(
+  () => import('../components/calendar/calendars-sidebar'),
+  { ssr: false },
+)
 
 function ProtectedPage() {
   // const [windowWidth, setWindowWidth] = useState<boolean>(() => window.innerWidth <= 576)
@@ -30,9 +33,9 @@ function ProtectedPage() {
 
   return (
     <div style={{ display: "flex", flexDirection: "row"}}>
-      {/* {!windowWidth ? <Scheduler/>  : <Calendar/>} */}
-      {/* <SidebarCalendars /> */}
-      <UserScheduler />
+      {/* {!windowWidth ?  <CalendarSideMenu/> : null} */}
+      <CalendarSideMenu/> 
+      <Scheduler />
     </div>
   )
 }

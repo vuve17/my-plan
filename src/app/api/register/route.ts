@@ -2,14 +2,15 @@
 
 import bcrypt from 'bcrypt';
 import { db  } from '@vercel/postgres';
-import type { RegisterParams } from '@/app/lib/types';
+import type { RegisterParams, KeysInDb } from '@/app/lib/types';
 import { NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import { createAccessKey, createRefreshKey } from '@/app/lib/key-handlers';
 
 
 
-export async function POST(req:Request) {
+export async function POST(req:Request): Promise <NextResponse <KeysInDb> > {
     const body = await req.json()
 
       const {email, username, password} : RegisterParams = await {
@@ -21,7 +22,6 @@ export async function POST(req:Request) {
       const hashedPassword = await bcrypt.hash(password, 10);
 
         try {
-
             const userExists = await client.sql`
               SELECT id FROM users WHERE name = ${email};
             `;
@@ -43,7 +43,7 @@ export async function POST(req:Request) {
 
             if(!userId || userId == undefined)
             {
-              throw new Error("no user id")
+              return NextResponse.json({ message: 'user doesn t exist' }, { status: 401 });
             }
 
             const newUserAchievements = await client.sql`
@@ -52,24 +52,24 @@ export async function POST(req:Request) {
             `;
             
             newUserAchievements.rows.forEach(async (row) => {
-                try{
-                  await client.sql`INSERT INTO user_Achievements ( id, User_id ) VALUES (${row.id}, ${userId})`
-
-                }
-                catch(error){
-                  console.log(error, "error adding achievements to new user")
-                }
+                await client.sql`INSERT INTO user_Achievements ( achievement_id, User_id ) VALUES (${row.id}, ${userId})`
             });
 
-            const token = jwt.sign({ userId }, process.env.JWT_SECRET as string, {
-              expiresIn: "1m",
-            });
-            
-            return NextResponse.json({ token });
+            const accessKey = await createAccessKey(userId)
+            const refreshKey = await createRefreshKey(userId)
+
+            if(!refreshKey.success || !accessKey.success)
+            {
+              return NextResponse.json({message: 'error creating keys'}, {status: 500})
+            }
+
+            return NextResponse.json({refreshToken: refreshKey.token, accessToken: accessKey.token},{status: 200})
             
           } catch (error) {
             console.error('Error registering user:', error);
             return NextResponse.json({message: 'error 500'}, {status: 500})
+          } finally {
+              client.release()
           }
 
 }

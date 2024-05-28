@@ -58,7 +58,8 @@ const TimeTable: React.FC <timeListInterface> = ({...props}) => {
                 sx={{
                     display: "flex",
                     position:"sticky",
-                    border: "1px solid black",
+                    borderBottom: "1px solid white",
+                    backgroundColor: "white",
                     height: {
                     ...danHeaderHeight
                     },
