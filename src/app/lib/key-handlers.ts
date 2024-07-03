@@ -1,8 +1,8 @@
 'use server'
-import { sql, db, VercelPool, VercelPoolClient } from "@vercel/postgres"
+import { db } from "@vercel/postgres"
 import { NextRequest, NextResponse } from "next/server"
 import { SignJWT } from 'jose';
-import {  KeyResult, createToken, KeysInDb } from './types';
+import { KeyResult, createToken, KeysInDb } from './types';
 import { getExpirationDate } from "./auth";
 import { getJwtSecretKey } from "./auth";
 import { jwtVerify } from "jose";
@@ -169,10 +169,13 @@ export async function readKeysFromDb (userId: string): Promise<KeyResult> {
         const refreshKey: string | undefined = refreshKeyResult.rows.length > 0 ? refreshKeyResult.rows[0].refresh_key : undefined;
         const accessKey: string | undefined = accessKeyResult.rows.length > 0 ? accessKeyResult.rows[0].access_key : undefined;
 
+
+        console.log("refreshKey: ", refreshKey)
         if (refreshKey !== undefined && accessKey !== undefined) {
             console.log("keys EXISTTT")
             return { result: "success", message: "Keys exist in database", refreshKey: refreshKey, accessKey: accessKey }
         } else if (refreshKey === undefined && accessKey === undefined) {
+            console.log("No keys found")
             return { result: "missing", message: "No keys found"};
         }
         else if (refreshKey === undefined && accessKey) {
@@ -303,21 +306,29 @@ export async function handleReadKeysFromDb(userId:string): Promise <NextResponse
                 }
                 return NextResponse.json({ refreshToken: newRefreshKey.token , accessToken: keysInDb.accessKey }, { status: 200 });
             }
+
+            else if (keysInDb.message === "No keys found")
+                {
+                    console.log("log in: 1")
+                    try{
+                        console.log("log in: 2")
+                        const newRefreshKey = await createRefreshKey(userId)
+                        const newAccessKey = await createAccessKey(userId)
+                        console.log(newRefreshKey, `\n`, newAccessKey)
+                        if(newRefreshKey.success && newAccessKey.success)
+                        {
+                            console.log("log in: 3")
+                            return NextResponse.json({ refreshToken: newRefreshKey.token, accessToken: newAccessKey.token }, { status: 200 });    
+                        }
+                    } catch(error) {
+                        console.error(error)
+                        return NextResponse.json({ message: "token creation failed" }, { status: 404 });   
+                    }
+                    console.log("log in: 4")
+                }
         }
        
-        else if (keysInDb.message === "No keys found")
-        {
-            const newRefreshKey = await createRefreshKey(userId)
-            const newAccessKey = await createAccessKey(userId)
-            if(newRefreshKey.success && newAccessKey.success)
-            {
-                return NextResponse.json({ refreshToken: newRefreshKey.token, accessToken: newAccessKey.token, }, { status: 200 });    
-
-            }
-            else {
-                return NextResponse.json({ message: "token validation failed" }, { status: 404 });    
-            }
-        }
+        
         
         else if (keysInDb.result === "many")
         {

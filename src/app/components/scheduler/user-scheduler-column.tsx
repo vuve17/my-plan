@@ -4,27 +4,22 @@ import { Box } from "@mui/material";
 import React from "react";
 import UserSchedulerCell from "./user-scheduler-cell";
 import colors from "@/app/ui/colors";
-import TimeTable from "./user-scheduler-day-time";
-
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
+import { headerHeight, columnWidth, fixedDanHeaderWidth } from "@/app/utils/index.js"
 
 interface UserSchedulerColumnProps {
     date: Date,
     onClick: (id:string) => void,
-    // dateFormated: string,
     headingDayName: string,
     headingDate: string,
     colNumber: number,
 }
 
-const danHeaderHeight = {
-    lg: "10vh",
-    md: "8vh",
-    sm: "10vh",
-    xs: "12vh"
-}
 
 const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => {
     
+    const isMobile = useSelector((state : RootState) => state.screen.isMobile)
 
     const daySchedule = [];
     for (let j = 1; j < 25; j++) {
@@ -47,41 +42,75 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
                     sx={{
                         position: "relative",
                         backgroundColor: colors.white, 
+                        padding: 0,
+                        margin: 0,
                         zIndex: 10,
-                        width:"13.5%",   
-                        borderBottom: `1px solid ${colors.secondaryLightBlue}`,
-                        borderLeft:  props.colNumber === 0 ? 'none' : `1px solid ${colors.secondaryLightBlue}`,                  
+                        width:{
+                            ...columnWidth
+                        },   
+
                     }}
                 >
                     <Box
                     className="dan_header"
                     sx={{
+                        position: "fixed",
+                        top: "calc(62px + 79px)",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        backgroundColor: colors.white, 
                         justifyContent: "center",
-                        position: "sticky",
-                        borderBottom: `1px solid ${colors.secondaryLightBlue}`,
-                        borderLeft:  props.colNumber === 0 ? 'none' : `1px solid ${colors.secondaryLightBlue}`,  
+                        backgroundColor: colors.white, 
+                        borderBottom: isMobile ? `1px solid ${colors.white}` : `1px solid ${colors.secondaryLightBlue}`,
+                        borderLeft: isMobile ? `1px solid white` :  props.colNumber === 0 ? 'none' : `1px solid ${colors.secondaryLightBlue}`,  
                         height: {
-                          ...danHeaderHeight
+                          ...headerHeight
+                        },
+                        width: {
+                            ...fixedDanHeaderWidth
                         },
                         textAlign: "center",
-                        zIndex: 5,
-                    }}
-                    >
-                        <div style={{ color: `${colors.lightBlack}`}}>
-                            {props.headingDayName}
-                        </div>
-                        <div style={{ color: `${colors.lightBlack}`}}>
-                            {props.headingDate}
-                        </div>
-                    </Box>   
-                    <Box
-                    sx={{
+                        zIndex: 20,
+                        fontWeight:  700,
+                        fontSize: {
+                            xs: "14px",
+                            md: "16px",
+                            xl: "18px",
+                            xxl: "20px",
+                        },
+                        color: colors.lightBlack
 
                     }}
+                    >
+                        <Box sx={{
+                            fontSize: {
+                                xs: "16px",
+                                md: "18px",
+                                xl: "18px",
+                                xxl: "20px",
+                            },
+                            width:"100%"
+                        }}>
+                            {props.headingDayName}
+                        </Box>
+                        <Box 
+                            sx={{
+                                width:"100%"
+                            }}
+                        >
+                            {props.headingDate}
+                        </Box>
+                    </Box>   
+                    <Box
+                        sx={{
+                            position: "relative",
+                            borderBottom: `1px solid ${colors.secondaryLightBlue}`,
+                            borderLeft:  props.colNumber === 0 ? 'none' : `1px solid ${colors.primaryBlue}`,    
+                            paddingTop: {
+                                ...headerHeight
+                            }         
+                        }}
+                        
                     >
                         {daySchedule} 
                     </Box>

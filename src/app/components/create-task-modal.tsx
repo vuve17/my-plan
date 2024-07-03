@@ -280,9 +280,14 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                 >
                     <form onSubmit={formik.handleSubmit} autoComplete="off">
 
-                        <Grid container spacing={4}>
+                        <Grid container spacing={4} 
+                        sx={{
+                            position: "relative",
+                        }}
+                        
+                        >
 
-                                <Box
+                                {/* <Box
                                     sx={{
                                         position: "absolute",
                                         // transform: "translate(-20%, -10%)",
@@ -340,7 +345,12 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                     </Box>
                                     {formik.errors.taskType && formik.touched.taskType ? <div>{formik.errors.taskType}</div> : null}
 
-                                </Box>
+                                </Box> */}
+
+                                <Bookmark 
+                                
+                                
+                                />
                             <Grid item  xl={8} lg={8} md={8} sm={12} xs={12}
                             >
                                 <TextField 

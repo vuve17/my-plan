@@ -10,25 +10,17 @@ interface navLinksProps {
 
 const links = [
     { 
-        name: 'Home', 
-        href: '/' 
+        name: 'Achievements', 
+        href: '/scheduler/achievements' 
     },
     {
-        name: 'About',
-        href: '/about',
+        name: 'Statistics',
+        href: '/scheduler/statistics',
     },
-    { 
-        name: 'Register', 
-        href: '/register', 
-    },
-    { 
-        name: 'Log in', 
-        href: '/login', 
-    }
   ];
 
 
-const  NavLinks: React.FC<navLinksProps> = ({onClick}) => {
+const  NavLinksPrivate: React.FC<navLinksProps> = ({onClick}) => {
     return (
       <ul>
         {links.map((link) => {
@@ -39,7 +31,7 @@ const  NavLinks: React.FC<navLinksProps> = ({onClick}) => {
                   href={link.href}
                   onClick={onClick}
                 >
-                  <p className="hidden md:block">{link.name}</p>
+                  <p className="md:block">{link.name}</p>
                 </Link>
             </li>
           );
@@ -48,5 +40,5 @@ const  NavLinks: React.FC<navLinksProps> = ({onClick}) => {
     );
   }
 
-export default NavLinks
+export default NavLinksPrivate
   

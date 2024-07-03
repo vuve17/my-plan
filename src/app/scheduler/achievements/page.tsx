@@ -4,6 +4,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Grid } from '@mui/material';
 import AchievementCard from '@/app/components/scheduler/achievements/achievement-card';
 import { Achievement } from '@/app/lib/types';
+import Cookies from "js-cookie";
 
 export const dynamic = 'force-dynamic'
 
@@ -12,17 +13,27 @@ const AchievementPage: React.FC = () => {
     const [achievements, setAchievements] = useState<Achievement[]>([]);
     const initialized = useRef(false)
     const [loading, setLoading] = useState<boolean>(true); 
+    const refreshCookie = Cookies.get("refreshToken")
+    const accessCookie = Cookies.get("accessToken")
+    const webCookies = {refreshCookie, accessCookie}
+
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                
                 console.log("try")
                 const response = await fetch('/api/achievements', {
                     method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'refreshToken': refreshCookie || '',
+                        'accessToken': accessCookie || '',
+                      },
                 });
                 if (response.ok) {
                     const jsonResponse = await response.json();
-                    // console.log(jsonResponse);
+                    console.log("res ok");
                     setAchievements(jsonResponse.achievementsArray)
                     console.log(achievements);
                     setLoading(false);
@@ -37,10 +48,11 @@ const AchievementPage: React.FC = () => {
             fetchData();
         }
     }, [achievements]);
-
+    //	f4849010-09b0-4687-8b50-c70828b4d914
+    // f4849010-09b0-4687-8b50-c70828b4d914
 
     return (
-        <div style={{display: "flex", justifyContent: "center"}}>
+        <div style={{display: "flex", justifyContent: "center", marginTop: "80px"}}>
             <Grid container 
             sx={{
                 margin: {
@@ -50,8 +62,8 @@ const AchievementPage: React.FC = () => {
                 },
                 maxWidth: "1500px"
             }}
-            // spacing={3}
             >
+                
                 {loading ? (
                 <p>Loading...</p>
             ) : (
@@ -85,7 +97,6 @@ const AchievementPage: React.FC = () => {
             </Grid>
         </div>
     );
-
 }
 
 export default AchievementPage

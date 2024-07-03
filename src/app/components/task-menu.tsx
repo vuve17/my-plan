@@ -1,156 +1,106 @@
 import React, { useState } from 'react';
-import { Button, Box, Grid} from '@mui/material';
-import colors from '../ui/colors'
+import { Button, Box, Grid } from '@mui/material';
+import colors from '../ui/colors';
 import CreateTaskModal from './create-task-modal';
-import Image from 'next/image';
 
-const customGridItemStyle = {
-    display: "flex",
-    paddingTop: {
-        xs: "14px",
-        sm: "14px",
-        lg: "10px",
-    },
-    paddingBottom: {
-        xs: "14px",
-        sm: "14px",
-        lg: "10px",
-    },
-    padding: "auto",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-};
+interface TaskMenuProps {}
 
-const smallDeviceStyle = {
-    position: "fixed",
-    bottom: 0,
-    left: 0,
+const buttonStyle = {
+    padding: "3px",
+    backgroundColor: 'white',
+    position: "relative",
+    width: {
+        xs: '60px',  
+        sm: '70px',  
+        // md: '40px',  
+        lg: '60px',  
+        xl: '60px',
+    },  
+    height: {
+        xs: '60px', 
+        sm: '70px',
+        // md: '40px',
+        lg: '60px',
+        xl: '60px',
+    },
+    borderRadius: "8px",
 }
 
-const customButtonStyle = {
-    backgroundColor: "white",
-    padding: "10px 0 10px 0",
-    width: "60px",
-    height: "60px",
-    margin: "0",
-    "&:hover": {
-        backgroundColor: "white",
-        "& img": {
-            transform: "scale(1.1)", 
-        },
-    }
-};
 
-interface TaskMenuProps {
-    device: boolean
-}
 
-const TaskMenu:React.FC<TaskMenuProps> = ({...props}) => {
-    const [showTaskModal, setTaskModalState] = useState(false)
-
+const TaskMenu: React.FC<TaskMenuProps> = () => {
+    const [showTaskModal, setTaskModalState] = useState(false);
 
     const handleTaskModalState = () => {
-        setTaskModalState(!showTaskModal)
-    }
+        setTaskModalState(!showTaskModal);
+    };
 
 
-    return(
+
+    return (
         <>
-            {/* {showTaskModal && 
-            <CreateTaskModal cancel={handleTaskModalState}
-            
-            />} */}
+
             <Box
-            width={{
-                lg: "350px",
-                md: "350px",
-                sm: "100vw",
-                xs: "100vw"
-            }}
+            className={"task-menu"}
             sx={{
-                backgroundColor: `${colors.primaryBlue}`,
-                ...(props.device && {...smallDeviceStyle})
+                display: "flex",
+                zIndex: 10,
+                justifyContent: "space-between",
+                backgroundColor: colors.primaryBlue,
+                boxSizing: "border-box",
+                gap: "10px",
+                padding:{
+                    xs: '10px 20px 10px 20px',  
+                    sm: '30px 60px 30px 60px',  
+                    md: '10px 8px 10px 8px',  
+                    lg: '16px 20px 16px 20px ',  
+                    xl: '20px 20px 20px 20px',
+                },
+
             }}
             >
-                <Grid container spacing={1}>
-                    <Grid item lg={3} sm={3} xs={3}
-                        sx={{
-                            ...customGridItemStyle
-                        }}
-                    >
-                        <Button
-                        sx={{
-                            ...customButtonStyle
-                        }}
-                        onClick={handleTaskModalState}
-                        >
-                            <Image 
-                            src="../svg/add-task.svg" 
-                            alt="Add task" 
-                            width={40}
-                            height={40}
-                            />
-                        </Button>
-                    </Grid>
-                    <Grid item lg={3} sm={3} xs={3}
-                        sx={{
-                            ...customGridItemStyle
-                        }}
-                    >
-                        <Button
-                        sx={{
-                            ...customButtonStyle
-                        }}
-                        >
-                            <Image
-                             src="../svg/graph.svg" 
-                             alt="Statistics"
-                             width={40}
-                             height={40}
-                              />
-                        </Button>
-                    </Grid>
-                    <Grid item lg={3} sm={3} xs={3}
-                        sx={{
-                            ...customGridItemStyle
-                        }}
-                    >
-                        <Button
-                        sx={{
-                            ...customButtonStyle
-                        }}
-                        >
-                            <Image
-                             src="../svg/stars.svg" 
-                             alt="Statistics"
-                             width={40}
-                             height={40}
-                              />                        
-                        </Button>
-                    </Grid>
-                    <Grid item lg={3} sm={3} xs={3}
-                        sx={{
-                            ...customGridItemStyle
-                        }}
-                    >
-                        <Button
-                        sx={{
-                            ...customButtonStyle
-                        }}
-                        >
-                            <Image
-                             src="../svg/share-calendar.svg" 
-                             alt="Statistics"
-                             width={40}
-                             height={40}
-                              />                      
-                          </Button>
-                    </Grid>
-                    
-                </Grid>
-            </Box>
-        </>
-    )
-}
+                <Button 
+                onClick={handleTaskModalState}
+                sx={buttonStyle}
+                >
 
-export default TaskMenu
+                        <img
+                            src="../svg/add-task.svg"
+                            alt="Add task"    
+                        />
+                </Button>
+
+                <Button
+                sx={buttonStyle}
+                >
+                        <img 
+                        src="../svg/graph.svg" 
+                        alt="Statistics"                                    
+                        />
+
+                </Button>
+                <Button 
+                sx={buttonStyle}
+                >
+                        <img 
+                        src="../svg/stars.svg" 
+                        alt="Statistics"                                                                     
+                    />
+
+                </Button>
+
+                <Button 
+                sx={buttonStyle}
+                >
+                        <img
+                        src="../svg/share-calendar.svg" 
+                        alt="Statistics"                      
+                        />
+                </Button>
+            </Box>
+
+        </>
+    );
+};
+
+export default TaskMenu;

@@ -54,6 +54,7 @@ const CustomButton = forwardRef(({ value, onClick }: any, ref :any) => {
               value={value}
               onClick={onClick}
               ref={ref}
+              onChange={() => {}} // konzola se buni da mora postojat on change
           />
   );
 });

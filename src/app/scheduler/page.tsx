@@ -1,11 +1,7 @@
 'use client'
-import { useEffect, useState } from "react";
-import SidebarCalendars from "../components/calendar/calendars-sidebar";
-import UserScheduler from "../components/scheduler/user-scheduler";
 import dynamic from "next/dynamic";
-
-// export const dynamic = 'force-dynamic'
-
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store"; 
 
 const Scheduler = dynamic(
   () => import('../components/scheduler/user-scheduler'),
@@ -18,26 +14,14 @@ const CalendarSideMenu = dynamic(
 )
 
 function ProtectedPage() {
-  // const [windowWidth, setWindowWidth] = useState<boolean>(() => window.innerWidth <= 576)
-
-  // useEffect(() => {
-  //   function handleResize() {
-  //     setWindowWidth(window.innerWidth <= 576)
-  //   }
-  //   handleResize()
-
-  //   window.addEventListener('resize', handleResize)
-
-  //   return () => window.removeEventListener('resize', handleResize)
-  // }, [])
+  const isMobile = useSelector((state: RootState) => state.screen.isMobile);
 
   return (
-    <div style={{ display: "flex", flexDirection: "row"}}>
-      {/* {!windowWidth ?  <CalendarSideMenu/> : null} */}
-      <CalendarSideMenu/> 
-      <Scheduler />
+    <div style={{ display: "flex", flexDirection: "row", width: "100vw", marginTop: "79px" }}>
+      <CalendarSideMenu />
+      {/* <Scheduler /> */}
     </div>
-  )
+  );
 }
 
 export default ProtectedPage;

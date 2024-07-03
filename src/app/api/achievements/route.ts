@@ -1,12 +1,18 @@
 'use server'
 
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from "next/server";
 import { getUserId } from '../../lib/auth';
 import { db } from '@vercel/postgres';
 import { Achievement } from "@/app/lib/types";
 
+type WebCookies = {
+    refreshCookie : string,
+    accessCookie: string,
+}
+
 async function getAchievements(userId:string) {
+    console.log(" IN getAchievements ")
+
     const client = await db.connect()
     const result = await client.sql`
         SELECT * FROM achievements
@@ -15,20 +21,34 @@ async function getAchievements(userId:string) {
             WHERE User_id = ${userId}
         )
     `;
+    console.log("result: ", result)
     const achievements: Achievement[] = result.rows as Achievement[];
     return achievements;
 }
 
 export async function GET(request: NextRequest) {
     try {
-        const cookiesList  = cookies()
-        const token = cookiesList.get("token")?.value as string; 
-        // const token = request.cookies.get("token")?.value as string; 
-        const userId = await getUserId(token) as string;
+
+        const refreshCookie = request.headers.get('refreshToken');
+        const accessCookie = request.headers.get('accessToken');
+
+        console.log("refreshCookie", refreshCookie)
+        const token = refreshCookie || accessCookie;
+        if (!token) {
+            return NextResponse.json({ message: "No valid token found" }, { status: 400 });
+        }
+
+        const userId = await getUserId(token);
+        if (!userId) {
+            return NextResponse.json({ message: "Invalid token" }, { status: 401 });
+        }
+
+        console.log("userId: ", userId)
         const achievementsArray = await getAchievements(userId)
         console.log(achievementsArray)
         return NextResponse.json({achievementsArray: achievementsArray}, {status: 200});
     } catch (error) {
+        console.log(" catch ")
         return NextResponse.json({error: "achievements error 500"}, {status: 500})
     }
 }

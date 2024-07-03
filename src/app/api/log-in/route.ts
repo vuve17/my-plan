@@ -21,8 +21,6 @@ export async function POST(req: Request) {
 
   if (match) {
     const response = await handleReadKeysFromDb(user.id)
-    // response undefined constantly
-    // const response = await Test(user.id)
     return response
   } else {
     return NextResponse.json({ message: "Wrong Password" }, { status: 401 })

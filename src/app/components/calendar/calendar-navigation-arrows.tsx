@@ -7,7 +7,9 @@ export const NextArrow = () => {
         <CardMedia
         component="img"         
         image="/svg/next-arrow.svg" 
-        alt="next arrrow" />
+        alt="next arrrow" 
+        width={20}
+        />
     )
 }
 
@@ -16,6 +18,8 @@ export const PreviousArrow = () => {
         <CardMedia
         component="img"         
         image="/svg/previous-arrow.svg" 
-        alt="previous arrrow" />
+        alt="previous arrrow" 
+        width={20}
+        />
     )
 }

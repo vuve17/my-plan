@@ -2,21 +2,16 @@
 
 import { Box } from "@mui/material";
 import React,  { useState }  from "react";
+import colors from "@/app/ui/colors";
+import { useSelector } from 'react-redux';
+import { RootState } from "@/app/redux/store";
+import { headerHeight } from "@/app/utils/index.js"
+import { cellHeight, timeTableWidth } from "@/app/utils";
 
-interface timeListInterface {
-    height: object,
-}
-
-const danHeaderHeight = {
-    lg: "10vh",
-    md: "8vh",
-    sm: "10vh",
-    xs: "12vh"
-}
-
-const TimeTable: React.FC <timeListInterface> = ({...props}) => {
+const TimeTable: React.FC = () => {
     
     const [timeList, setTimeList] = useState<React.ReactNode[]>([]);
+    const isMobile = useSelector((state : RootState) => state.screen.isMobile)
 
 
     useState(() => {
@@ -28,16 +23,26 @@ const TimeTable: React.FC <timeListInterface> = ({...props}) => {
               key={hour}
               className="hour"
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-end",
-                textAlign: 'right',
-                border: '1px solid transparent',
-                position: 'relative',
-                height: "10vh"
+                
+                borderBottom: '1px solid black',
+                height: {...cellHeight},
+                position: 'relative',  
+                
+                
               }}
             >
-              {hour}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        width: '100%',
+                        top: "100%",
+                        left: isMobile ? "-20px" : "-30px",
+                        transform: "translateY(-50%)",
+                        backgroundColor: colors.white,
+                    }}
+                  >
+                      {hour}
+                  </Box>
             </Box>
           );
         }
@@ -49,23 +54,28 @@ const TimeTable: React.FC <timeListInterface> = ({...props}) => {
     return(
         <Box
           sx={{
-            width: "5.5%",
-            zIndex: 5,
+            width:{
+              ...timeTableWidth
+            },
+            zIndex: 12,
+            position: "relative",
+            backgroundColor: colors.white, 
+            left: 0,
           }}
         >
             <Box
                 className="dan_header"
                 sx={{
                     display: "flex",
-                    position:"sticky",
-                    borderBottom: "1px solid white",
-                    backgroundColor: "white",
+                    position:"fixed",
+                    backgroundColor: colors.white,
                     height: {
-                    ...danHeaderHeight
+                    ...headerHeight
                     },
+                    width: "inherit",
                     textAlign: "center",
-                    zIndex: 6,
-                    marginBottom: "0.5em"
+                    zIndex: 12,
+                    top: "calc(62px + 79px)"
                 }}
             >
 
@@ -76,9 +86,11 @@ const TimeTable: React.FC <timeListInterface> = ({...props}) => {
                 flexDirection: "column",
                 paddingRight: "1em",
                 alignItems: "flex-end",
-                position:"relative",
-                // border: "1px solid black",
                 zIndex: 2,
+                fontSize:  isMobile ? "12px" : "16px",
+                marginTop:{
+                  ...headerHeight
+                }
             }}
             >
                 {timeList}
