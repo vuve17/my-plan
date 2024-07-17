@@ -1,6 +1,6 @@
 'use client'
 import dynamic from "next/dynamic";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store"; 
 
 const Scheduler = dynamic(
@@ -15,11 +15,13 @@ const CalendarSideMenu = dynamic(
 
 function ProtectedPage() {
   const isMobile = useSelector((state: RootState) => state.screen.isMobile);
+  const schedulerVisibility = useSelector((state : RootState) => state.schedulerVisibility.schedulerVisibility)
 
   return (
     <div style={{ display: "flex", flexDirection: "row", width: "100vw", marginTop: "79px" }}>
       <CalendarSideMenu />
-      {/* <Scheduler /> */}
+      {schedulerVisibility ? <Scheduler /> : null}
+      
     </div>
   );
 }

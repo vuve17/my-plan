@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-
+import { Box } from '@mui/material';
+import { navLinksStyle } from '../utils';
 
 interface navLinksProps {
   onClick: () => void
@@ -25,26 +25,31 @@ const links = [
         name: 'Log in', 
         href: '/login', 
     }
-  ];
+];
 
 
 const  NavLinksPublic: React.FC<navLinksProps> = ({onClick}) => {
     return (
-      <ul>
+      <Box
+      sx={{
+        padding: "3em"
+      }}
+      >
         {links.map((link) => {
           return (
-            <li key={link.name}>
                 <Link
                   key={link.name}
                   href={link.href}
                   onClick={onClick}
+                  style={{
+                    ...navLinksStyle
+                  }} 
                 >
-                  <p className="md:block">{link.name}</p>
+                  <p>{link.name}</p>
                 </Link>
-            </li>
           );
         })}
-      </ul>
+      </Box>
     );
   }
 

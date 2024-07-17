@@ -1,4 +1,3 @@
-
 'use client'
 
 import React, { useState } from 'react';
@@ -7,33 +6,19 @@ import Link from 'next/link';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import colors from '../ui/colors';
 import NavLinksPrivate from '../ui/nav-links-private';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSchedulerVisibility } from '../redux/scheduler-visibility-slice';
+import { RootState } from "@/app/redux/store";
+
 
 interface NavbarProps  {
     deviceSmall?: boolean
 }
 
-async function logout() {
-    try {
-        const response = await fetch('/api/logout', {
-            method: 'POST',
-            credentials: 'include'
-        });
-
-        if (response.ok) {
-            console.log('Logged out successfully');
-            window.location.href = '/login';
-        } else {
-            const data = await response.json();
-            console.error('Logout failed:', data.message);
-        }
-    } catch (error) {
-        console.error('Error during logout:', error);
-    }
-}
-
-
 const NavBar: React.FC <NavbarProps> = ({...props}) => {
   const [isSidebarActive, setIsSideBarActive] = useState(false)
+  const schedulerVisibility = useSelector((state : RootState) => state.schedulerVisibility)
+  const dispatch = useDispatch()
 
   const toggleSidebar = () => {
     setIsSideBarActive(!isSidebarActive)
@@ -74,7 +59,7 @@ const NavBar: React.FC <NavbarProps> = ({...props}) => {
               </button>
               <button
                 id="sidebarCollapse"
-                onClick={toggleSidebar}
+                onClick={() => dispatch(setSchedulerVisibility(!schedulerVisibility))}
                 style={{
                   visibility: props.deviceSmall ? "visible" : "hidden"
                 }}
@@ -93,18 +78,7 @@ const NavBar: React.FC <NavbarProps> = ({...props}) => {
           </nav>
         </div>
           <nav id="sidebar" className={`${isSidebarActive ? "active" : ""}`}>
-                  <Link
-                    key="logout"
-                    href='/'
-                    onClick={() => logout()}
-                    style={{
-                      textDecoration: "none",
-                      color: "white",
-                      marginLeft: "2em"
-                    }}
-                  >
-                    Log out
-                  </Link>
+
                   <NavLinksPrivate onClick={toggleSidebar}/>
           </nav>
           </div>

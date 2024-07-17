@@ -72,24 +72,6 @@ const LogInForm: React.FC = () => {
     
     return(
 
-        <Box 
-        sx={{
-            width: "100vw", 
-            height: "100vh - 71px",
-            display: "flex", 
-            alignItems: {
-                md: "normal",
-                sm: "center",
-                xs: "center"
-            },
-            justifyContent: {
-                md: "center",
-                sm: "center",
-                xs: "center"
-            },
-            paddingTop: "4em"
-        }}
-        >
         <Paper
         square={false}
         sx={{
@@ -103,7 +85,8 @@ const LogInForm: React.FC = () => {
             padding:{
                 lg: "2em 5em 2em",
                 md: "2em 5em 2em",
-                sm: "auto"
+                sm: "3em",
+                xs: "3em",
             },
             flexDirection:"column",
             boxShadow: "none",
@@ -113,7 +96,9 @@ const LogInForm: React.FC = () => {
                 sm: "100vw",
                 lg: "15em",
                 md: "15em"
-            }
+            },
+            // navbar height
+            marginTop: "80px"
 
         }}
 
@@ -211,14 +196,10 @@ const LogInForm: React.FC = () => {
             
                         </Button>
                     </div>
-
-
-        
-
             </form>
             
             <div style={{marginTop: "1em"}}>
-                Don t have account?
+                {`Don't have an account? `}
                 <Link
                 href="/register"
                 >
@@ -226,7 +207,6 @@ const LogInForm: React.FC = () => {
                 </Link>
             </div>
         </Paper>
-        </Box>
     )
 }
 

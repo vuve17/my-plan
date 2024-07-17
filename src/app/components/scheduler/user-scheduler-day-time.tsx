@@ -36,7 +36,7 @@ const TimeTable: React.FC = () => {
                         position: 'absolute',
                         width: '100%',
                         top: "100%",
-                        left: isMobile ? "-20px" : "-30px",
+                        left: isMobile ? "-18px" : "-32px",
                         transform: "translateY(-50%)",
                         backgroundColor: colors.white,
                     }}

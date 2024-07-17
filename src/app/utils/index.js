@@ -29,3 +29,11 @@ export const fixedDanHeaderWidth = {
     sm: "13vw",
     xs: "13vw",
 }
+
+export const navLinksStyle = {
+    textDecoration: "none",
+    color: "white",
+    display: "block",
+    fontSize: "16px", 
+    fontWeight: 600
+}
