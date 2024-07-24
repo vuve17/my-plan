@@ -24,8 +24,10 @@ const containerWidth = {
 };
 
 const containerHeight = {
-  md: "calc(100vh - 80px)",
+  lg: "calc(100vh - 80px)",
+  md: "100%",
   sm: "100%",
+  xs: "100%",
 }
 
 

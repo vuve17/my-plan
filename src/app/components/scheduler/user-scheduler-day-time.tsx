@@ -6,7 +6,8 @@ import colors from "@/app/ui/colors";
 import { useSelector } from 'react-redux';
 import { RootState } from "@/app/redux/store";
 import { headerHeight } from "@/app/utils/index.js"
-import { cellHeight, timeTableWidth } from "@/app/utils";
+import { cellHeight, timeTableWidth, marginTopClassDanScheduler } from "@/app/utils";
+
 
 const TimeTable: React.FC = () => {
     
@@ -23,11 +24,9 @@ const TimeTable: React.FC = () => {
               key={hour}
               className="hour"
               sx={{
-                
                 borderBottom: '1px solid black',
                 height: {...cellHeight},
-                position: 'relative',  
-                
+                position: 'relative',              
                 
               }}
             >
@@ -61,6 +60,9 @@ const TimeTable: React.FC = () => {
             position: "relative",
             backgroundColor: colors.white, 
             left: 0,
+            marginTop: {
+              ...marginTopClassDanScheduler
+            },
           }}
         >
             <Box
@@ -75,7 +77,8 @@ const TimeTable: React.FC = () => {
                     width: "inherit",
                     textAlign: "center",
                     zIndex: 12,
-                    top: "calc(62px + 79px)"
+                    top: "calc(62px + 79px)",
+                    borderBottom: "3px solid white"
                 }}
             >
 

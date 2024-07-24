@@ -17,7 +17,7 @@ interface NavbarProps  {
 
 const NavBar: React.FC <NavbarProps> = ({...props}) => {
   const [isSidebarActive, setIsSideBarActive] = useState(false)
-  const schedulerVisibility = useSelector((state : RootState) => state.schedulerVisibility)
+  const schedulerVisibility = useSelector((state : RootState) => state.schedulerVisibility.schedulerVisibility)
   const dispatch = useDispatch()
 
   const toggleSidebar = () => {

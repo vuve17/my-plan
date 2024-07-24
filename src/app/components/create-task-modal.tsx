@@ -47,9 +47,8 @@ function createStartTime(time: string | undefined) {
         const formattedTime = time.length === 1 ? `0${time}:00` : `${time}:00`;;
         return formattedTime
     }
-    else{
-        return undefined
-    }
+    return undefined
+    
 }
 
 function createEndTime(time: string | undefined) {
@@ -58,9 +57,7 @@ function createEndTime(time: string | undefined) {
         const endTime = createStartTime(incrementTime.toString())
         return endTime
     }
-    else{
-        return undefined
-    }
+    return undefined
 }
 
 const SourceSerif4 = Source_Serif_4({
@@ -130,6 +127,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
     const choreBookmarkRef = useRef<HTMLDivElement>(null);
     const eventBookmarkRef = useRef<HTMLDivElement>(null);
 
+    console.log(props.date, "date")
     useEffect(() => {
         if (bookmarkValue === true) {
             animateBookmark(choreBookmarkRef.current, 100); 

@@ -25,9 +25,9 @@ const AchievementCard: React.FC<Achievement> = ({...props}) => {
                         width: {
                             xl: "350px",
                             lg: "320px",
-                            md: "300px",
-                            sm: "280px",
-                            xs: "200px",
+                            md: "100%",
+                            sm: "100%",
+                            xs: "100%",
                             '@media (max-width:475px)': {
                                 width: '100%', 
                                 marginRight: "0.5em"

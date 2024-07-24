@@ -30,6 +30,10 @@ async function logout() {
 
 const links = [
     { 
+        name: 'Scheduler', 
+        href: '/scheduler' 
+    },
+    { 
         name: 'Achievements', 
         href: '/scheduler/achievements' 
     },

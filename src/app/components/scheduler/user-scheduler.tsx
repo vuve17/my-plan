@@ -16,7 +16,6 @@ import { headerHeight } from '@/app/utils/index.js';
 
 export const dynamic = 'force-dynamic'
 
-
 const width = {
         xl: "80vw",
         lg: "70vw",
@@ -25,24 +24,22 @@ const width = {
         xs: "100vw"
 }
 
-
-
 function getChosenDateTime(divId: string) {
     const dateString = divId.indexOf("_");
     const dateBeforeUnderscore = divId.slice(0, dateString);
     const month = dateBeforeUnderscore.slice(0, 2);
     const day = dateBeforeUnderscore.slice(2, 4);
-    const year = dateBeforeUnderscore.slice(4, dateString);
-    const currentYear = new Date().getFullYear();
-    const date = new Date(currentYear, +month - 1, +day);
     const time = divId.slice(dateString + 1);
-  
+    const year = Number(dateBeforeUnderscore.slice(4, dateString));
+    const date = new Date(year, +month - 1, +day, Number(time));
+
+    console.log("dateTime:", date )
+    console.log("Time:", time )
     return { date, time };
 }
 
 
 const UserScheduler : React.FC = () => {
-
 
     const scheduleHeaderRef = useRef<HTMLDivElement>(null);
     // potencijalo spojiti selectedDate i selectedStringDate
@@ -120,8 +117,6 @@ const UserScheduler : React.FC = () => {
         startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay() + (selectedDate.getDay() === 0 ? -6 : 1))
         endOfWeek.setDate(startOfWeek.getDate() + 6)
 
-        console.log(startOfWeek)
-        console.log(endOfWeek)
 
         const newSchedule = [];
 
@@ -259,7 +254,7 @@ const UserScheduler : React.FC = () => {
                         {     isMobile ?      
                         <Box 
                         sx={{
-                            position: "relative",
+                            // position: "relative",
                             display: "flex",
                             alignItems: "center",
                         }}

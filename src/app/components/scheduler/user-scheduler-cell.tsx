@@ -19,7 +19,7 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({...props}) => {
         <Box 
             onClick={(event) => {
                 props.onClick(event.currentTarget.id)
-                }}
+            }}
             id={props.id}
             sx={{
                 height: {
@@ -28,8 +28,7 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({...props}) => {
                 textAlign: "center",
                 zIndex: 5,
                 borderBottom: `1px solid ${colors.lightGrey}`,
-                backgroundColor: "green",
-                // borderRight: props.colNumber == 6 ? "" : `2px solid ${colors.secondaryLightBlue}`,
+                backgroundColor: "white",
             }}
         >
 

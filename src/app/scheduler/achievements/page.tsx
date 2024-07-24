@@ -15,8 +15,6 @@ const AchievementPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true); 
     const refreshCookie = Cookies.get("refreshToken")
     const accessCookie = Cookies.get("accessToken")
-    const webCookies = {refreshCookie, accessCookie}
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -53,7 +51,7 @@ const AchievementPage: React.FC = () => {
 
     return (
         <div style={{display: "flex", justifyContent: "center", marginTop: "80px"}}>
-            <Grid container 
+            <Grid container spacing={2}
             sx={{
                 margin: {
                     lg: "2em",
@@ -69,14 +67,9 @@ const AchievementPage: React.FC = () => {
             ) : (
                     achievements.map((achievement) => (
                         
-                        <Grid item key={achievement.id} lg={3} md={4} sm={6} xs={6}
+                        <Grid item key={achievement.id} lg={3} md={4} sm={6} xs={6} 
                         onClick={()=> console.log(achievement.id)}
                         sx={{
-                            marginBottom: {
-                                lg: "1em",
-                                sm: "1em",
-                                xs: "1em"
-                            },
                             display: "flex",
                             justifyContent: "center",
                         }}
