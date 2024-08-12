@@ -45,9 +45,8 @@ const SidebarCalendars:React.FC = () => {
   const [date, setDate] = useState<Date | null>(new Date(selectedDate));
   const visibleMonths = isMobile ? 12 : 2;
   const [checkNavIconClass, setCheckNavIconClass] = useState<boolean>(false)
-  const minDate = new Date()
-  const maxDateNumber: number = isMobile ? 24 : 12
-  const maxDate = new Date(minDate.setMonth(minDate.getMonth() + maxDateNumber))
+  const maxDate = useSelector((state: RootState) => state.selectedDate.maxDate )
+
 
     const setNewDate = (newDate : Date | null) => {
       if(newDate)
@@ -74,13 +73,10 @@ const SidebarCalendars:React.FC = () => {
       prevButtonSpan?.classList.remove('react-datepicker__navigation-icon')
     
       if(isMobile){
-        console.log("prevButtonSpan", prevButtonSpan )
-        console.log("nextButtonSpan", nextButtonSpan )
         nextButton?.classList.add('hidden')
         prevButton?.classList.add('hidden')
       }
       else {
-        console.log("else")
         nextButton?.classList.remove('hidden')
         prevButton?.classList.remove('hidden')
       }
@@ -106,7 +102,6 @@ const SidebarCalendars:React.FC = () => {
         bottom: 0,
         left: 0,
 
-
       }}
       >
         <DatePicker
@@ -119,7 +114,7 @@ const SidebarCalendars:React.FC = () => {
           previousMonthButtonLabel={<PreviousArrow/>}
           nextMonthButtonLabel={<NextArrow/>}
           minDate={new Date()}
-          maxDate={maxDate}
+          maxDate={new Date(maxDate)}
           // pogledti jel treba setCheckNavIconClass
           onMonthChange={() => setCheckNavIconClass(!checkNavIconClass)}
           

@@ -12,6 +12,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "@/app/redux/store";
 import { setSelectedDate } from '@/app/redux/selected-date-slice';
 import { headerHeight } from '@/app/utils/index.js';
+import UserTask from "./scheduler-task";
 
 
 export const dynamic = 'force-dynamic'
@@ -45,7 +46,7 @@ const UserScheduler : React.FC = () => {
     // potencijalo spojiti selectedDate i selectedStringDate
     const selectedStringDate = useSelector((state: RootState) => state.selectedDate.selectedDate)
     const [taskModalDate, setTaskModalDate] = useState<Date | undefined>(undefined);
-    const [taskModalTime, setTaskModalTime] = useState<string | undefined>(undefined);
+    // const [taskModalTime, setTaskModalTime] = useState<string | undefined>(undefined);
     const [showTaskModal, setTaskModalState] = useState(false);
     const [selectedDate, setSelecteStateDate] = useState<Date>(new Date(selectedStringDate))
     const [snackbarState, setSnackbarState] = useState(false);
@@ -54,9 +55,11 @@ const UserScheduler : React.FC = () => {
     const [prevWeekArrow, setPrevWeekArrow] = useState<boolean>(false);
     const [nextWeekArrow, setNextWeekArrow] = useState<boolean>(false);
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
-    const minDate = new Date()
-    const maxDateNumber: number = isMobile ? 24 : 12
-    const maxDate = new Date(minDate.setMonth(minDate.getMonth() + maxDateNumber))  
+    const maxDateString = useSelector((state: RootState) => state.selectedDate.maxDate);
+    const minDate = new Date();
+    const maxDate = new Date(maxDateString);
+    const { week: maxWeek, year: maxYear } = getISOWeekInfo(maxDate);
+    const { week: minWeek, year: minYear } = getISOWeekInfo(minDate);
     const weekdayFormat = isMobile ? 'short' : 'long';
     const [scheduleHeader, setScheduleHeader] = useState<string>('');
     const [schedule, setSchedule] = useState<JSX.Element[]>([]);
@@ -65,7 +68,7 @@ const UserScheduler : React.FC = () => {
     const handleTaskModalState = (id: string) => {
         const dateTime = getChosenDateTime(id)
         setTaskModalDate(dateTime.date)
-        setTaskModalTime(dateTime.time)
+        // setTaskModalTime(dateTime.time)
         setTaskModalState(!showTaskModal)
     }
 
@@ -81,6 +84,16 @@ const UserScheduler : React.FC = () => {
         setSnackbarText(text)
     }
 
+    function getISOWeekInfo(date: Date): { week: number, year: number } {
+        const currentDate = new Date(date.getTime());
+        currentDate.setHours(0, 0, 0, 0);
+        currentDate.setDate(currentDate.getDate() + 4 - (currentDate.getDay() || 7));
+        const yearStart = new Date(currentDate.getFullYear(), 0, 1);
+        const weekNo = Math.ceil((((currentDate.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+    
+        return { week: weekNo, year: currentDate.getFullYear() };
+    }
+    
 
     const nextWeekFunc = () => {
         const newDate = new Date(selectedDate)
@@ -138,16 +151,13 @@ const UserScheduler : React.FC = () => {
                 />
             )
         } 
-
         const newScheduleHeader = `${startOfWeek.getDate()}. - ${endOfWeek.getDate()}. ${endOfWeek.toLocaleString('en', {
         month: 'long',
         })}`;
 
         return {newSchedule, newScheduleHeader}
-
     }
 
-    
     useEffect(() => {
         setSelecteStateDate(new Date(selectedStringDate));
     }, [selectedStringDate]);
@@ -156,6 +166,18 @@ const UserScheduler : React.FC = () => {
         const { newSchedule, newScheduleHeader } = weekDayGenerator(selectedDate);
         setSchedule(newSchedule);
         setScheduleHeader(newScheduleHeader);
+        const { week: selectedWeek, year: selectedYear } = getISOWeekInfo(selectedDate);
+
+        if (selectedWeek === maxWeek && selectedYear === maxYear) {
+            setNextWeekArrow(true);
+        } else if (selectedWeek === minWeek && selectedYear === minYear) {
+            setPrevWeekArrow(true);
+        } else {
+            setPrevWeekArrow(false);
+            setNextWeekArrow(false);
+        }
+
+
     }, [selectedDate]);
 
     return(
@@ -164,15 +186,17 @@ const UserScheduler : React.FC = () => {
                 <CreateTaskModal 
                 cancel={() => setTaskModalState(!showTaskModal)}
                 date={taskModalDate}
-                time={taskModalTime}
+                // time={taskModalTime}
                 openSnackbar={handleSnackbarOpen}
                 snackbarText={handleSnackbarText}
-            />}
+                setSnackbarAlertState={setSnackbarAlertState}
+                />
+            }
 
 
             <Snackbar
                 open={snackbarState}
-                autoHideDuration={5000}
+                autoHideDuration={4000}
                 onClose={handleSnackbarClose}
                 message={snackbarText}
                 // TransitionComponent={SlideTransition}
@@ -254,7 +278,6 @@ const UserScheduler : React.FC = () => {
                         {     isMobile ?      
                         <Box 
                         sx={{
-                            // position: "relative",
                             display: "flex",
                             alignItems: "center",
                         }}

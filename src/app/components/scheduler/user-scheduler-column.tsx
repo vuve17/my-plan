@@ -64,7 +64,7 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
                         justifyContent: "center",
                         backgroundColor: colors.white, 
                         borderBottom: `3px solid ${colors.primaryBlue}`,
-                        borderLeft: isMobile ? `1px solid white` :  props.colNumber === 0 ? 'none' : `1px solid ${colors.primaryBlue}`,  
+                        borderLeft:  `1px solid ${colors.white}`,  
                         height: {
                           ...headerHeight
                         },

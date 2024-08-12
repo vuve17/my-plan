@@ -1,8 +1,7 @@
 import React from 'react';
-import SvgIcon from '@mui/material/SvgIcon';
-import { Box, Button, IconButton } from '@mui/material';
+import { Button } from '@mui/material';
 import colors from '@/app/ui/colors';
-import { PropaneSharp } from '@mui/icons-material';
+import { Visibility } from '@mui/icons-material';
 
 interface ArrowProps {
   height?: string | number;
@@ -16,7 +15,7 @@ const NextArrowIcon: React.FC<ArrowProps> = ({ color, height, onClick, hidden })
     sx={{
       rotate: '-90deg',
       color: color || 'inherit',
-      display: hidden ? 'none' : 'block',
+      visibility: hidden ? 'hidden' : 'visible',
       cursor: onClick ? 'pointer' : 'default',
       outline: 'none', 
       height: height,
@@ -39,7 +38,7 @@ const PreviousArrowIcon: React.FC<ArrowProps> = ({ color, height, onClick, hidde
     sx={{
       rotate: '-90deg',
       color: color || 'inherit',
-      display: hidden ? 'none' : 'block',
+      visibility: hidden ? 'hidden' : 'visible',
       cursor: onClick ? 'pointer' : 'default',
       outline: 'none', 
       height: height,

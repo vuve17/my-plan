@@ -31,7 +31,7 @@ export type Task = {
     startDate: Date,
     endDate: Date,
     description: string,
-    taskType: boolean
+    taskType: "chore" | "event"
 }
 
 export type KeyResult = |
@@ -60,3 +60,9 @@ export type KeysInDb = |
     message: string
 }
 
+
+export type taskTypeColorTheme = 
+{
+    fontColor: string,
+    backgroundColor: string,
+}

@@ -7,8 +7,8 @@ import { useState  } from 'react';
 import { Button } from '@mui/material';
 import DatePickerInput from './components/test/custom-input-test-ts';
 import SidebarCalendars from './components/calendar/calendars-sidebar';
-import Bookmark from './components/scheduler/scheduler_utils/bookmark';
 import NavBar from './components/navbar-public';
+import Bookmark from './components/scheduler/scheduler_utils/bookmark';
 
 
 export const dynamic = "force-dynamic"
@@ -20,12 +20,11 @@ interface ApiResponse {
 
 export default function Page() {
 
-
     return (
         
         <>
         <NavBar />
-            <div style={{ display: "flex", flexDirection: "row", position: "relative"}}>
+            <div style={{ display: "flex", flexDirection: "row", position: "relative", marginTop: "80px"}}>
                 
                 {/* <Button
                 onClick={insertDateInDb}
@@ -35,10 +34,10 @@ export default function Page() {
     
                 {/* <SidebarCalendars /> */}
 
-                <UserScheduler />
+                {/* <UserScheduler /> */}
     
-                {/* <Bookmark 
-                /> */}
+                <Bookmark 
+                />
             </div>
         </>
     )

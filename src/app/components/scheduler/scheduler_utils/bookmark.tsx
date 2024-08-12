@@ -1,11 +1,11 @@
 'use client'
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { Box } from '@mui/material';
 import { Source_Serif_4 } from "next/font/google";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/app/redux/store';
-import { toggleBookmarkValueEvent, toggleBookmarkValueChore, setAnimating } from "@/app/redux/bookmark-slice";
+import { toggleBookmarkValues, setAnimating } from "@/app/redux/bookmark-slice";
 
 const SourceSerif4 = Source_Serif_4({
     weight: "700",
@@ -20,7 +20,6 @@ const bookmarkStyle = {
     width: "0px",
     minHeight: "100px",
     maxHeight: "150px",
-    height: "100px",
     boxSizing: "border-box",
     borderBottom: "25px solid transparent",
     borderTop: "none",
@@ -31,84 +30,77 @@ const bookmarkStyle = {
 
 const Bookmark: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const bookmarkState = useSelector((state: RootState) => state.bookmark.bookmarkValue);
+    const bookmarkEvent = useSelector((state: RootState) => state.bookmark.event);
+    const bookmarkChore = useSelector((state: RootState) => state.bookmark.chore);
     const isAnimating = useSelector((state: RootState) => state.bookmark.isAnimating);
+    const [animationsCompleted, setAnimationsCompleted] = useState(0); 
 
     const choreBookmarkRef = useRef<HTMLDivElement>(null);
     const eventBookmarkRef = useRef<HTMLDivElement>(null);
 
-    const startAnimation = () => {
+    const startAnimation = (target : "chore" | "event") => {
         dispatch(setAnimating(true));
-        const onComplete = () => dispatch(setAnimating(false));
+        setAnimationsCompleted(0); 
+        const onComplete = () => {
+            setAnimationsCompleted(prev => prev + 1);
+        };
         
-        if (bookmarkState === true) {
+        if (bookmarkChore === true) {
             animateBookmark2Elements(choreBookmarkRef.current, eventBookmarkRef.current, 150, 100, onComplete);
         } else {
-            animateBookmark2Elements( eventBookmarkRef.current, choreBookmarkRef.current, 150, 100, onComplete);
-        } 
+            animateBookmark2Elements(eventBookmarkRef.current, choreBookmarkRef.current, 150, 100, onComplete);
+        }
+    }
+
+    useEffect(() => {
+        if (animationsCompleted === 2) { 
+            dispatch(setAnimating(false));
+        }
+    }, [animationsCompleted, dispatch]);
+
+    const animateElement = (finalHeight: number, element: HTMLElement, onComplete: () => void) => {
+        const initialHeight = element.clientHeight;
+        if (initialHeight !== finalHeight) {
+            let currentHeight = initialHeight;
+            const interval = setInterval(() => {
+                if (currentHeight < finalHeight && finalHeight > initialHeight) {
+                    currentHeight += 1;
+                    element.style.height = currentHeight + "px";
+                } else if (currentHeight > finalHeight && finalHeight < initialHeight) {
+                    currentHeight -= 1;
+                    element.style.height = currentHeight + "px";
+                } else {
+                    clearInterval(interval);
+                    onComplete(); 
+                }
+            }, 1);
+        }
     }
 
     const animateBookmark2Elements = (
-        element1: HTMLElement | null, element2: HTMLElement | null, 
+        element1: HTMLElement | null, element2: HTMLElement | null,
         finalHeight1: number, finalHeight2: number,
-        onComplete: () => void) => {
-            console.log("isAnimating1: ", isAnimating)
-            if (element1 && element2) {
-                const initialHeight1 = element1.clientHeight;
-                const initialHeight2 = element2.clientHeight;
-                if (initialHeight1 !== finalHeight1 ) {
-                    let currentHeight1 = initialHeight1;
-                    const interval = setInterval(() => {
-                        if (currentHeight1 < finalHeight1 && finalHeight1 > initialHeight1) {
-                            currentHeight1 += 1;
-                            element1.style.height = currentHeight1 + "px";
-                        } else if (currentHeight1 > finalHeight1 && finalHeight1 < initialHeight1) {
-                            currentHeight1 -= 1;
-                            element1.style.height = currentHeight1 + "px";
-                        } else {
-                            console.log("isAnimating1: ", isAnimating)
-                            clearInterval(interval);
-                            if (initialHeight2 !== finalHeight2 ) {
-                                let currentHeight2 = initialHeight2;
-                                const interval2 = setInterval(() => {
-                                    if (currentHeight2 < finalHeight2 && finalHeight2 > initialHeight2) {
-                                        currentHeight2 += 1;
-                                        element2.style.height = currentHeight2 + "px";
-                                    } else if (currentHeight2 > finalHeight2 && finalHeight2 < initialHeight2) {
-                                        currentHeight2 -= 1;
-                                        element2.style.height = currentHeight2 + "px";
-                                    } else {
-                                        console.log("isAnimating2: ", isAnimating)
-                                        clearInterval(interval2);
-                                        onComplete();
-                                    }
-                                }, 10);
-                            } 
-                        }
-                    }, 10);
-                } 
-
-            }
-    };
-
-        
-
-        
-        
-    const handleClickChore = () => {
-        if (!isAnimating) {
-            
-            startAnimation()
-            dispatch(toggleBookmarkValueChore());
+        onComplete: () => void) => 
+    {
+        if (element1 && element2) {
+            animateElement(finalHeight1, element1, onComplete);
+            animateElement(finalHeight2, element2, onComplete);
         }
-    };
+    }
 
-    const handleClickEvent = () => {
+    const handleBookmarkClickEvent = () => {
         if (!isAnimating) {
-            startAnimation()
-            dispatch(toggleBookmarkValueEvent());
+            startAnimation("event")
+            dispatch(toggleBookmarkValues());
         }
-    };
+    }
+
+    const handleBookmarkClickChore = () => {
+        if (!isAnimating) {
+            startAnimation("chore")
+            dispatch(toggleBookmarkValues());
+        }
+    }
 
     return (
         <Box
@@ -131,8 +123,9 @@ const Bookmark: React.FC = () => {
                     borderLeft: `30px solid #0081D1`,
                     borderRight: `30px solid #0081D1`,
                     marginRight: "20px",
+                    height: "150px",
                 }}
-                onClick={handleClickChore}
+                onClick={handleBookmarkClickChore}
             >
                 C
             </Box>
@@ -145,8 +138,9 @@ const Bookmark: React.FC = () => {
                     ...bookmarkStyle,
                     borderLeft: `30px solid #3CE239`,
                     borderRight: `30px solid #3CE239`,
+                    height: "100px",
                 }}
-                onClick={handleClickEvent}
+                onClick={handleBookmarkClickEvent}
             >
                 E
             </Box>

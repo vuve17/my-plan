@@ -1,21 +1,18 @@
 'use client'
 
-import React, { useState, useEffect, useRef, forwardRef, useMemo, memo, ForwardedRef, createRef } from "react";
+import React, { useState, useEffect, useRef, forwardRef } from "react";
 import DatePicker, { registerLocale }  from 'react-datepicker';
 import enGB from 'date-fns/locale/en-GB';
 import 'react-datepicker/dist/react-datepicker.css';
-import CalendarCustomInput from "./calendar-custom-input";
 import colors from "@/app/ui/colors";
 
 
 export const dynamic = 'force-dynamic'
-
 registerLocale('en-gb', enGB);
-
-//redux?
 
 interface DatePickerInputProps {
   value?: Date,
+  twelvePmTime?: boolean,
   name?: string,
   onChange: (value: Date) => void,
 }
@@ -32,12 +29,7 @@ const formatButtonValue = (date: Date) => {
   }
 };
 
-
-
 const CustomButton = forwardRef(({ value, onClick }: any, ref :any) => {
-
-  // console.log("value: ", value)
-  // console.log("type: ", typeof(value))
 
   return (
           <input
@@ -61,23 +53,20 @@ const CustomButton = forwardRef(({ value, onClick }: any, ref :any) => {
 
 CustomButton.displayName = "customDatePickerButton"
 
-
-const DatePickerInput: React.FC<DatePickerInputProps> = ({ value, onChange }) => {
+const DatePickerInput: React.FC<DatePickerInputProps> = ({ value, onChange, twelvePmTime }) => {
     
   const [startDate, setStartDate] = useState(value || new Date());
   const [buttonValue, setButtonValue] = useState<string | undefined>(formatButtonValue(startDate));
   
-
   useEffect(() => {
     if (value) {
         setStartDate(new Date(value));
     }
-  }, [value]);
-  
+  }, [value, twelvePmTime]);
+
   const  handleDateChange = (date: Date) => {
     if(date){
       setStartDate(date);
-
       setButtonValue(formatButtonValue(date));
       onChange && onChange(date);
     }
@@ -92,7 +81,6 @@ const DatePickerInput: React.FC<DatePickerInputProps> = ({ value, onChange }) =>
             minDate={new Date()}
           />
   );
-
 }
 
 export default DatePickerInput
