@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import colors from "@/app/ui/colors";
-import type { Task, taskTypeColorTheme } from '@/app/lib/types';
+import type { Task } from '@/app/lib/types';
 import { getDifferenceInHoursAndMinutes } from '../../lib/date-functions';
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/redux/store";
 
 interface taskProps {
     task: Task,
@@ -12,118 +14,153 @@ interface taskProps {
 function formatTime(date: Date) {
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0'); 
-    return `${hours}:${minutes}`
+    return `${hours}:${minutes}`;
 }
 
-const UserTask: React.FC<taskProps> = ({...props}) => {
+const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
+    const startTime = formatTime(task.startDate);
+    const endTime = formatTime(task.endDate);
+    const [description, setDescription] = useState<string>(task.description);
+    const [title, setTitle] = useState<string>(task.title);
+    const [height, setHeight] = useState<string | number>();
+    const isMobile = useSelector((state: RootState) => state.screen.isMobile);
 
-    const startTime = formatTime(props.task.startDate);
-    const endTime = formatTime(props.task.endDate);
-    const [description, setDescription] = useState<string>(props.task.description)
-    const [height, setHeight] = useState<string | number>()
-
-    function sliceStringAtSpace(inputString : string, maxLength : number) {
-        if(maxLength === 0){
-            setDescription("")
+    function sliceString(inputString: string, func: React.Dispatch<React.SetStateAction<string>>, maxLength: number) {
+        if (maxLength === 0) {
+            func("");
         } else {
-            const str = inputString.substring(0, maxLength) + " ..."
-            setDescription(str)
+            const str = inputString.substring(0, maxLength) + " ...";
+            console.log("str: ", str, "maxLength: ", maxLength);
+            func(str);
         }
-   }
-
+    }
+    // task < 4, heading 25 po satu
     function descriptionAndHeighLenght(task: Task) {
-        console.log(task);
-        const diff = getDifferenceInHoursAndMinutes(task.startDate, task.endDate)
-        if( diff.hours < 1)
-        {
-            console.log(1);
-            setHeight("calc(100% - 4px)")
-            sliceStringAtSpace(task.description, 0)
-        } 
-        else
-        {
-            console.log(diff.minutes)
-            const percentage = Math.round((diff.minutes/60) * 100)
-            const time = (diff.hours * 100) + percentage
-            const newHeight = `calc(${time}% - 4px)`
-            console.log("newHeight: ", newHeight)
-            setHeight(newHeight)
-            if (diff.hours > 7)
-            {
-                console.log(2)
-                sliceStringAtSpace(task.description, 250)
-            }
+        const diff = getDifferenceInHoursAndMinutes(task.startDate, task.endDate);
+        if (diff.hours < 1) {
+            setHeight("calc(100% - 4px)");
+            sliceString(task.description, setDescription, 0);
+            sliceString(task.title, setTitle, 25)
+        } else {
+            const percentage = (diff.minutes / 60) * 100;
+            const roundedPercentage = Math.round(percentage * 100) / 100;
+            const time = (diff.hours * 100) + roundedPercentage;
+            const newHeight = `calc(${time}% - 4px)`;
+            const charsPerHourDes = 45 * diff.hours;
+            const charsPerHourTitle = 10 * diff.hours
+            setHeight(newHeight);
+            sliceString(task.description, setDescription, charsPerHourDes);
+            sliceString(task.title, setTitle, charsPerHourTitle)
         }
     }
 
     useEffect(() => {
-        descriptionAndHeighLenght(props.task)
-    }, [])
+        descriptionAndHeighLenght(task);
+    }, [task]);
 
     return (
         <Box
-        sx={{
-            display: "flex",
-            flexDirection: "column",  
-            justifyContent: "space-between",
-            position: 'relative',
-            width:"calc(100% - 12px)",
-            height: height,
-            color: colors.tasks[props.task.taskType]?.Text,
-            backgroundColor: colors.tasks[props.task.taskType]?.Background,
-            border: `2px solid ${colors.tasks[props.task.taskType]?.Stroke}`,
-            borderLeft: `10px solid ${colors.tasks[props.task.taskType]?.Stroke}`,
-            borderRadius: "4px",
-        }}  
-        // onClick={openTaskModal}
-        >
-            <Box 
             sx={{
                 display: "flex",
-                justifyContent: 'flex-start',
-                alignItems: "center",
-                fontStyle: 'italic',
-                padding: "4px 8px",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                position: 'relative',
+                width: {
+                    sm: "calc(100% - 4px)",
+                    md: "calc(100% - 12px)",
+                    lg: "calc(100% - 12px)",
+                },
+                height: height,
+                color: colors.tasks[task.taskType]?.Text,
+                backgroundColor: colors.tasks[task.taskType]?.Background,
+                border: `2px solid ${colors.tasks[task.taskType]?.Stroke}`,
+                borderLeft: {
+                    sm: `2px solid ${colors.tasks[task.taskType]?.Stroke}`,
+                    md: `10px solid ${colors.tasks[task.taskType]?.Stroke}`,
+                    lg: `10px solid ${colors.tasks[task.taskType]?.Stroke}`,
+                },
+                borderRadius: "4px",
+                overflow: "hidden",
             }}
+            key={task.id}
+            onClick={() => openTaskModal?.(task)}
+        >
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: 'flex-start',
+                    alignItems: "center",
+                    fontStyle: 'italic',
+                    padding: {
+                        xs: "4px 2px",
+                        sm: "4px",
+                        lg: "4px 8px",
+                    },
+                }}
             >
                 <Typography
-                variant="h6"
-                sx={{
-                    fontWeight: "bold"
-                }}
+                    sx={{
+                        fontWeight: "bold",
+                        fontSize: {
+                            xs: "12px",
+                            sm: "14px",
+                            md: "1em",
+                            lg: "1.2em",
+                            xl: "1.5em"
+                        },
+                        textAlign: "left",
+                    }}
                 >
-                    {props.task.title}
+                    {title}
                 </Typography>
             </Box>
 
             <Typography
-            variant="body1"
-            sx={{
-                display: "flex",
-                justifyContent: 'flex-start',
-                margin: "4px 8px",
-                fontStyle: 'italic',
-                textAlign: "left",
-                flexGrow: 1, 
-            }}
+                variant="body1"
+                sx={{
+                    display: "flex",
+                    justifyContent: 'flex-start',
+                    margin: "4px 8px",
+                    fontStyle: 'italic',
+                    textAlign: "left",
+                    flexGrow: 1,
+                }}
             >
-                {description}
+                {isMobile ? null : description}
             </Typography>
 
             <Box
-            sx={{
-                display: "flex",
-                justifyContent: 'flex-end',
-                alignItems: "center",
-                backgroundColor: colors.tasks[props.task.taskType]?.TimeBackground,
-                padding: "4px 8px",
-            }}
+                sx={{
+                    display: "flex",
+                    justifyContent: {
+                        sm: 'center',
+                        md: 'flex-end',
+                    },
+                    alignItems: "center",
+                    backgroundColor: colors.tasks[task.taskType]?.TimeBackground,
+                    padding: {
+                        xs: "4px 8px",
+                        sm: "4px 8px",
+                        md: "4px 8px",
+                    },
+                }}
             >
                 <Typography
-                sx={{
-                    fontStyle: 'italic',
-                    fontWeight: "normal",
-                }}
+                    sx={{
+                        fontStyle: 'italic',
+                        fontWeight: "normal",
+                        fontSize: {
+                            xs: "12px",
+                            sm: "14px",
+                            md: "16px",
+                            lg: "16px",
+                        },
+                        lineHeight: {
+                            xs: "1em",
+                            sm: "1.5",
+                            md: "auto"
+                        }
+                    }}
                 >
                     {startTime} - {endTime}
                 </Typography>

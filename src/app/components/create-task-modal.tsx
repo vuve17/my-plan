@@ -84,10 +84,11 @@ let newTaskSchema = Yup.object().shape({
             exclusive: false,
             message: 'End Date must be after Start Date',
             test: function(endDate) {
-                if (!startDate || !endDate) {
+                const start = Array.isArray(startDate) ? startDate[0] : startDate;              
+                if (!start || !endDate) {
                     return true;
                 }
-                return new Date(endDate) > new Date(startDate);
+                return new Date(endDate) > new Date(start);
             },
         });
     }),
@@ -113,7 +114,7 @@ let newTaskSchema = Yup.object().shape({
     }),
 
     descripton: Yup.string().max(255).min(0),
-    taskType: Yup.string().required().oneOf(['chore', 'task']).strict(true),
+    taskType: Yup.string().required().oneOf(['chore', 'event']).strict(true),
 
 })
 
@@ -160,7 +161,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
     const propsStartHours = props.date?.getHours()
     const startTime = createStartPropsTime(propsStartHours)
     const endTime =  createEndPropsTime(propsStartHours)
-    const bookmarkEvent = useSelector((state: RootState) => state.bookmark.event);
+    const bookmarkType = useSelector((state: RootState) => state.bookmark.type);
     const initialStartDate = props.date || new Date();
     const initialStartTime = moment(initialStartDate).format('HH:mm');
     const initialEndDate = new Date(initialStartDate);
@@ -176,10 +177,12 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
             endDate:  initialEndDate,
             endTime: initialEndTime,
             description: "",
-            taskType: "chore"
+            taskType: bookmarkType
         },
-
-        
+        // provjeriti kako se bookmark sprema u bazu (je li boolean ili string)
+                        // vrijeme u bazi je još dalje jedno manje nego kako bi trebalo biti
+                // console.log(sentData.startDate.toISOString())
+                // console.log(sentData.startDate.toISOString().replace("T", " "))
         validationSchema: newTaskSchema,
         onSubmit: async (values, { setErrors }) => {
             try {
@@ -191,14 +194,9 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
 
                 sentData.startDate = setDateTime(sentData.startDate, startTime)
                 sentData.endDate = setDateTime(sentData.endDate, endTime)
-                sentData.taskType = bookmarkEvent ? "event" : "chore"
+                sentData.taskType = bookmarkType
 
                 const token = Cookies.get("refreshToken");
-                console.log("2024-08-22T21:00:00.000Z")
-                console.log(new Date ("2024-08-22T21:00:00.000Z"))
-                // vrijeme u bazi je još dalje jedno manje nego kako bi trebalo biti
-                // console.log(sentData.startDate.toISOString())
-                // console.log(sentData.startDate.toISOString().replace("T", " "))
 
                 const response = await fetch('/api/create-task', {
                     method: 'POST',
@@ -237,7 +235,6 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                 console.error('Error creating task:', error);
             }
         }
-
     })
 
     console.log(        

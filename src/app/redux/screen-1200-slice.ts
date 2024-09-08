@@ -7,7 +7,7 @@ interface ScreenState {
 const initialState: ScreenState = { isMobile: false };
 
 const screen1500Slice = createSlice({
-    name: "screen1500",
+    name: "screen1200",
     initialState,
     reducers: {
         setIsMobile(state, action: PayloadAction<boolean>) {

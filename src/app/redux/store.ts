@@ -1,7 +1,7 @@
 'use client'
 
 import { configureStore } from '@reduxjs/toolkit'
-import screenReducer from "./screen-1500-slice";
+import screenReducer from "./screen-1200-slice";
 import selectedDateSlice from './selected-date-slice';
 import schedulerVisibilitySlice from './scheduler-visibility-slice';
 import bookmarkSlice from './bookmark-slice';

@@ -30,8 +30,10 @@ const bookmarkStyle = {
 
 const Bookmark: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const bookmarkEvent = useSelector((state: RootState) => state.bookmark.event);
-    const bookmarkChore = useSelector((state: RootState) => state.bookmark.chore);
+    // const bookmarkEvent = useSelector((state: RootState) => state.bookmark.event);
+    // const bookmarkChore = useSelector((state: RootState) => state.bookmark.chore);
+    const bookmarkType = useSelector((state: RootState) => state.bookmark.type);
+
     const isAnimating = useSelector((state: RootState) => state.bookmark.isAnimating);
     const [animationsCompleted, setAnimationsCompleted] = useState(0); 
 
@@ -45,7 +47,7 @@ const Bookmark: React.FC = () => {
             setAnimationsCompleted(prev => prev + 1);
         };
         
-        if (bookmarkChore === true) {
+        if (bookmarkType === "chore") {
             animateBookmark2Elements(choreBookmarkRef.current, eventBookmarkRef.current, 150, 100, onComplete);
         } else {
             animateBookmark2Elements(eventBookmarkRef.current, choreBookmarkRef.current, 150, 100, onComplete);
@@ -90,15 +92,27 @@ const Bookmark: React.FC = () => {
 
     const handleBookmarkClickEvent = () => {
         if (!isAnimating) {
+            if(bookmarkType === "event")
+            {
+                startAnimation("chore")
+                dispatch(toggleBookmarkValues("chore"));
+            } else {
             startAnimation("event")
-            dispatch(toggleBookmarkValues());
+            dispatch(toggleBookmarkValues("event"));
+            }
         }
     }
 
     const handleBookmarkClickChore = () => {
         if (!isAnimating) {
+            if(bookmarkType === "chore")
+            {
+                startAnimation("event")
+                dispatch(toggleBookmarkValues("event"));
+            } else {
             startAnimation("chore")
-            dispatch(toggleBookmarkValues());
+            dispatch(toggleBookmarkValues("chore"));
+            }   
         }
     }
 

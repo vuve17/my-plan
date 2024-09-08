@@ -1,11 +1,10 @@
 'use server'
+
 import { db } from "@vercel/postgres"
 import { NextRequest, NextResponse } from "next/server"
-import { SignJWT } from 'jose';
 import { KeyResult, createToken, KeysInDb } from './types';
-import { getExpirationDate } from "./auth";
-import { getJwtSecretKey } from "./auth";
-import { jwtVerify } from "jose";
+import { getExpirationDate, getJwtSecretKey } from "./auth";
+import { jwtVerify, SignJWT } from "jose";
 
 export async function createAccessKey(userId: string): Promise<createToken> {
     try {

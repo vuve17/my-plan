@@ -42,7 +42,7 @@ export const getUserId = async (token:string) => {
     }
 }
 
-export async function getUserViaEmail ( email: string) {
+export async function getUserViaEmail (email: string) {
     
     const client = await db.connect();
     const getUser = await client.sql`

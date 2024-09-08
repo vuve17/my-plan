@@ -21,10 +21,10 @@ interface UserSchedulerColumnProps {
 
 const testTask : Task= {
     id: 1,
-    title: "Naziv test",
-    startDate: new Date("2024-08-02T18:20:30.123Z"),
-    endDate: new Date("2024-08-02T18:52:00.123Z"),
-    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
+    title: "Lorem Ipsum is simply dummy dummy dummy simply dummy simply dummy",
+    startDate: new Date("2024-08-02T10:00:00.123Z"),
+    endDate: new Date("2024-08-02T21:00:00.123Z"),
+    description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
     taskType: "event",
 }
 
@@ -50,11 +50,10 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({...props}) => {
             }}
         >
 
-            {props.id === "08132024_0" ?
+            {props.id === "09052024_0" ?
             
             <UserTask 
             task={testTask}
-
             /> : null
 
             }

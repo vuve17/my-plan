@@ -6,7 +6,7 @@ import NavBar from '../components/navbar-private';
 import '../index.css';
 import { Open_Sans } from "next/font/google"; 
 import { ReduxProvider } from '../redux/provider';
-import { setIsMobile } from '../redux/screen-1500-slice';
+import { setIsMobile } from '../redux/screen-1200-slice';
 import { RootState } from "../redux/store"; 
 
 const openSans = Open_Sans({
