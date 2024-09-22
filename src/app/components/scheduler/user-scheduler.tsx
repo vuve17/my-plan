@@ -1,7 +1,7 @@
 'use client'
 
 import React, {useEffect, useRef, useState} from "react";
-import { Box, Grid, Typography, IconButton, Snackbar, Alert, Button } from '@mui/material';
+import { Box, IconButton, Snackbar, Alert } from '@mui/material';
 import colors from "@/app/ui/colors";
 import CreateTaskModal from "../create-task-modal";
 import { NextArrow, PreviousArrow } from './scheduler_utils/scheduler-navigation-arrows';
@@ -12,8 +12,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from "@/app/redux/store";
 import { setSelectedDate } from '@/app/redux/selected-date-slice';
 import { headerHeight } from '@/app/utils/index.js';
-import UserTask from "./scheduler-task";
-
+import { setSnackBarText, setIsSnackBarOpen, setSnackbarAlertState } from "@/app/redux/snackbar-slice";
+import { setIsTaskModalActive , setTaskModalDate} from "@/app/redux/create-taks-modal-slice";
 
 export const dynamic = 'force-dynamic'
 
@@ -34,28 +34,27 @@ function getChosenDateTime(divId: string) {
     const year = Number(dateBeforeUnderscore.slice(4, dateString));
     const date = new Date(year, +month - 1, +day, Number(time));
 
-    console.log("dateTime:", date )
-    console.log("Time:", time )
     return { date, time };
 }
 
 
 const UserScheduler : React.FC = () => {
 
-    const scheduleHeaderRef = useRef<HTMLDivElement>(null);
-    // potencijalo spojiti selectedDate i selectedStringDate
-    const selectedStringDate = useSelector((state: RootState) => state.selectedDate.selectedDate)
-    const [taskModalDate, setTaskModalDate] = useState<Date | undefined>(undefined);
-    // const [taskModalTime, setTaskModalTime] = useState<string | undefined>(undefined);
-    const [showTaskModal, setTaskModalState] = useState(false);
-    const [selectedDate, setSelecteStateDate] = useState<Date>(new Date(selectedStringDate))
-    const [snackbarState, setSnackbarState] = useState(false);
-    const [snackbarText, setSnackbarText] = useState<string>("");
-    const [snackbarAlertState, setSnackbarAlertState] = useState<"success" | "warning" | "error">("success");
-    const [prevWeekArrow, setPrevWeekArrow] = useState<boolean>(false);
-    const [nextWeekArrow, setNextWeekArrow] = useState<boolean>(false);
+
+    
+    const dispatch = useDispatch()
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
     const maxDateString = useSelector((state: RootState) => state.selectedDate.maxDate);
+    const isSnackBarOpen = useSelector((state: RootState) => state.snackbar.isSnackBarOpen)
+    const snackbarText = useSelector((state: RootState) => state.snackbar.snackbarText)
+    const snackbarAlertState : "success" | "warning" | "error" = useSelector((state: RootState) => state.snackbar.snackbarAlertState)
+    const isTaskModalActive : boolean = useSelector((state : RootState) => state.createTaskModal.isTaskModalActive)
+    const selectedStringDate = useSelector((state: RootState) => state.selectedDate.selectedDate)
+
+    const scheduleHeaderRef = useRef<HTMLDivElement>(null);
+    const [selectedDate, setSelecteStateDate] = useState<Date>(new Date(selectedStringDate))
+    const [prevWeekArrow, setPrevWeekArrow] = useState<boolean>(false);
+    const [nextWeekArrow, setNextWeekArrow] = useState<boolean>(false);
     const minDate = new Date();
     const maxDate = new Date(maxDateString);
     const { week: maxWeek, year: maxYear } = getISOWeekInfo(maxDate);
@@ -63,25 +62,24 @@ const UserScheduler : React.FC = () => {
     const weekdayFormat = isMobile ? 'short' : 'long';
     const [scheduleHeader, setScheduleHeader] = useState<string>('');
     const [schedule, setSchedule] = useState<JSX.Element[]>([]);
-    const dispatch = useDispatch()
+
 
     const handleTaskModalState = (id: string) => {
         const dateTime = getChosenDateTime(id)
-        setTaskModalDate(dateTime.date)
-        // setTaskModalTime(dateTime.time)
-        setTaskModalState(!showTaskModal)
+        setTaskModalDate(dateTime.date.toISOString())
+        setIsTaskModalActive(true)
     }
 
     const handleSnackbarOpen = () => {
-        setSnackbarState(true)
+        dispatch(setIsSnackBarOpen(true))
     }
 
     const handleSnackbarClose = () => {
-        setSnackbarState(false)
+        dispatch(setIsSnackBarOpen(false))
     }
 
     const handleSnackbarText = (text: string) => {
-        setSnackbarText(text)
+        dispatch(setSnackBarText(text))
     }
 
     function getISOWeekInfo(date: Date): { week: number, year: number } {
@@ -143,7 +141,6 @@ const UserScheduler : React.FC = () => {
             newSchedule.push(
                 <UserSchedulerColumn
                     key={current_day}
-                    onClick={handleTaskModalState}                
                     date={day}
                     headingDayName={headingDayName}
                     headingDate={headingDate}
@@ -180,23 +177,18 @@ const UserScheduler : React.FC = () => {
 
     }, [selectedDate]);
 
+
     return(
         <>
-            {showTaskModal && 
+            {isTaskModalActive && 
                 <CreateTaskModal 
-                cancel={() => setTaskModalState(!showTaskModal)}
-                date={taskModalDate}
-                // time={taskModalTime}
-                openSnackbar={handleSnackbarOpen}
-                snackbarText={handleSnackbarText}
-                setSnackbarAlertState={setSnackbarAlertState}
                 />
             }
 
 
             <Snackbar
-                open={snackbarState}
-                autoHideDuration={4000}
+                open={isSnackBarOpen}
+                autoHideDuration={2000}
                 onClose={handleSnackbarClose}
                 message={snackbarText}
                 // TransitionComponent={SlideTransition}

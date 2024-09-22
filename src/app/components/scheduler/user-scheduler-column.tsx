@@ -1,16 +1,18 @@
 'use client'
 
 import { Box } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import UserSchedulerCell from "./user-scheduler-cell";
 import colors from "@/app/ui/colors";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { headerHeight, columnWidth, fixedDanHeaderWidth, marginTopClassDanScheduler } from "@/app/utils/index.js"
+import { convertTaskStringToTask, getTasks } from '../../lib/user-tasks-functions';
+import { setTasks } from "@/app/redux/tasks-slice"; 
 
 interface UserSchedulerColumnProps {
     date: Date,
-    onClick: (id:string) => void,
+    // onClick: (id:string) => void,
     headingDayName: string,
     headingDate: string,
     colNumber: number,
@@ -19,7 +21,11 @@ interface UserSchedulerColumnProps {
 
 const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => {
     
+    const dispatch = useDispatch()
     const isMobile = useSelector((state : RootState) => state.screen.isMobile)
+    const tasksStringifyed = useSelector((state: RootState) => state.tasks.tasks)
+    const tasks = tasksStringifyed ? convertTaskStringToTask(tasksStringifyed) : null
+    
 
     const daySchedule = [];
     for (let j = 0; j < 24; j++) {
@@ -28,12 +34,27 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
             daySchedule.push(
                 <UserSchedulerCell 
                     id={current_day_hour} 
-                    onClick={props.onClick} 
                     key={current_day_hour}
                     colNumber={props.colNumber}
+                    tasks={ tasks ? tasks[current_day_hour] : null}
                 />
             )
     }
+
+    useEffect(() => { // <-- Added useEffect for fetching tasks
+        async function fetchAndSetTasks() { // <-- Added async function for task fetching
+            try {
+                const fetchedTasks = await getTasks(); // <-- Await the async getTasks function
+                if (fetchedTasks) {
+                    dispatch(setTasks(fetchedTasks)); // <-- Dispatch action to update tasks in Redux
+                }
+            } catch (error) {
+                console.error("Error fetching tasks:", error); // <-- Error handling
+            }
+        }
+    
+        fetchAndSetTasks(); // <-- Invoke the async function
+    }, []);
     
     
     return(

@@ -1,10 +1,13 @@
+'use client'
+
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from '@mui/material';
 import colors from "@/app/ui/colors";
 import type { Task } from '@/app/lib/types';
-import { getDifferenceInHoursAndMinutes } from '../../lib/date-functions';
+import { getDifferenceInHoursAndMinutes } from '../../../lib/date-functions';
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
+import CreateTaskModal from "../../create-task-modal";
 
 interface taskProps {
     task: Task,
@@ -29,15 +32,14 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
         if (maxLength === 0) {
             func("");
         } else {
-            const str = inputString.substring(0, maxLength) + " ...";
-            console.log("str: ", str, "maxLength: ", maxLength);
+            const str = inputString.substring(0, maxLength) + "...";
             func(str);
         }
     }
     // task < 4, heading 25 po satu
     function descriptionAndHeighLenght(task: Task) {
         const diff = getDifferenceInHoursAndMinutes(task.startDate, task.endDate);
-        if (diff.hours < 1) {
+        if (diff.hours <= 1) {
             setHeight("calc(100% - 4px)");
             sliceString(task.description, setDescription, 0);
             sliceString(task.title, setTitle, 25)
@@ -45,7 +47,9 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
             const percentage = (diff.minutes / 60) * 100;
             const roundedPercentage = Math.round(percentage * 100) / 100;
             const time = (diff.hours * 100) + roundedPercentage;
-            const newHeight = `calc(${time}% - 4px)`;
+            // console.log(time, "time") 
+            const bordersheight = (diff.hours -1)
+            const newHeight = `calc(${time}% - 4px + ${bordersheight}px )`;
             const charsPerHourDes = 45 * diff.hours;
             const charsPerHourTitle = 10 * diff.hours
             setHeight(newHeight);
@@ -56,7 +60,7 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
 
     useEffect(() => {
         descriptionAndHeighLenght(task);
-    }, [task]);
+    }, [task]); 
 
     return (
         <Box

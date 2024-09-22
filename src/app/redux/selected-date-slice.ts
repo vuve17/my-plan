@@ -12,8 +12,7 @@ const selectedDateSlice = createSlice({
         setSelectedDate(state, action){
             state.selectedDate = action.payload
         }
-    }
-    
+    } 
 })
 
 export const { setSelectedDate } = selectedDateSlice.actions;

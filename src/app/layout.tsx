@@ -15,9 +15,6 @@ const metadata = {
   title: 'MyPlan',
   description: 'A good day starts with a good plan',
 }
-
-
-
  
 export default function Layout({ 
   children
@@ -28,7 +25,7 @@ export default function Layout({
     <html lang="en">
       <body>      
           <ReduxProvider>              
-              <div >{children}</div>
+              <div>{children}</div>
           </ReduxProvider>
 
       </body>

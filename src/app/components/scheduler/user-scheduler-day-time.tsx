@@ -74,7 +74,13 @@ const TimeTable: React.FC = () => {
                     height: {
                     ...headerHeight
                     },
-                    width: "inherit",
+                    width : {
+                      xs : "inherit",
+                      sm : "inherit",
+                      md : "inherit",
+                      lg: "3.7%",
+                      xl : "4.2vw",
+                    },
                     textAlign: "center",
                     zIndex: 12,
                     top: "calc(62px + 79px)",

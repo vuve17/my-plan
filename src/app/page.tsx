@@ -36,8 +36,7 @@ export default function Page() {
 
                 {/* <UserScheduler /> */}
     
-                <Bookmark 
-                />
+                
             </div>
         </>
     )

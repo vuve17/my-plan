@@ -13,10 +13,10 @@ interface ArrowProps {
 const NextArrowIcon: React.FC<ArrowProps> = ({ color, height, onClick, hidden }) => (
   <Button
     sx={{
+      cursor: 'pointer',
       rotate: '-90deg',
       color: color || 'inherit',
       visibility: hidden ? 'hidden' : 'visible',
-      cursor: onClick ? 'pointer' : 'default',
       outline: 'none', 
       height: height,
       "&:hover": {
@@ -39,7 +39,7 @@ const PreviousArrowIcon: React.FC<ArrowProps> = ({ color, height, onClick, hidde
       rotate: '-90deg',
       color: color || 'inherit',
       visibility: hidden ? 'hidden' : 'visible',
-      cursor: onClick ? 'pointer' : 'default',
+      cursor: 'pointer',
       outline: 'none', 
       height: height,
       "&:hover": {

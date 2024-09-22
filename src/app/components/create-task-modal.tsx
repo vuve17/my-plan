@@ -7,30 +7,32 @@ import {Backdrop, Box, TextField, Button, Paper, Grid, OutlinedInput, InputLabel
 import DatePickerInput from "./calendar/input-date-picker";
 import moment from "moment";
 import Cookies from "js-cookie";
-import getTasks from "../lib/fetch-user-tasks";
+import { getTasks } from "../lib/user-tasks-functions";
 import { Source_Serif_4 } from "next/font/google";
 import Bookmark from "./scheduler/scheduler_utils/bookmark";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from '../redux/store';
 import { Task } from "../lib/types";
-
+import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "../redux/snackbar-slice";
+import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/create-taks-modal-slice';
+import { setTasks } from "@/app/redux/tasks-slice";
 
 export const dynamic = 'force-dynamic'
 
 // const timeType = /^([01][0-9]|2[0-3]):[0-5][0-9]$/
 
 interface CreateTaskModalProps {
-    cancel: () => void,
-    date?: Date,
-    openSnackbar: () => void,
-    snackbarText: (text: string) => void
-    setSnackbarAlertState: (text : "success" | "warning" | "error" ) => void,
+    // cancel: () => void,
+    // date?: Date,
+    // openSnackbar: () => void,
+    // snackbarText: (text: string) => void
+    // setSnackbarAlertState: (text : "success" | "warning" | "error" ) => void,
     task?: Task,
 }
 
 const  sliceDescription = (text: string) => {
     const spaces = text.indexOf(" ", -1)
-    console.log(spaces)
+    // console.log(spaces)
 }
 
 function TimeHours(time: string) {
@@ -112,7 +114,6 @@ let newTaskSchema = Yup.object().shape({
         }
         return true;
     }),
-
     descripton: Yup.string().max(255).min(0),
     taskType: Yup.string().required().oneOf(['chore', 'event']).strict(true),
 
@@ -123,7 +124,6 @@ const createStartPropsTime = (time: number | undefined) => {
     
     if(time)
     {
-        console.log("time: " ,time.toString().padStart(2, '0') + ":00")
         return time.toString().padStart(2, '0') + ":00";
     } else if (time == 0){
         return "00:00"
@@ -156,28 +156,43 @@ const currentEndTime = endHours.toString().padStart(2, '0') + ":00";
 
 const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
 
-    const [twelvePmNewDay, setTwelvePmNewDay] = useState<Boolean>(false)
+    // const [twelvePmNewDay, setTwelvePmNewDay] = useState<Boolean>(false)
     const backDropRef = useRef<HTMLDivElement>(null)
-    const propsStartHours = props.date?.getHours()
+    
+    const isSnackBarOpen = useSelector((state : RootState) => state.snackbar.isSnackBarOpen)
+    const snackbarText = useSelector((state : RootState) => state.snackbar.snackbarText)
+    const snackbarAlertState = useSelector((state : RootState) => state.snackbar.snackbarAlertState)
+    const dispatch = useDispatch()
+    const taskModalDateString = useSelector((state : RootState) => state.createTaskModal.taskModalDate)
+    const taskModalDate = new Date(taskModalDateString)
+
+    const propsStartHours = taskModalDate?.getHours()
     const startTime = createStartPropsTime(propsStartHours)
     const endTime =  createEndPropsTime(propsStartHours)
     const bookmarkType = useSelector((state: RootState) => state.bookmark.type);
-    const initialStartDate = props.date || new Date();
+    const initialStartDate = taskModalDate || new Date();
     const initialStartTime = moment(initialStartDate).format('HH:mm');
     const initialEndDate = new Date(initialStartDate);
     initialEndDate.setHours(initialStartDate.getHours() + 1);
     const initialEndTime = moment(initialEndDate).format('HH:mm');  
-     // twelvePmNewDay ? new Date(initialEndDate.setDate(initialEndDate.getDate() + 1)) : initialEndDate,
     
+    const handleSnackbarClose = () => {
+        dispatch(setIsSnackBarOpen(false))
+    }
+
+    const handleTaskModalClose = () => {
+        dispatch(setIsTaskModalActive(false))
+    }
+
      const formik = useFormik({
         initialValues : {
-            title: "",
-            startDate: initialStartDate ,
-            startTime: initialStartTime ,
-            endDate:  initialEndDate,
-            endTime: initialEndTime,
-            description: "",
-            taskType: bookmarkType
+            title: props.task?.title || "",
+            startDate: props.task?.startDate || initialStartDate ,
+            startTime: createStartPropsTime(props.task?.startDate.getHours()) || initialStartTime ,
+            endDate:  props.task?.endDate || initialEndDate,
+            endTime: createEndPropsTime(props.task?.endDate.getHours()) || initialEndTime,
+            description: props.task?.description || "",
+            taskType: props.task?.taskType || bookmarkType
         },
         // provjeriti kako se bookmark sprema u bazu (je li boolean ili string)
                         // vrijeme u bazi je još dalje jedno manje nego kako bi trebalo biti
@@ -214,39 +229,40 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                 });
 
                 if (response.ok) {
-                    props.setSnackbarAlertState("success");
-                    props.snackbarText(`Successfuly created ${sentData.title} ${sentData.taskType}`);
-                    props.openSnackbar();
-                    props.cancel();
+                    dispatch(setSnackBarText(`Successfuly created ${sentData.title} ${sentData.taskType}`))
+                    dispatch(setSnackbarAlertState("success"))
+                    dispatch(setIsSnackBarOpen(true))
+
+                    dispatch(setIsTaskModalActive(false))
                     console.log("created");
-                    console.log(getTasks());
+                    const tasks = await getTasks()
+                    if(tasks)
+                    {
+                        dispatch(setTasks(tasks))
+                        console.log(tasks);
+                    }
+                    console.log(tasks);
                 } 
                 else {
-                    props.setSnackbarAlertState("error")
-                    props.snackbarText("Failed to create task")
-                    console.log("creation failed");
-                    props.openSnackbar()
+                    dispatch(setSnackBarText("Failed to create task"))
+                    dispatch(setSnackbarAlertState("error"))
+                    dispatch(setIsSnackBarOpen(true))
+                    console.log("creation failed")
                 }
             }
             catch (error) {
-                props.setSnackbarAlertState("error")
-                props.snackbarText('Error creating task')
-                props.openSnackbar()
+                dispatch(setSnackBarText("Failed to create task"))
+                dispatch(setSnackbarAlertState("error"))
+                dispatch(setIsSnackBarOpen(true))
+                console.log("creation failed")
                 console.error('Error creating task:', error);
             }
         }
     })
 
-    console.log(        
-        "startDate:", props.date || new Date(),
-        "startTime:", startTime || currentStartTime ,
-        "endDate: ", initialEndDate || new Date(),
-        "endTime:", endTime || currentEndTime,
-    )
-
     const HandleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
         if (backDropRef.current === event.target) {
-            props.cancel();
+            dispatch(setIsTaskModalActive(false))
         }
     }
 
@@ -256,9 +272,9 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
             const newEndDate = new Date(formik.values.startDate);
             newEndDate.setDate(newEndDate.getDate() + 1);
             formik.setFieldValue("endDate", newEndDate);
-            setTwelvePmNewDay(true);
+            // setTwelvePmNewDay(true);
         } else {
-            setTwelvePmNewDay(false);
+            // setTwelvePmNewDay(false);
         }
     }, [formik.values.endTime]);
 
@@ -278,8 +294,6 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
             }}
             
         >
-
-
 
             <Backdrop 
                 open={true} 
@@ -314,7 +328,10 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                         
                         >
 
-                                <Bookmark />
+                                <Bookmark 
+                                
+                                
+                                />
                                 
                                 
                                 
@@ -509,8 +526,6 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                         md: "space-evenly",
                                         xs: "flex-end",
                                     },
-    
-                                   
                                 }}
                             >
                                 <Button 
@@ -518,7 +533,7 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                     sx={{backgroundColor: "red", marginRight: "1em"}}
                                     name="cancleBtn"
                                     color="error"
-                                    onClick={props.cancel}
+                                    onClick={handleTaskModalClose}
                             
                                 >
                                     Cancel

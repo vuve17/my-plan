@@ -98,8 +98,7 @@ h2 {
     align-items: center;
     background-color:#F4F4F4; 
     padding-top: 5em;
-    border-radius: 0;
-    height: 100%;
+    border-radius: 0; 
     border: 0;
   }
 
@@ -107,9 +106,6 @@ h2 {
     margin-bottom: 2em;
   }
 
-  .vertical-datepicker-container{
-    height: 100%
-  }
 
   .task-menu{
     position: fixed;
@@ -132,9 +128,25 @@ h2 {
     background-color:#F4F4F4; 
     border-radius: 0;
     gap: 10px;
-    height: 100%;
   }
 }
+
+@media screen and (min-width: 1200px ) {
+
+  .vertical-datepicker-container .react-datepicker {
+    height: calc(100vh - 80px);
+    
+  }
+}
+
+@media screen and (max-width: 1200px ) {
+
+  .vertical-datepicker-container .react-datepicker {
+    height:100%;
+    border: none
+  }
+}
+
 
 @media screen and (min-width: 2200px) {
 

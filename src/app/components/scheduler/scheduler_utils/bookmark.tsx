@@ -13,6 +13,7 @@ const SourceSerif4 = Source_Serif_4({
 });
 
 const bookmarkStyle = {
+    cursor: 'pointer',
     position: "relative",
     display: "flex",
     alignItems: "center",
@@ -30,26 +31,29 @@ const bookmarkStyle = {
 
 const Bookmark: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
-    // const bookmarkEvent = useSelector((state: RootState) => state.bookmark.event);
-    // const bookmarkChore = useSelector((state: RootState) => state.bookmark.chore);
     const bookmarkType = useSelector((state: RootState) => state.bookmark.type);
 
     const isAnimating = useSelector((state: RootState) => state.bookmark.isAnimating);
-    const [animationsCompleted, setAnimationsCompleted] = useState(0); 
+    const [animationsCompleted, setAnimationsCompleted] = useState<number>(0); 
 
     const choreBookmarkRef = useRef<HTMLDivElement>(null);
     const eventBookmarkRef = useRef<HTMLDivElement>(null);
 
     const startAnimation = (target : "chore" | "event") => {
-        dispatch(setAnimating(true));
         setAnimationsCompleted(0); 
+        dispatch(setAnimating(true));
+        console.log(animationsCompleted, 1)
+        
         const onComplete = () => {
             setAnimationsCompleted(prev => prev + 1);
         };
-        
+        console.log(animationsCompleted, 2)
         if (bookmarkType === "chore") {
+            console.log("in first animation")
             animateBookmark2Elements(choreBookmarkRef.current, eventBookmarkRef.current, 150, 100, onComplete);
+            console.log(animationsCompleted, 3)
         } else {
+            console.log("in second animation")
             animateBookmark2Elements(eventBookmarkRef.current, choreBookmarkRef.current, 150, 100, onComplete);
         }
     }
@@ -59,6 +63,10 @@ const Bookmark: React.FC = () => {
             dispatch(setAnimating(false));
         }
     }, [animationsCompleted, dispatch]);
+
+    // useEffect(() => {
+    //     setAnimationsCompleted(1); 
+    // }, [])
 
     const animateElement = (finalHeight: number, element: HTMLElement, onComplete: () => void) => {
         const initialHeight = element.clientHeight;

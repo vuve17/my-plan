@@ -24,11 +24,13 @@ const containerWidth = {
 };
 
 const containerHeight = {
+  xl: "calc(100vh - 80px)",
   lg: "calc(100vh - 80px)",
-  md: "100%",
-  sm: "100%",
-  xs: "100%",
+  md: "calc(100vh - 80px)",
+  sm: "calc(100vh - 80px)",
+  xs: "calc(100vh - 80px)",
 }
+
 
 
 const mobileContainerStyle = {
@@ -91,13 +93,13 @@ const SidebarCalendars:React.FC = () => {
         position: "relative", 
         display: 'flex',
         flexDirection: 'column',
-        overflow: isMobile ? "auto" : "hidden",
+        overflow: isMobile ? "scroll" : "hidden",
         width: {
           ...containerWidth
         },
-        height: {
-          ...containerHeight
-        },
+        height: 
+          isMobile ? "calc(100vh - 80px)" : "100%"
+        ,
         zIndex: 50,
         bottom: 0,
         left: 0,

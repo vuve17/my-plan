@@ -33,6 +33,12 @@
 //     },
 // });
 
+        // setActiveType(state, action) {
+            // activeType =  'chore' | 'event' | 'task' | 'appointment'
+        //     state.activeType = action.payload;  // Directly set the active type based on action payload
+        //     console.log("activeType:", state.activeType);
+        // },
+
 // export default bookmarkSlice 
 // export const  { toggleBookmarkValues, setAnimating } = bookmarkSlice.actions
 
@@ -59,11 +65,7 @@ const bookmarkSlice = createSlice({
         setAnimating(state, action) {
             state.isAnimating = action.payload;
         },
-        // setActiveType(state, action) {
-            // activeType =  'chore' | 'event' | 'task' | 'appointment'
-        //     state.activeType = action.payload;  // Directly set the active type based on action payload
-        //     console.log("activeType:", state.activeType);
-        // },
+
     },
 });
 

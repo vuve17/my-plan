@@ -23,6 +23,7 @@ const colors = {
             Text: "#9A3412",
             Background: "#FED7AA",
             Stroke: "#9A3412",
+            TimeBackground: "#BFDBFE"
         },
     },
     stars: {
