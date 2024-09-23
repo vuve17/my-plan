@@ -39,7 +39,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openTaskModal }) =
     const [isTask2Short, setIsTask2Short] = useState<boolean>(false);
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
     const titleAndDescriptionContainer = isMobile ? "4px" : "8px"
-    console.log(titleAndDescriptionContainer, " titleAndDescriptionContainer")
+    // console.log(titleAndDescriptionContainer, " titleAndDescriptionContainer")
 
 
     function sliceString(inputString: string, func: React.Dispatch<React.SetStateAction<string>>, maxLength: number) {

@@ -9,6 +9,8 @@ import { PreviousArrow, NextArrow } from './calendar-navigation-arrows';
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { setSelectedDate } from '@/app/redux/selected-date-slice';
+import { setSchedulerVisibility } from '@/app/redux/scheduler-visibility-slice';
+
 
 export const dynamic = 'force-dynamic'
 
@@ -32,17 +34,11 @@ const containerHeight = {
 }
 
 
-
-const mobileContainerStyle = {
-  top: 0,
-  right: 0,
-  position: "fixed",
-}
-
 const SidebarCalendars:React.FC = () => {
 
   const dispatch = useDispatch();
   const isMobile = useSelector((state : RootState) => state.screen.isMobile)
+  const schedulerVisibility = useSelector((state : RootState) => state.schedulerVisibility.schedulerVisibility)
   const selectedDate = useSelector((state: RootState) => state.selectedDate.selectedDate)
   const [date, setDate] = useState<Date | null>(new Date(selectedDate));
   const visibleMonths = isMobile ? 12 : 2;
@@ -56,7 +52,13 @@ const SidebarCalendars:React.FC = () => {
         setDate(newDate)
         const dateToIsoStirng = newDate.toISOString()
         dispatch(setSelectedDate(dateToIsoStirng))
+        dateSelectedFunction()
       } 
+    }
+
+    function dateSelectedFunction() {
+        setCheckNavIconClass(!checkNavIconClass)
+        dispatch(setSchedulerVisibility(!schedulerVisibility))
     }
 
     useEffect(() => {

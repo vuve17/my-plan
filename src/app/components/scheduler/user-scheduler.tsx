@@ -3,7 +3,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import { Box, IconButton, Snackbar, Alert } from '@mui/material';
 import colors from "@/app/ui/colors";
-import CreateTaskModal from "../create-task-modal";
+import CreateTaskModal from "./modals/create-task-modal";
 import { NextArrow, PreviousArrow } from './scheduler_utils/scheduler-navigation-arrows';
 import UserSchedulerColumn from "./user-scheduler-column";
 import TimeTable from "./user-scheduler-day-time";
@@ -69,7 +69,7 @@ const UserScheduler : React.FC = () => {
         setTaskModalDate(dateTime.date.toISOString())
         setIsTaskModalActive(true)
     }
-
+    console.log("scheduler is rendering ")
     const handleSnackbarOpen = () => {
         dispatch(setIsSnackBarOpen(true))
     }

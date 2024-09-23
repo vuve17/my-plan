@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Box, Grid } from '@mui/material';
 import colors from '../ui/colors';
-import CreateTaskModal from './create-task-modal';
 
 interface TaskMenuProps {}
 

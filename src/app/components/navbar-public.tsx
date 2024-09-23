@@ -40,6 +40,9 @@ const NavBar: React.FC = () => {
                       width={40}
                       height={40} 
                       priority
+                      style={{
+                        cursor: "pointer",
+                      }}
                     />
                   </i>
                 </button>

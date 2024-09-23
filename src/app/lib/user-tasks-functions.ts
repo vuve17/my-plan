@@ -76,7 +76,7 @@ export function formatJsonWithCellIds(tasks: UserTasksStringValuePairFormat) {
         const cellId = getCellIdFromStringTask(Array.isArray(value) ? value[0] : value);
         taskGroup[cellId] = Array.isArray(value) ? value : value;
     });
-    console.log("taskGroup: ", taskGroup)
+    // console.log("taskGroup: ", taskGroup)
     return taskGroup;
 }
 
@@ -95,7 +95,6 @@ export function confirmTaskType(task: any): task is Task {
 
 export async function getTasks() {
     const token = Cookies.get("refreshToken")
-    console.log("tokennnn:", token)
     const response = await fetch('/api/get-tasks', {
         method: 'GET',
         headers: {

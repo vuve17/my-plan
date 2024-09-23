@@ -7,7 +7,6 @@ import type { Task } from '@/app/lib/types';
 import { getDifferenceInHoursAndMinutes } from '../../../lib/date-functions';
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
-import CreateTaskModal from "../../create-task-modal";
 
 interface taskProps {
     task: Task,
@@ -29,7 +28,13 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
 
     function sliceString(inputString: string, func: React.Dispatch<React.SetStateAction<string>>, maxLength: number) {
+        
+        // console.log("maxLength: ", maxLength);
+
+        
         if (maxLength === 0) {
+            // console.log(0, "ZERO");
+            
             func("");
         } else {
             const str = inputString.substring(0, maxLength) + "...";

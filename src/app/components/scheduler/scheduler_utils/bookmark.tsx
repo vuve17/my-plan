@@ -42,18 +42,18 @@ const Bookmark: React.FC = () => {
     const startAnimation = (target : "chore" | "event") => {
         setAnimationsCompleted(0); 
         dispatch(setAnimating(true));
-        console.log(animationsCompleted, 1)
+        // console.log(animationsCompleted, 1)
         
         const onComplete = () => {
             setAnimationsCompleted(prev => prev + 1);
         };
         console.log(animationsCompleted, 2)
         if (bookmarkType === "chore") {
-            console.log("in first animation")
+            console.log("in chore animation")
             animateBookmark2Elements(choreBookmarkRef.current, eventBookmarkRef.current, 150, 100, onComplete);
             console.log(animationsCompleted, 3)
         } else {
-            console.log("in second animation")
+            console.log("in event animation")
             animateBookmark2Elements(eventBookmarkRef.current, choreBookmarkRef.current, 150, 100, onComplete);
         }
     }

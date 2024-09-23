@@ -1,7 +1,7 @@
 'use client'
 
 import { Box } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import UserSchedulerCell from "./user-scheduler-cell";
 import colors from "@/app/ui/colors";
 import { useSelector, useDispatch } from "react-redux";
@@ -12,7 +12,6 @@ import { setTasks } from "@/app/redux/tasks-slice";
 
 interface UserSchedulerColumnProps {
     date: Date,
-    // onClick: (id:string) => void,
     headingDayName: string,
     headingDate: string,
     colNumber: number,
@@ -26,9 +25,9 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
     const tasksStringifyed = useSelector((state: RootState) => state.tasks.tasks)
     const tasks = tasksStringifyed ? convertTaskStringToTask(tasksStringifyed) : null
     
-
-    const daySchedule = [];
-    for (let j = 0; j < 24; j++) {
+    const generatedSchedulerCells = useMemo(() => {
+        const daySchedule = [];
+        for (let j = 0; j < 24; j++) {
         const current_day_hour = `${(props.date.getMonth() + 1).toString().padStart(2, '0')}${props.date.getDate().toString().padStart(2, '0')}${props.date.getFullYear()}_${j}`;            
 
             daySchedule.push(
@@ -39,22 +38,29 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
                     tasks={ tasks ? tasks[current_day_hour] : null}
                 />
             )
-    }
-
-    useEffect(() => { // <-- Added useEffect for fetching tasks
-        async function fetchAndSetTasks() { // <-- Added async function for task fetching
-            try {
-                const fetchedTasks = await getTasks(); // <-- Await the async getTasks function
-                if (fetchedTasks) {
-                    dispatch(setTasks(fetchedTasks)); // <-- Dispatch action to update tasks in Redux
-                }
-            } catch (error) {
-                console.error("Error fetching tasks:", error); // <-- Error handling
-            }
-        }
+         }
+         return daySchedule
+    }, [tasks, props.date, props.colNumber]);
     
-        fetchAndSetTasks(); // <-- Invoke the async function
-    }, []);
+    // useEffect(() => {
+    //     async function fetchAndSetTasks() { 
+    //         try {
+    //             const fetchedTasks = await getTasks(); 
+    //             if (fetchedTasks) {
+    //                 dispatch(setTasks(fetchedTasks)); 
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching tasks:", error); 
+    //         }
+    //     }
+    //     fetchAndSetTasks(); 
+    // }, [dispatch]);
+
+    //  }
+//     taskType: 'chore'
+//     taskType: 'chore'
+//   }
+// }
     
     
     return(
@@ -135,7 +141,7 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
                         }}
                         
                     >
-                        {daySchedule} 
+                        {generatedSchedulerCells} 
                     </Box>
                     
                 </Box>

@@ -4,16 +4,16 @@ import React, { useState, useEffect, useRef, } from "react";
 import { Form, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import {Backdrop, Box, TextField, Button, Paper, Grid, OutlinedInput, InputLabel, Snackbar, IconButton } from '@mui/material';
-import DatePickerInput from "./calendar/input-date-picker";
+import DatePickerInput from "../../calendar/input-date-picker";
 import moment from "moment";
 import Cookies from "js-cookie";
-import { getTasks } from "../lib/user-tasks-functions";
+import { getTasks } from "../../../lib/user-tasks-functions";
 import { Source_Serif_4 } from "next/font/google";
-import Bookmark from "./scheduler/scheduler_utils/bookmark";
+import Bookmark from "../scheduler_utils/bookmark";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from '../redux/store';
-import { Task } from "../lib/types";
-import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "../redux/snackbar-slice";
+import { RootState } from '../../../redux/store';
+import { Task } from "../../../lib/types";
+import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "../../../redux/snackbar-slice";
 import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/create-taks-modal-slice';
 import { setTasks } from "@/app/redux/tasks-slice";
 
@@ -21,22 +21,8 @@ export const dynamic = 'force-dynamic'
 
 // const timeType = /^([01][0-9]|2[0-3]):[0-5][0-9]$/
 
-interface CreateTaskModalProps {
-    // cancel: () => void,
-    // date?: Date,
-    // openSnackbar: () => void,
-    // snackbarText: (text: string) => void
-    // setSnackbarAlertState: (text : "success" | "warning" | "error" ) => void,
-    task?: Task,
-}
 
-const  sliceDescription = (text: string) => {
-    const spaces = text.indexOf(" ", -1)
-    // console.log(spaces)
-}
-
-function TimeHours(time: string) {
-
+function TimeHours(time: string) { 
     return Number(time.slice(0,2))
 }
 
@@ -114,7 +100,7 @@ let newTaskSchema = Yup.object().shape({
         }
         return true;
     }),
-    descripton: Yup.string().max(255).min(0),
+    description: Yup.string().max(255).min(0),
     taskType: Yup.string().required().oneOf(['chore', 'event']).strict(true),
 
 })
@@ -154,7 +140,7 @@ const endHours = startHours + 1;
 const currentStartTime = startHours.toString().padStart(2, '0') + ":00";
 const currentEndTime = endHours.toString().padStart(2, '0') + ":00";
 
-const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
+const CreateTaskModal: React.FC = () => {
 
     // const [twelvePmNewDay, setTwelvePmNewDay] = useState<Boolean>(false)
     const backDropRef = useRef<HTMLDivElement>(null)
@@ -186,13 +172,13 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
 
      const formik = useFormik({
         initialValues : {
-            title: props.task?.title || "",
-            startDate: props.task?.startDate || initialStartDate ,
-            startTime: createStartPropsTime(props.task?.startDate.getHours()) || initialStartTime ,
-            endDate:  props.task?.endDate || initialEndDate,
-            endTime: createEndPropsTime(props.task?.endDate.getHours()) || initialEndTime,
-            description: props.task?.description || "",
-            taskType: props.task?.taskType || bookmarkType
+            title: "",
+            startDate: initialStartDate ,
+            startTime: initialStartTime ,
+            endDate: initialEndDate,
+            endTime: initialEndTime,
+            description: "",
+            taskType: bookmarkType
         },
         // provjeriti kako se bookmark sprema u bazu (je li boolean ili string)
                         // vrijeme u bazi je još dalje jedno manje nego kako bi trebalo biti
@@ -222,8 +208,10 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                     body: JSON.stringify({
                         description: sentData.description,
                         title: sentData.title,
-                        startDate: sentData.startDate.toISOString().replace("T", " "),
-                        endDate: sentData.endDate.toISOString().replace("T", " "),
+                        // startDate: sentData.startDate.toISOString().replace("T", " "),
+                        // endDate: sentData.endDate.toISOString().replace("T", " "),
+                        startDate: sentData.startDate.toISOString(),
+                        endDate: sentData.endDate.toISOString(),
                         taskType: sentData.taskType
                     })
                 });
@@ -239,9 +227,8 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                     if(tasks)
                     {
                         dispatch(setTasks(tasks))
-                        console.log(tasks);
+                        // console.log(tasks);
                     }
-                    console.log(tasks);
                 } 
                 else {
                     dispatch(setSnackBarText("Failed to create task"))
@@ -329,8 +316,6 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                         >
 
                                 <Bookmark 
-                                
-                                
                                 />
                                 
                                 
@@ -493,7 +478,9 @@ const CreateTaskModal: React.FC <CreateTaskModalProps> = ({...props}) => {
                                         value={formik.values.description}
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
-                                    />          
+                                    />
+
+                                    {formik.errors.description && formik.touched.description ? <div>Description must be under 255 characters</div> : null}          
                                 </Grid>   
                                           
                                 

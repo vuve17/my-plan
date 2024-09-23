@@ -28,8 +28,11 @@ const UserTaskSlice = createSlice({
             }
             state.selectedTask = null; 
         },
+        setSelectedTask(state, action: PayloadAction<TaskString>) {
+            state.selectedTask = action.payload
+        }   
     },
 });
 
-export const { setTasks, getTask } = UserTaskSlice.actions;
+export const { setTasks, getTask, setSelectedTask } = UserTaskSlice.actions;
 export default UserTaskSlice.reducer;

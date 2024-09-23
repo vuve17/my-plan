@@ -8,6 +8,7 @@ import { getDifferenceInHoursAndMinutes } from '../../../lib/date-functions';
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 
+
 interface taskProps {
     // tasks: UserTasksValuePairFormat,
     tasks: Task[],
@@ -32,7 +33,8 @@ const UserMutipleTasks: React.FC<taskProps> = ({
     const [startTime, setStartTime] = useState<Date>(new Date())
     const [endTime, setEndTime] = useState<Date>(new Date())
     const [taskArray, setTaskArray] = useState<React.JSX.Element[]>([]);
-    
+    const [taskTooShortToDisplayAll, setTaskTooShortToDisplayAll] = useState<boolean>(false)
+
     function findEarliestTime (dates : Date[]) { 
         let earliestDate = dates[0];
 
@@ -167,9 +169,11 @@ const UserMutipleTasks: React.FC<taskProps> = ({
         const diff = getDifferenceInHoursAndMinutes(startTime, endTime);
         const mutipleTasksTitle =  `${taskArray.length} tasks occuring`
         if (diff.hours <= 1) {
+            setTaskTooShortToDisplayAll(true)
             setHeight("calc(100% - 4px)");
             setTitle(mutipleTasksTitle)
         } else {
+            setTaskTooShortToDisplayAll(diff.hours <= 3 ? true : false)
             const percentage = (diff.minutes / 60) * 100;
             const roundedPercentage = Math.round(percentage * 100) / 100;
             const time = (diff.hours * 100) + roundedPercentage;
@@ -184,7 +188,6 @@ const UserMutipleTasks: React.FC<taskProps> = ({
     // }, [tasks]); 
     
     useEffect(() => {
-        console.log("render")
         structureMultipleTaskElement(tasks);
         multipleTasksHeight(); 
     }, [tasks]); 
@@ -245,7 +248,7 @@ const UserMutipleTasks: React.FC<taskProps> = ({
                         {title}
                     </Typography>
                 </Box>
-            {taskArray}
+            { taskTooShortToDisplayAll ? taskArray : null}
         </Box>
     );
 }

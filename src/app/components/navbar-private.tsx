@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import colors from '../ui/colors';
 import NavLinksPrivate from '../ui/nav-links-private';
@@ -54,6 +53,9 @@ const NavBar: React.FC <NavbarProps> = ({...props}) => {
                     width={40}
                     height={40} 
                     priority
+                    style={{
+                      cursor: "pointer",
+                    }}
                   />
                 </i>
               </button>
