@@ -58,7 +58,7 @@ const SidebarCalendars:React.FC = () => {
 
     function dateSelectedFunction() {
         setCheckNavIconClass(!checkNavIconClass)
-        dispatch(setSchedulerVisibility(!schedulerVisibility))
+        isMobile ? dispatch(setSchedulerVisibility(!schedulerVisibility)) : null
     }
 
     useEffect(() => {

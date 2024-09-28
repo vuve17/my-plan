@@ -65,7 +65,6 @@ const bookmarkSlice = createSlice({
         setAnimating(state, action) {
             state.isAnimating = action.payload;
         },
-
     },
 });
 

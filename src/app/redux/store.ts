@@ -9,6 +9,7 @@ import testSlice from './test-slice';
 import snackbarSlice from './snackbar-slice';
 import createTaskModalSlice from './create-taks-modal-slice';
 import UserTaskSlice from './tasks-slice';
+import achievementsSlice from './achievements-slice';
 
 export const store = configureStore({
   reducer: {
@@ -19,7 +20,8 @@ export const store = configureStore({
       test: testSlice,
       snackbar: snackbarSlice,
       createTaskModal: createTaskModalSlice,
-      tasks: UserTaskSlice
+      tasks: UserTaskSlice,
+      achievements: achievementsSlice,
   },
 })
 

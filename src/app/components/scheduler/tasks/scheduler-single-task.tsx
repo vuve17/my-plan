@@ -26,40 +26,48 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
     const [title, setTitle] = useState<string>(task.title);
     const [height, setHeight] = useState<string | number>();
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
+    const [oneHourTaskWithLongTitle, setOneHourTaskWithLongTitle] = useState<boolean>(false)
 
-    function sliceString(inputString: string, func: React.Dispatch<React.SetStateAction<string>>, maxLength: number) {
-        
-        // console.log("maxLength: ", maxLength);
+    const [topOffset, setTopOffset] = useState<string | number>(0);
 
+    function sliceString(inputString: string, func: React.Dispatch<React.SetStateAction<string>>, maxLength: number, oneHourTask: boolean) {
         
-        if (maxLength === 0) {
-            // console.log(0, "ZERO");
-            
-            func("");
-        } else {
-            const str = inputString.substring(0, maxLength) + "...";
-            func(str);
-        }
+            if(inputString.length <= maxLength)
+            {
+                func(inputString)
+            } else {
+                const str = inputString.substring(0, maxLength) + "...";
+                func(str);
+                if(oneHourTask){
+                    setOneHourTaskWithLongTitle(true)
+                }
+            }        
     }
+    
     // task < 4, heading 25 po satu
     function descriptionAndHeighLenght(task: Task) {
         const diff = getDifferenceInHoursAndMinutes(task.startDate, task.endDate);
         if (diff.hours <= 1) {
             setHeight("calc(100% - 4px)");
-            sliceString(task.description, setDescription, 0);
-            sliceString(task.title, setTitle, 25)
+            sliceString(task.description, setDescription, 0, false);
+            sliceString(task.title, setTitle, 15, true)
         } else {
             const percentage = (diff.minutes / 60) * 100;
             const roundedPercentage = Math.round(percentage * 100) / 100;
             const time = (diff.hours * 100) + roundedPercentage;
             // console.log(time, "time") 
-            const bordersheight = (diff.hours -1)
-            const newHeight = `calc(${time}% - 4px + ${bordersheight}px )`;
+            const bordersHeight = (diff.hours -1)
+            const newHeight = `calc(${time}% - 4px + ${bordersHeight}px )`;
             const charsPerHourDes = 45 * diff.hours;
             const charsPerHourTitle = 10 * diff.hours
+
+            const startMinutes = task.startDate.getMinutes();
+            const topPercentage = (startMinutes / 60) * 100; 
+            setTopOffset(`${topPercentage}%`);
+
             setHeight(newHeight);
-            sliceString(task.description, setDescription, charsPerHourDes);
-            sliceString(task.title, setTitle, charsPerHourTitle)
+            sliceString(task.description, setDescription, charsPerHourDes, false);
+            sliceString(task.title, setTitle, charsPerHourTitle, false)
         }
     }
 
@@ -70,6 +78,8 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
     return (
         <Box
             sx={{
+                // position: 'absolute',  // NEW: Make the task absolutely positioned inside its parent cell
+                top: topOffset,
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
@@ -113,9 +123,9 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
                         fontSize: {
                             xs: "12px",
                             sm: "14px",
-                            md: "1em",
-                            lg: "1.2em",
-                            xl: "1.5em"
+                            md: "18px",
+                            lg: "1em",
+                            xl: "1em"
                         },
                         textAlign: "left",
                     }}
@@ -124,6 +134,8 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
                 </Typography>
             </Box>
 
+            {isMobile ? null : 
+            
             <Typography
                 variant="body1"
                 sx={{
@@ -135,9 +147,13 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
                     flexGrow: 1,
                 }}
             >
-                {isMobile ? null : description}
+                 {description}
             </Typography>
 
+            }
+
+
+        { oneHourTaskWithLongTitle && isMobile ? null :
             <Box
                 sx={{
                     display: "flex",
@@ -145,12 +161,18 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
                         sm: 'center',
                         md: 'flex-end',
                     },
+                    marginTop: {
+                        sm: "auto",
+                        md: " margin-top: -5px",
+                        lg: "auto"
+                    },
                     alignItems: "center",
                     backgroundColor: colors.tasks[task.taskType]?.TimeBackground,
                     padding: {
-                        xs: "4px 8px",
-                        sm: "4px 8px",
-                        md: "4px 8px",
+                        xs: "4px 2px",
+                        sm: "2px 4px",
+                        md: "2px 8px 2px 4px",
+                        xl: "4px 8px",
                     },
                 }}
             >
@@ -174,6 +196,8 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
                     {startTime} - {endTime}
                 </Typography>
             </Box>
+
+        }
         </Box>
     );
 }

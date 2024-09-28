@@ -1,13 +1,13 @@
 'use client'
 
 import { Box } from "@mui/material";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import UserSchedulerCell from "./user-scheduler-cell";
 import colors from "@/app/ui/colors";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { headerHeight, columnWidth, fixedDanHeaderWidth, marginTopClassDanScheduler } from "@/app/utils/index.js"
-import { convertTaskStringToTask, getTasks } from '../../lib/user-tasks-functions';
+import { convertTaskStringToTaskValuePair, getTasks } from '../../lib/user-tasks-functions';
 import { setTasks } from "@/app/redux/tasks-slice"; 
 
 interface UserSchedulerColumnProps {
@@ -17,13 +17,13 @@ interface UserSchedulerColumnProps {
     colNumber: number,
 }
 
-
 const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => {
     
     const dispatch = useDispatch()
     const isMobile = useSelector((state : RootState) => state.screen.isMobile)
     const tasksStringifyed = useSelector((state: RootState) => state.tasks.tasks)
-    const tasks = tasksStringifyed ? convertTaskStringToTask(tasksStringifyed) : null
+    const tasks = tasksStringifyed ? convertTaskStringToTaskValuePair(tasksStringifyed) : null
+    const tasksRefFlag = useRef<boolean>(true)
     
     const generatedSchedulerCells = useMemo(() => {
         const daySchedule = [];
@@ -42,26 +42,7 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
          return daySchedule
     }, [tasks, props.date, props.colNumber]);
     
-    // useEffect(() => {
-    //     async function fetchAndSetTasks() { 
-    //         try {
-    //             const fetchedTasks = await getTasks(); 
-    //             if (fetchedTasks) {
-    //                 dispatch(setTasks(fetchedTasks)); 
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching tasks:", error); 
-    //         }
-    //     }
-    //     fetchAndSetTasks(); 
-    // }, [dispatch]);
 
-    //  }
-//     taskType: 'chore'
-//     taskType: 'chore'
-//   }
-// }
-    
     
     return(
                 <Box

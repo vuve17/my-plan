@@ -5,9 +5,6 @@ import { Box, Card, CardActions, CardContent, CardMedia, Typography, Grid, useMe
 import AchievementStars from "./achievement-stars";
 import { Achievement } from "../../../lib/types";
 
-// interface AchievementKey extends Achievement {
-//     key: number
-// }
 
 const AchievementCard: React.FC<Achievement> = ({...props}) => {
 

@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
         console.log(tasks.rows);
         
         const jsonFormattedTasks =  formatTasksByTimeOverlap(tasks.rows);
-        console.log("jsonFormattedTasks: backend : ", jsonFormattedTasks);
+        // console.log("jsonFormattedTasks: backend : ", jsonFormattedTasks);
 
         
         return NextResponse.json({tasks : jsonFormattedTasks}, {status: 200});

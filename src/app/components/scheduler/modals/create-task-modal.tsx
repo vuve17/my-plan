@@ -21,7 +21,6 @@ export const dynamic = 'force-dynamic'
 
 // const timeType = /^([01][0-9]|2[0-3]):[0-5][0-9]$/
 
-
 function TimeHours(time: string) { 
     return Number(time.slice(0,2))
 }
@@ -33,7 +32,8 @@ function TimeMinutes(time: string) {
 
 function setDateTime (date: Date, time: string) {
     const newDate = new Date(date)
-    newDate.setHours(TimeHours(time)+1)
+    newDate.setHours(TimeHours(time))
+    // newDate.setHours(TimeHours(time)+1)
     newDate.setMinutes(TimeMinutes(time))
     return newDate
 }
@@ -85,10 +85,6 @@ let newTaskSchema = Yup.object().shape({
     .string()
     .matches(/^([01][0-9]|2[0-3]):[0-5][0-9]$/)
     .required("Start time is required"),
-    // .test("is-earlier", "Start time should be earlier than end time", function(value) {
-    //   const { endTime } = this.parent;
-    //   return moment(value, "HH:mm").isSameOrBefore(moment(endTime, "HH:mm"));
-    // }),
     endTime: Yup
     .string()
     .matches(/^([01][0-9]|2[0-3]):[0-5][0-9]$/)

@@ -13,10 +13,6 @@ import Bookmark from './components/scheduler/scheduler_utils/bookmark';
 
 export const dynamic = "force-dynamic"
 
-interface ApiResponse {
-    eventTimeTz: string;
-    message?: string;
-}
 
 export default function Page() {
 
@@ -26,11 +22,6 @@ export default function Page() {
         <NavBar />
             <div style={{ display: "flex", flexDirection: "row", position: "relative", marginTop: "80px"}}>
                 
-                {/* <Button
-                onClick={insertDateInDb}
-                >
-                    click me
-                </Button> */}
     
                 {/* <SidebarCalendars /> */}
 

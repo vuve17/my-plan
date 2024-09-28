@@ -25,15 +25,12 @@ export type Achievement = {
     stars: 0 | 1 | 2 | 3;
 }
 
-
 // task types
-
 
 // export enum TaskType {
 //     Event = "event",
 //     Chore = "chore"
 // }
-
 
 export type TaskType = "event" | "chore"
 

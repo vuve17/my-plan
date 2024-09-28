@@ -13,7 +13,6 @@ import { RootState } from "@/app/redux/store";
 interface taskProps {
     task1: Task ,
     task2: Task ,
-    openTaskModal?: (task: Task) => void,
 }
 
 function formatTime(date: Date) {
@@ -22,37 +21,73 @@ function formatTime(date: Date) {
     return `${hours}:${minutes}`;
 }
 
-const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openTaskModal }) => {
+const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
     const startTime = formatTime(task1.startDate);
     const endTime = formatTime(task1.endDate);
     const startTime2 = formatTime(task2.startDate);
     const endTime2 = formatTime(task2.endDate);
 
+    // const task1StartDate = 
+
     const [description, setDescription] = useState<string>(task1.description);
     const [description2, setDescription2] = useState<string>(task2.description);
-
     const [title, setTitle] = useState<string>(task1.title);
     const [title2, setTitle2] = useState<string>(task2.title);
     const [height, setHeight] = useState<string | number>("auto");
     const [height2, setHeight2] = useState<string | number>("auto");
     const [isTask1Short, setIsTask1Short] = useState<boolean>(true);
     const [isTask2Short, setIsTask2Short] = useState<boolean>(false);
+    const [topOffset1, setTopOffset1] = useState<number | string>("")
+    const [topOffset2, setTopOffset2] = useState<number | string>("")
+
+    const test = (new Date(task2.startDate).getHours() ) - (new Date(task1.startDate).getHours())
+
+    console.log("task1.startDate: ", new Date(task1.startDate));
+    console.log("task2.startDate: ", new Date(task2.startDate));
+    console.log("test: ", test);
+    
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
+
     const titleAndDescriptionContainer = isMobile ? "4px" : "8px"
-    // console.log(titleAndDescriptionContainer, " titleAndDescriptionContainer")
 
-
-    function sliceString(inputString: string, func: React.Dispatch<React.SetStateAction<string>>, maxLength: number) {
-        // ovdje ne prepoznaje 0
-        if (maxLength === 0) {
-            func("");
+    function getDiffInHours(task1 : Task, task2 : Task) {
+        const task1Hours = new Date(task1.startDate).getHours() === 0 ? 24 : new Date(task1.startDate).getHours()
+        const task2Hours = new Date(task2.startDate).getHours() === 0 ? 24 : new Date(task2.startDate).getHours()
+        if(task1Hours > task2Hours)
+        {
+            const diff = task1Hours - task2Hours
+            return diff
+        } else if (task1Hours < task2Hours) {
+            const diff = task2Hours - task1Hours
+            return diff
         } else {
-            const str = inputString.substring(0, maxLength) + "...";
-            func(str);
+            return 0
         }
     }
 
-    function descriptionAndHeightLength(task: Task, setHeightFunc : React.Dispatch<React.SetStateAction<string | number>>, setTitleFunc : React.Dispatch<React.SetStateAction<string>>, setDescriptionFunc : React.Dispatch<React.SetStateAction<string>>, setIsTaskShort : React.Dispatch<React.SetStateAction<boolean>>) {
+    function sliceString(inputString: string, func: React.Dispatch<React.SetStateAction<string>>, maxLength: number) {
+        if(inputString.length <= maxLength)
+            {
+                func(inputString)
+            } else {
+                const str = inputString.substring(0, maxLength) + "...";
+                func(str);
+                // if(oneHourTask){
+                //     setOneHourTaskWithLongTitle(true)
+                // }
+            } 
+    }
+
+    function descriptionAndHeightLength(task: Task, 
+        setHeightFunc : React.Dispatch<React.SetStateAction<string | number>>,
+        setTitleFunc : React.Dispatch<React.SetStateAction<string>>, 
+        setDescriptionFunc : React.Dispatch<React.SetStateAction<string>>, 
+        setIsTaskShort : React.Dispatch<React.SetStateAction<boolean>>, 
+        setTopOffset : React.Dispatch<React.SetStateAction<number | string>>,
+        offsetLaterTask ?: boolean
+    )
+        
+    {
         const diff = getDifferenceInHoursAndMinutes(task.startDate, task.endDate);
         if (diff.hours <= 1 ) {
             setHeightFunc("calc(100% - 4px)");
@@ -63,9 +98,16 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openTaskModal }) =
             const percentage = (diff.minutes / 60) * 100;
             const roundedPercentage = Math.round(percentage * 100) / 100;
             const time = (diff.hours * 100) + roundedPercentage;
-            const newHeight = `calc(${time}% - 4px)`;
+            const bordersHeight = (diff.hours -1)
+            const newHeight = `calc(${time}% - 4px + ${bordersHeight}px)`;
             const charsPerHourDes = 15 * diff.hours;
             const charsPerHourTitle = 10 * diff.hours;
+
+            const startMinutes = task.startDate.getMinutes();
+            const topPercentage = (startMinutes / 60) * 100; 
+            const hourDiff = offsetLaterTask ? getDiffInHours(task1, task2) : null
+
+            setTopOffset(`${hourDiff ? hourDiff : ""}${topPercentage}%`);
             setHeightFunc(newHeight);
             sliceString(task.description, setDescriptionFunc, charsPerHourDes);
             sliceString(task.title, setTitleFunc, charsPerHourTitle);
@@ -74,30 +116,23 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openTaskModal }) =
     }
 
     useEffect(() => {
-        descriptionAndHeightLength(task1, setHeight, setTitle, setDescription, setIsTask1Short);
-        descriptionAndHeightLength(task2, setHeight2, setTitle2, setDescription2, setIsTask2Short);
+        descriptionAndHeightLength(task1, setHeight, setTitle, setDescription, setIsTask1Short, setTopOffset1);
+        descriptionAndHeightLength(task2, setHeight2, setTitle2, setDescription2, setIsTask2Short, setTopOffset2, true);
     }, [task1, task2]);
 
     return (
-
-        // iz nekog razloga se izgubi 20 %
-        // <Box height={"520%"}
-        // sx={{
-        //     backgroundColor: colors.tasks[task1.taskType]?.Background,
-        // }}
-        // >
-        // </Box>
 
         <Box
             sx={{
                 display: "flex",
                 width: "100%", 
                 height: "inherit",
-                // marginTop: "2px"
             }}
         >
             <Box
                 sx={{
+                    position: 'relative',
+                    top: topOffset1,
                     display: "flex",
                     flexDirection : "column",
                     width: "50%",
@@ -116,7 +151,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openTaskModal }) =
                     
                 }}
                 key={task1.id}
-                onClick={() => openTaskModal?.(task1)}
+                // onClick={() => openTaskModal(task1)}
             >
                  <Box
                     sx={{
@@ -212,6 +247,8 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openTaskModal }) =
     
             <Box
                 sx={{
+                    position: 'relative',
+                    top: topOffset2,
                     display: "flex",
                     flexDirection : "column",
                     width: "50%",
@@ -230,7 +267,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openTaskModal }) =
                     
                 }}
                 key={task2.id}
-                onClick={() => openTaskModal?.(task2)}
+                // onClick={() => openTaskModal(task2)}
             >
                  <Box
                     sx={{

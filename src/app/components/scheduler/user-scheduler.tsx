@@ -1,3 +1,7 @@
+
+
+
+
 'use client'
 
 import React, {useEffect, useRef, useState} from "react";
@@ -14,6 +18,8 @@ import { setSelectedDate } from '@/app/redux/selected-date-slice';
 import { headerHeight } from '@/app/utils/index.js';
 import { setSnackBarText, setIsSnackBarOpen, setSnackbarAlertState } from "@/app/redux/snackbar-slice";
 import { setIsTaskModalActive , setTaskModalDate} from "@/app/redux/create-taks-modal-slice";
+import { getTasks } from "@/app/lib/user-tasks-functions";
+import { setTasks } from "@/app/redux/tasks-slice";
 
 export const dynamic = 'force-dynamic'
 
@@ -40,8 +46,6 @@ function getChosenDateTime(divId: string) {
 
 const UserScheduler : React.FC = () => {
 
-
-    
     const dispatch = useDispatch()
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
     const maxDateString = useSelector((state: RootState) => state.selectedDate.maxDate);
@@ -63,6 +67,7 @@ const UserScheduler : React.FC = () => {
     const [scheduleHeader, setScheduleHeader] = useState<string>('');
     const [schedule, setSchedule] = useState<JSX.Element[]>([]);
 
+    const tasksRefFlag = useRef<boolean>(true)
 
     const handleTaskModalState = (id: string) => {
         const dateTime = getChosenDateTime(id)
@@ -173,10 +178,27 @@ const UserScheduler : React.FC = () => {
             setPrevWeekArrow(false);
             setNextWeekArrow(false);
         }
-
-
     }, [selectedDate]);
 
+
+    useEffect(() => {
+        async function fetchAndSetTasks() { 
+            try {
+                const fetchedTasks = await getTasks(); 
+                if (fetchedTasks) {
+                    dispatch(setTasks(fetchedTasks)); 
+                }
+            } catch (error) {
+                console.error("Error fetching tasks:", error); 
+            }
+        }
+        if(tasksRefFlag.current)
+        {
+            console.log("calling fetchAndSetTasks()");
+            fetchAndSetTasks(); 
+            tasksRefFlag.current = false
+        }  
+    }, []);
 
     return(
         <>
@@ -304,7 +326,6 @@ const UserScheduler : React.FC = () => {
                         marginTop: 0,
                         position: isMobile ? "relative" : "fixed",
                         bottom: 0,
-                        // overflow: isMobile ? "auto" : "none" ,
                         overflowY: 'auto',
                         overflowX: isMobile ? 'auto' : 'hidden',
                         '&::-webkit-scrollbar': {
@@ -320,10 +341,9 @@ const UserScheduler : React.FC = () => {
             </Box>
 
         </>
-
     )
-
 
 }
 
 export default UserScheduler
+
