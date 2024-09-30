@@ -3,14 +3,16 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from '@mui/material';
 import colors from "@/app/ui/colors";
-import type { Task } from '@/app/lib/types';
+import type { Task, TaskString } from '@/app/lib/types';
 import { getDifferenceInHoursAndMinutes } from '../../../lib/date-functions';
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/redux/store";
+import { convertSingleTaskToTaskString } from "@/app/lib/user-tasks-functions";
+import type { UnknownAction } from "@reduxjs/toolkit";
 
 interface taskProps {
     task: Task,
-    openTaskModal?: (task: Task) => void,
+    openUpdateTaskModal: (task: TaskString) => UnknownAction,
 }
 
 function formatTime(date: Date) {
@@ -19,7 +21,8 @@ function formatTime(date: Date) {
     return `${hours}:${minutes}`;
 }
 
-const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
+const UserTask: React.FC<taskProps> = ({ task, openUpdateTaskModal }) => {
+    const dispatch = useDispatch()
     const startTime = formatTime(task.startDate);
     const endTime = formatTime(task.endDate);
     const [description, setDescription] = useState<string>(task.description);
@@ -27,8 +30,8 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
     const [height, setHeight] = useState<string | number>();
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
     const [oneHourTaskWithLongTitle, setOneHourTaskWithLongTitle] = useState<boolean>(false)
-
     const [topOffset, setTopOffset] = useState<string | number>(0);
+    const taskString = convertSingleTaskToTaskString(task)
 
     function sliceString(inputString: string, func: React.Dispatch<React.SetStateAction<string>>, maxLength: number, oneHourTask: boolean) {
         
@@ -102,7 +105,7 @@ const UserTask: React.FC<taskProps> = ({ task, openTaskModal }) => {
                 overflow: "hidden",
             }}
             key={task.id}
-            onClick={() => openTaskModal?.(task)}
+            onClick={() => dispatch(openUpdateTaskModal(taskString)) }
         >
             <Box
                 sx={{

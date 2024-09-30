@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 import { Source_Serif_4 } from "next/font/google";
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/app/redux/store';
-import { toggleBookmarkValues, setAnimating } from "@/app/redux/bookmark-slice";
+import { setBookmarkValue, setAnimating } from "@/app/redux/bookmark-slice";
 
 const SourceSerif4 = Source_Serif_4({
     weight: "700",
@@ -32,6 +32,7 @@ const bookmarkStyle = {
 const Bookmark: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const bookmarkType = useSelector((state: RootState) => state.bookmark.type);
+    const bookmarkInitalState = bookmarkType === "chore" ? true : false
 
     const isAnimating = useSelector((state: RootState) => state.bookmark.isAnimating);
     const [animationsCompleted, setAnimationsCompleted] = useState<number>(0); 
@@ -103,10 +104,10 @@ const Bookmark: React.FC = () => {
             if(bookmarkType === "event")
             {
                 startAnimation("chore")
-                dispatch(toggleBookmarkValues("chore"));
+                dispatch(setBookmarkValue("chore"));
             } else {
             startAnimation("event")
-            dispatch(toggleBookmarkValues("event"));
+            dispatch(setBookmarkValue("event"));
             }
         }
     }
@@ -116,10 +117,10 @@ const Bookmark: React.FC = () => {
             if(bookmarkType === "chore")
             {
                 startAnimation("event")
-                dispatch(toggleBookmarkValues("event"));
+                dispatch(setBookmarkValue("event"));
             } else {
             startAnimation("chore")
-            dispatch(toggleBookmarkValues("chore"));
+            dispatch(setBookmarkValue("chore"));
             }   
         }
     }
@@ -145,7 +146,7 @@ const Bookmark: React.FC = () => {
                     borderLeft: `30px solid #0081D1`,
                     borderRight: `30px solid #0081D1`,
                     marginRight: "20px",
-                    height: "150px",
+                    height: bookmarkInitalState ? "150px" : "100px",
                 }}
                 onClick={handleBookmarkClickChore}
             >
@@ -160,7 +161,7 @@ const Bookmark: React.FC = () => {
                     ...bookmarkStyle,
                     borderLeft: `30px solid #3CE239`,
                     borderRight: `30px solid #3CE239`,
-                    height: "100px",
+                    height: bookmarkInitalState ? "100px" : "150px",
                 }}
                 onClick={handleBookmarkClickEvent}
             >

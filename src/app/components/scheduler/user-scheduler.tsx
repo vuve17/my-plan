@@ -20,6 +20,8 @@ import { setSnackBarText, setIsSnackBarOpen, setSnackbarAlertState } from "@/app
 import { setIsTaskModalActive , setTaskModalDate} from "@/app/redux/create-taks-modal-slice";
 import { getTasks } from "@/app/lib/user-tasks-functions";
 import { setTasks } from "@/app/redux/tasks-slice";
+import UpdateTaskModal from "./modals/update-task-modal";
+import { convertSingleTaskStringToTask } from '../../lib/user-tasks-functions';
 
 export const dynamic = 'force-dynamic'
 
@@ -54,6 +56,9 @@ const UserScheduler : React.FC = () => {
     const snackbarAlertState : "success" | "warning" | "error" = useSelector((state: RootState) => state.snackbar.snackbarAlertState)
     const isTaskModalActive : boolean = useSelector((state : RootState) => state.createTaskModal.isTaskModalActive)
     const selectedStringDate = useSelector((state: RootState) => state.selectedDate.selectedDate)
+    const selectedTaskString = useSelector((state: RootState) => state.tasks.selectedTask)
+    const selectedTask = selectedTaskString ? convertSingleTaskStringToTask(selectedTaskString) : null
+
 
     const scheduleHeaderRef = useRef<HTMLDivElement>(null);
     const [selectedDate, setSelecteStateDate] = useState<Date>(new Date(selectedStringDate))
@@ -74,7 +79,7 @@ const UserScheduler : React.FC = () => {
         setTaskModalDate(dateTime.date.toISOString())
         setIsTaskModalActive(true)
     }
-    console.log("scheduler is rendering ")
+    // console.log("scheduler is rendering ")
     const handleSnackbarOpen = () => {
         dispatch(setIsSnackBarOpen(true))
     }
@@ -202,10 +207,20 @@ const UserScheduler : React.FC = () => {
 
     return(
         <>
-            {isTaskModalActive && 
+
+        { selectedTask ?
+            (
+                selectedTask && 
+                <UpdateTaskModal
+                task={selectedTask}
+                />
+            ) :
+
+            (isTaskModalActive && 
                 <CreateTaskModal 
                 />
-            }
+            )
+        }
 
 
             <Snackbar

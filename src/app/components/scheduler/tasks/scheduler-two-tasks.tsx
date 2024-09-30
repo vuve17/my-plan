@@ -1,18 +1,20 @@
 'use client'
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography } from '@mui/material';
 import colors from "@/app/ui/colors";
-import type { Task } from '@/app/lib/types';
+import type { Task, TaskString } from '@/app/lib/types';
 import { getDifferenceInHoursAndMinutes } from '../../../lib/date-functions';
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/redux/store";
-// import { cellHeight } from '@/app/utils';
+import { convertSingleTaskToTaskString } from "@/app/lib/user-tasks-functions";
+import type { UnknownAction } from "@reduxjs/toolkit";
 
 
 interface taskProps {
-    task1: Task ,
-    task2: Task ,
+    task1: Task,
+    task2: Task,
+    openUpdateTaskModal: (task: TaskString) => UnknownAction,
 }
 
 function formatTime(date: Date) {
@@ -21,14 +23,19 @@ function formatTime(date: Date) {
     return `${hours}:${minutes}`;
 }
 
-const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
+const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openUpdateTaskModal }) => {
+    
+    
+    
     const startTime = formatTime(task1.startDate);
     const endTime = formatTime(task1.endDate);
     const startTime2 = formatTime(task2.startDate);
     const endTime2 = formatTime(task2.endDate);
 
     // const task1StartDate = 
-
+    // console.log("task1: ", task1)
+    // console.log("task2: ", task2)
+    const dispatch = useDispatch()
     const [description, setDescription] = useState<string>(task1.description);
     const [description2, setDescription2] = useState<string>(task2.description);
     const [title, setTitle] = useState<string>(task1.title);
@@ -40,29 +47,18 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
     const [topOffset1, setTopOffset1] = useState<number | string>("")
     const [topOffset2, setTopOffset2] = useState<number | string>("")
 
-    const test = (new Date(task2.startDate).getHours() ) - (new Date(task1.startDate).getHours())
+    const task1String = convertSingleTaskToTaskString(task1)
+    const task2String = convertSingleTaskToTaskString(task2)
 
-    console.log("task1.startDate: ", new Date(task1.startDate));
-    console.log("task2.startDate: ", new Date(task2.startDate));
-    console.log("test: ", test);
-    
+    const test = (new Date(task2.startDate).getHours() ) - (new Date(task1.startDate).getHours())    
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
-
     const titleAndDescriptionContainer = isMobile ? "4px" : "8px"
 
     function getDiffInHours(task1 : Task, task2 : Task) {
-        const task1Hours = new Date(task1.startDate).getHours() === 0 ? 24 : new Date(task1.startDate).getHours()
-        const task2Hours = new Date(task2.startDate).getHours() === 0 ? 24 : new Date(task2.startDate).getHours()
-        if(task1Hours > task2Hours)
-        {
-            const diff = task1Hours - task2Hours
-            return diff
-        } else if (task1Hours < task2Hours) {
-            const diff = task2Hours - task1Hours
-            return diff
-        } else {
-            return 0
-        }
+        const task1Hours = new Date(task1.startDate).getHours()
+        const task2Hours = new Date(task2.startDate).getHours()
+        const diff = task1Hours - task2Hours
+        return Math.abs(diff) 
     }
 
     function sliceString(inputString: string, func: React.Dispatch<React.SetStateAction<string>>, maxLength: number) {
@@ -72,9 +68,6 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
             } else {
                 const str = inputString.substring(0, maxLength) + "...";
                 func(str);
-                // if(oneHourTask){
-                //     setOneHourTaskWithLongTitle(true)
-                // }
             } 
     }
 
@@ -84,30 +77,31 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
         setDescriptionFunc : React.Dispatch<React.SetStateAction<string>>, 
         setIsTaskShort : React.Dispatch<React.SetStateAction<boolean>>, 
         setTopOffset : React.Dispatch<React.SetStateAction<number | string>>,
-        offsetLaterTask ?: boolean
+        offsetHours : number
     )
         
     {
         const diff = getDifferenceInHoursAndMinutes(task.startDate, task.endDate);
+        const percentage = (diff.minutes / 60) * 100;
+        const roundedPercentage = Math.round(percentage * 100) / 100;
+        const time = (diff.hours * 100) + roundedPercentage;
+        const bordersHeight = (diff.hours -1)
+        const newHeight = `calc(${time}% - 4px + ${bordersHeight}px)`;
+        const charsPerHourDes = 15 * diff.hours;
+        const charsPerHourTitle = 10 * diff.hours;
+        const startMinutes = task.startDate.getMinutes();
+        const topPercentage = (startMinutes / 60) * 100; 
+        const totalOffset = (offsetHours * 100) + topPercentage 
+        const topOffsetString = `${totalOffset}%`
+
         if (diff.hours <= 1 ) {
             setHeightFunc("calc(100% - 4px)");
             sliceString(task.description, setDescriptionFunc, 0);
             sliceString(task.title, setTitleFunc, 12)
             setIsTaskShort(true)
-        } else {
-            const percentage = (diff.minutes / 60) * 100;
-            const roundedPercentage = Math.round(percentage * 100) / 100;
-            const time = (diff.hours * 100) + roundedPercentage;
-            const bordersHeight = (diff.hours -1)
-            const newHeight = `calc(${time}% - 4px + ${bordersHeight}px)`;
-            const charsPerHourDes = 15 * diff.hours;
-            const charsPerHourTitle = 10 * diff.hours;
-
-            const startMinutes = task.startDate.getMinutes();
-            const topPercentage = (startMinutes / 60) * 100; 
-            const hourDiff = offsetLaterTask ? getDiffInHours(task1, task2) : null
-
-            setTopOffset(`${hourDiff ? hourDiff : ""}${topPercentage}%`);
+            setTopOffset(topOffsetString);
+        } else {            
+            setTopOffset(topOffsetString);
             setHeightFunc(newHeight);
             sliceString(task.description, setDescriptionFunc, charsPerHourDes);
             sliceString(task.title, setTitleFunc, charsPerHourTitle);
@@ -116,8 +110,11 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
     }
 
     useEffect(() => {
-        descriptionAndHeightLength(task1, setHeight, setTitle, setDescription, setIsTask1Short, setTopOffset1);
-        descriptionAndHeightLength(task2, setHeight2, setTitle2, setDescription2, setIsTask2Short, setTopOffset2, true);
+        // true - task 1 je prije
+        const whosFirst = new Date(task1.startDate) < new Date(task2.startDate)  
+        const offsetHours = getDiffInHours(task1, task2)
+        descriptionAndHeightLength(task1, setHeight, setTitle, setDescription, setIsTask1Short, setTopOffset1, whosFirst ? 0 : offsetHours);
+        descriptionAndHeightLength(task2, setHeight2, setTitle2, setDescription2, setIsTask2Short, setTopOffset2, whosFirst ? offsetHours : 0);
     }, [task1, task2]);
 
     return (
@@ -131,6 +128,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
         >
             <Box
                 sx={{
+                    
                     position: 'relative',
                     top: topOffset1,
                     display: "flex",
@@ -147,10 +145,10 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
                     },
                     borderRadius: "4px",
                     overflow: "hidden",
-                    flexGrow: 1,
-                    
+                    flexGrow: 1,                    
                 }}
                 key={task1.id}
+                onClick={() => dispatch(openUpdateTaskModal(task1String)) }
                 // onClick={() => openTaskModal(task1)}
             >
                  <Box
@@ -166,6 +164,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
                             sx={{
                                 display: "inline-block",
                                 fontWeight: "bold",
+                                fontStyle: 'italic',
                                 fontSize: {
                                     xs: "12px",
                                     sm: "14px",
@@ -267,7 +266,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
                     
                 }}
                 key={task2.id}
-                // onClick={() => openTaskModal(task2)}
+                onClick={() => dispatch(openUpdateTaskModal(task2String)) }
             >
                  <Box
                     sx={{
@@ -282,6 +281,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2 }) => {
                         <Typography
                             sx={{
                                 display: "inline-block",
+                                fontStyle: 'italic',
                                 fontWeight: "bold",
                                 fontSize: {
                                     xs: "12px",

@@ -87,9 +87,14 @@ export type KeysInDb = |
     message: string
 }
 
-
 export type taskTypeColorTheme = 
 {
     fontColor: string,
     backgroundColor: string,
+}
+
+export interface apiDeletedTask {
+
+    title: string
+    status: number
 }

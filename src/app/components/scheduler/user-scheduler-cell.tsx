@@ -12,13 +12,12 @@ import UserTask from "./tasks/scheduler-single-task";
 import UserMutipleTasks from "./tasks/scheduler-multiple-tasks";
 import { getChosenDateTime} from '../../lib/date-functions';
 import { setTaskModalDate, setIsTaskModalActive } from '@/app/redux/create-taks-modal-slice';
-import { getTasks, convertTaskStringToTask, isTask } from "@/app/lib/user-tasks-functions";
-import { setTasks } from "@/app/redux/tasks-slice";
+import { isTask } from "@/app/lib/user-tasks-functions";
+import {  setSelectedTask } from '@/app/redux/tasks-slice';
 
 interface UserSchedulerColumnProps {
     id: string,
     tasks?: Task | Task[] | null,
-    // onClick: (id:string) => void,
     colNumber: number
 }
 
@@ -31,7 +30,6 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({id, colNumber, t
         const dateTime = getChosenDateTime(id)
         dispatch(setTaskModalDate(dateTime.date.toISOString()))
         dispatch(setIsTaskModalActive(true))
-        console.log("passed")
     }
 
 
@@ -57,12 +55,19 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({id, colNumber, t
         (
             Array.isArray(tasks) ? ( 
                 tasks.length === 2 ? ( 
-                    <UserDoubleTask task1={tasks[0]} task2={tasks[1]} />
+                    <UserDoubleTask 
+                    task1={tasks[0]} 
+                    task2={tasks[1]} 
+                    openUpdateTaskModal={setSelectedTask}
+                    />
                 ) : (
                     <UserMutipleTasks tasks={tasks} /> 
                 )
             ) : isTask(tasks) ? ( 
-                <UserTask task={tasks} /> 
+                <UserTask
+                task={tasks}
+                openUpdateTaskModal={setSelectedTask}
+                /> 
             ) : null 
         )
 

@@ -7,21 +7,21 @@ import {Backdrop, Box, TextField, Button, Paper, Grid, OutlinedInput, InputLabel
 import DatePickerInput from "../../calendar/input-date-picker";
 import moment from "moment";
 import Cookies from "js-cookie";
-import { getTasks } from "../../../lib/user-tasks-functions";
+import { getTasks } from "@/app/lib/user-tasks-functions";
 import { Source_Serif_4 } from "next/font/google";
 import Bookmark from "../scheduler_utils/bookmark";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from '../../../redux/store';
-import { Task } from "../../../lib/types";
-import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "../../../redux/snackbar-slice";
+import { RootState } from "@/app/redux/store";
+import { Task, apiDeletedTask } from "@/app/lib/types";
+import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "@/app/redux/snackbar-slice";
 import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/create-taks-modal-slice';
-import { setTasks } from "@/app/redux/tasks-slice";
+import { setTasks, setSelectedTask } from '@/app/redux/tasks-slice';
+import { convertTaskStringToTaskValuePair, convertTaskStringToTask } from "@/app/lib/user-tasks-functions";
+import { setBookmarkValue } from "@/app/redux/bookmark-slice";
 
 export const dynamic = 'force-dynamic'
 
-// const timeType = /^([01][0-9]|2[0-3]):[0-5][0-9]$/
-
-function TimeHours(time: string) { 
+function TimeHours(time: string) {
     return Number(time.slice(0,2))
 }
 
@@ -33,7 +33,6 @@ function TimeMinutes(time: string) {
 function setDateTime (date: Date, time: string) {
     const newDate = new Date(date)
     newDate.setHours(TimeHours(time))
-    // newDate.setHours(TimeHours(time)+1)
     newDate.setMinutes(TimeMinutes(time))
     return newDate
 }
@@ -96,107 +95,141 @@ let newTaskSchema = Yup.object().shape({
         }
         return true;
     }),
-    description: Yup.string().max(255).min(0),
+    descripton: Yup.string().max(255).min(0),
     taskType: Yup.string().required().oneOf(['chore', 'event']).strict(true),
 
 })
 
 
-const createStartPropsTime = (time: number | undefined) => {
-    
-    if(time)
+const createStartPropsTime = (startDate : Date) => {
+    if(startDate)
     {
-        return time.toString().padStart(2, '0') + ":00";
-    } else if (time == 0){
-        return "00:00"
-    } else {
-        return undefined
+        const hours : number = new Date(startDate).getHours()
+        const minutes : number = new Date(startDate).getMinutes()
+
+        return hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0');
     }
 }
 
-const createEndPropsTime = (time: number | undefined, endDate?: Date) => {
-    if(time)
+const createEndPropsTime = (endDate : Date) => {
+    if(endDate)
     {
-        if(time === 23)
-        {
-            return "00:00"
-        }
-        time ++
-        return time.toString().padStart(2, '0') + ":00";
-    } else if (time == 0){
-        return "01:00"
-    } else {
-        return undefined
+        const hours : number = new Date(endDate).getHours()
+        const minutes : number = new Date(endDate).getMinutes()
+
+        return hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0');
     }
 }
 
 const currentDate = new Date();
 const startHours = currentDate.getHours();
 const endHours = startHours + 1;
-const currentStartTime = startHours.toString().padStart(2, '0') + ":00";
-const currentEndTime = endHours.toString().padStart(2, '0') + ":00";
-
-const CreateTaskModal: React.FC = () => {
 
 
-    const btnRef = useRef<HTMLButtonElement | null>(null);
+interface UpdateTaskModalProps {
+    task: Task
+}
+
+const UpdateTaskModal: React.FC<UpdateTaskModalProps> = ({task}) => {
+
+
+    // zanijeniti sve sa taskom 
     // const [twelvePmNewDay, setTwelvePmNewDay] = useState<Boolean>(false)
     const backDropRef = useRef<HTMLDivElement>(null)
-    const disableButtonRef = useRef<boolean>(false)
-    const [disableButton, setDisableButtons] = useState<boolean>(false)
     
-
-    const isSnackBarOpen = useSelector((state : RootState) => state.snackbar.isSnackBarOpen)
-    const snackbarText = useSelector((state : RootState) => state.snackbar.snackbarText)
-    const snackbarAlertState = useSelector((state : RootState) => state.snackbar.snackbarAlertState)
     const dispatch = useDispatch()
     const taskModalDateString = useSelector((state : RootState) => state.createTaskModal.taskModalDate)
     const taskModalDate = new Date(taskModalDateString)
 
-    const propsStartHours = taskModalDate?.getHours()
-    const startTime = createStartPropsTime(propsStartHours)
-    const endTime =  createEndPropsTime(propsStartHours)
+    const startTime = createStartPropsTime(task.startDate)
+    const endTime =  createEndPropsTime(task.endDate)
     const bookmarkType = useSelector((state: RootState) => state.bookmark.type);
+    
     const initialStartDate = taskModalDate || new Date();
     const initialStartTime = moment(initialStartDate).format('HH:mm');
     const initialEndDate = new Date(initialStartDate);
     initialEndDate.setHours(initialStartDate.getHours() + 1);
     const initialEndTime = moment(initialEndDate).format('HH:mm');  
+    const initialBookmarkState = useSelector((state: RootState) => state.bookmark.type)
+    const [disableButton, setDisableButtons] = useState<boolean>(false)
 
-    const handleTaskModalClose = () => {
-        disableButtonRef.current = true
+
+    const selectedTaskString = useSelector((state: RootState) => state.tasks.selectedTask)
+    
+    const handleUpdateTaskModalClose = () => {
+        setDisableButtons(true)
+        dispatch(setSelectedTask(null))
         dispatch(setIsTaskModalActive(false))
     }
-
+    
+    const handleTaskDelete = async () => {
+        try {
+            setDisableButtons(true)
+            const token = Cookies.get("refreshToken");
+            console.log("token" , token)
+    
+            const response = await fetch(`/api/delete-task/${task.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+    
+            if (response.ok) {
+                const body: apiDeletedTask = await response.json(); 
+                setSnackBarText(`Successfully deleted ${body.title}`);
+                setSnackbarAlertState("success");    
+                setIsSnackBarOpen(true);
+                const fetchAllTasks = await getTasks();
+                if(fetchAllTasks){
+                    dispatch(setTasks(fetchAllTasks));
+                    handleUpdateTaskModalClose()
+                }
+            } else {
+                setSnackBarText("Failed to delete the task");
+                setSnackbarAlertState("error");
+                setIsSnackBarOpen(true);
+            }
+        } catch (error) {
+            console.log(error);
+            setIsSnackBarOpen(true);
+            setSnackBarText("Error deleting task");
+            setSnackbarAlertState("error");
+        }
+    };
+    
      const formik = useFormik({
         initialValues : {
-            title: "",
-            startDate: initialStartDate ,
-            startTime: initialStartTime ,
-            endDate: initialEndDate,
-            endTime: initialEndTime,
-            description: "",
-            taskType: bookmarkType
+            title: task ? task.title :  "",
+            startDate: task ? task.startDate : initialStartDate ,
+            startTime: task ? createStartPropsTime(task.startDate) : initialStartTime ,
+            endDate:  task ? task?.endDate : initialEndDate,
+            endTime: task ? createEndPropsTime(task.endDate) : initialEndTime,
+            description: task ? task?.description : "",
+            taskType: task ? task.taskType :  initialBookmarkState
         },
-
         validationSchema: newTaskSchema,
         onSubmit: async (values, { setErrors }) => {
-            setDisableButtons(true)
             try {
+                setDisableButtons(true)
                 const { 
                     startTime, 
                     endTime,
                     ...sentData 
                 } = values;
-                disableButtonRef.current = true
-                sentData.startDate = setDateTime(sentData.startDate, startTime)
-                sentData.endDate = setDateTime(sentData.endDate, endTime)
+
+                const finalStartTime = startTime || "00:00";
+                const finalEndTime = endTime || "00:00";
+
+                sentData.startDate = setDateTime(sentData.startDate, finalStartTime)
+                sentData.endDate = setDateTime(sentData.endDate, finalEndTime)
                 sentData.taskType = bookmarkType
 
                 const token = Cookies.get("refreshToken");
 
-                const response = await fetch('/api/create-task', {
-                    method: 'POST',
+                const response = await fetch(`/api/update-task/${task.id}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`, 
@@ -209,29 +242,33 @@ const CreateTaskModal: React.FC = () => {
                         taskType: sentData.taskType
                     })
                 });
-
+                const responseData = await response.json()
                 if (response.ok) {
                     dispatch(setSnackBarText(`Successfuly created ${sentData.title} ${sentData.taskType}`))
                     dispatch(setSnackbarAlertState("success"))
                     dispatch(setIsSnackBarOpen(true))
 
-                    dispatch(setIsTaskModalActive(false))
-                    console.log("created");
+                    handleUpdateTaskModalClose()
+                    console.log("updated");
                     const tasks = await getTasks()
                     if(tasks)
                     {
                         dispatch(setTasks(tasks))
-                        // console.log(tasks);
+                        console.log(tasks);
                     }
+                    
                 } 
                 else {
                     dispatch(setSnackBarText("Failed to create task"))
                     dispatch(setSnackbarAlertState("error"))
                     dispatch(setIsSnackBarOpen(true))
                     console.log("creation failed")
+                    console.log(responseData);
+                    
                 }
             }
             catch (error) {
+                
                 dispatch(setSnackBarText("Failed to create task"))
                 dispatch(setSnackbarAlertState("error"))
                 dispatch(setIsSnackBarOpen(true))
@@ -245,7 +282,7 @@ const CreateTaskModal: React.FC = () => {
 
     const HandleBackdropClick = (event: React.MouseEvent<HTMLDivElement>) => {
         if (backDropRef.current === event.target) {
-            dispatch(setIsTaskModalActive(false))
+            handleUpdateTaskModalClose()
         }
     }
 
@@ -261,6 +298,10 @@ const CreateTaskModal: React.FC = () => {
         }
     }, [formik.values.endTime]);
 
+    useEffect(() => {
+        dispatch(setBookmarkValue(task.taskType))
+    })
+ 
     return(
         <Box
             width="100vw" 
@@ -275,7 +316,6 @@ const CreateTaskModal: React.FC = () => {
                 alignItems: 'center',
                 justifyContent: "center"
             }}
-            
         >
 
             <Backdrop 
@@ -299,8 +339,7 @@ const CreateTaskModal: React.FC = () => {
                         maxWidth: "50rem",
                         padding: "2em",
                         zIndex: "10",
-                    }}
-                    
+                    }}      
                 >
                     <form onSubmit={formik.handleSubmit} autoComplete="off" >
 
@@ -308,14 +347,11 @@ const CreateTaskModal: React.FC = () => {
                         sx={{
                             position: "relative",
                         }}
-                        
                         >
 
                                 <Bookmark 
                                 />
-                                
-                                
-                                
+                                 
                             <Grid item  xl={8} lg={8} md={8} sm={12} xs={12}
                             >
                                 <TextField 
@@ -376,7 +412,7 @@ const CreateTaskModal: React.FC = () => {
                                                     <DatePickerInput 
                                                     name="datePickerInputStartDate"
                                                     value={formik.values.startDate}
-                                                    onChange={(date) => {formik.setFieldValue('startDate', date); formik.handleChange}}
+                                                    onChange={(date: Date) => {formik.setFieldValue('startDate', date); formik.handleChange}}
 
                                                      />
                                                     {formik.errors.startDate && formik.touched.startDate ? <div>{String(formik.errors.startDate)}</div> : null}
@@ -469,14 +505,11 @@ const CreateTaskModal: React.FC = () => {
                                     <OutlinedInput
                                         id="description"
                                         name="description"
-                                        // label="Description"
                                         fullWidth
                                         value={formik.values.description}
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
-                                    />
-
-                                    {formik.errors.description && formik.touched.description ? <div>Description must be under 255 characters</div> : null}          
+                                    />          
                                 </Grid>   
                                           
                                 
@@ -513,18 +546,39 @@ const CreateTaskModal: React.FC = () => {
                             >
                                 <Button 
                                     variant="contained" 
-                                    sx={{backgroundColor: "red", marginRight: "1em"}}
+                                    sx={{
+                                        backgroundColor: "red",
+                                        marginRight: "1em",
+                                        fontWeight: "bold"
+                                    }}
                                     name="cancleBtn"
                                     color="error"
-                                    onClick={handleTaskModalClose}
+                                    onClick={handleTaskDelete}
                                     disabled={disableButton}
-                                    >
+                                >
+                                    Delete
+                                </Button>
+                                <Button 
+                                    variant="contained" 
+                                    sx={{backgroundColor: "red", marginRight: "1em", fontWeight: "bold"}}
+                                    name="cancleBtn"
+                                    color="error"
+                                    onClick={handleUpdateTaskModalClose}
+                                    disabled={disableButton}
+                            
+                                >
                                     Cancel
                                 </Button>
                                 <Button 
+                                variant="contained"
+                                name="saveBtn"
+                                type="submit"
+                                sx={{
+                                    fontWeight: "bold"
+                                }}
                                 disabled={disableButton}
-                                variant="contained" name="saveBtn" type="submit" >
-                                    Save
+                                 >
+                                    Update
                                 </Button>
                             </Grid >
     
@@ -536,48 +590,4 @@ const CreateTaskModal: React.FC = () => {
     )
 }
 
-export default CreateTaskModal
-
-
-// const [bookmarkValue, setBookmarkValue] = useState<boolean | null>(null);
-// const choreBookmarkRef = useRef<HTMLDivElement>(null);
-// const eventBookmarkRef = useRef<HTMLDivElement>(null);
-
-// useEffect(() => {
-//     if (bookmarkValue === true) {
-//         animateBookmark(choreBookmarkRef.current, 100); 
-//         animateBookmark(eventBookmarkRef.current, 150); 
-//     } else if (bookmarkValue === false) {
-//         animateBookmark(eventBookmarkRef.current, 100); 
-//         animateBookmark(choreBookmarkRef.current, 150); 
-//     } else {
-//         animateBookmark(choreBookmarkRef.current, 100); 
-//         animateBookmark(eventBookmarkRef.current, 100);
-//     }
-
-// }, [bookmarkValue]);
-
-
-// const animateBookmark = (element: HTMLElement | null, finalHeight: number) => {
-//     if (element) {
-//         const initialHeight = element.clientHeight;
-//         if (initialHeight !== finalHeight) {
-//             let currentHeight = initialHeight;
-//             const interval = setInterval(() => {
-//                 if (currentHeight < finalHeight && finalHeight > initialHeight) {
-//                     currentHeight += 1;
-//                 } else if (currentHeight > finalHeight && finalHeight < initialHeight) {
-//                     currentHeight -= 1;
-//                 } else {
-//                     clearInterval(interval);
-//                 }
-//                 element.style.height = currentHeight + "px";
-//             }, 10);
-//         }
-//     }
-// };
-
-// const handleBookmarkClick = ( newValue: boolean | null) => {
-//     setBookmarkValue(newValue);
-//     formik.setFieldValue('taskType', newValue)
-// };
+export default UpdateTaskModal

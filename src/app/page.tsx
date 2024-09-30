@@ -9,7 +9,7 @@ import DatePickerInput from './components/test/custom-input-test-ts';
 import SidebarCalendars from './components/calendar/calendars-sidebar';
 import NavBar from './components/navbar-public';
 import Bookmark from './components/scheduler/scheduler_utils/bookmark';
-
+import UpdateTaskModal from './components/scheduler/modals/update-task-modal';
 
 export const dynamic = "force-dynamic"
 
@@ -26,7 +26,10 @@ export default function Page() {
                 {/* <SidebarCalendars /> */}
 
                 {/* <UserScheduler /> */}
-    
+
+                {/* <UpdateTaskModal
+                
+                /> */}
                 
             </div>
         </>

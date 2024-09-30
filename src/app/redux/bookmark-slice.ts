@@ -43,6 +43,7 @@
 // export const  { toggleBookmarkValues, setAnimating } = bookmarkSlice.actions
 
 import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction } from "@reduxjs/toolkit";
 
 interface BookmarkState {
     type: "chore" | "event",
@@ -58,15 +59,16 @@ const bookmarkSlice = createSlice({
     initialState,
     name: "bookmarkSlice",
     reducers: {
-        toggleBookmarkValues(state, action){
+        setBookmarkValue(state, action : PayloadAction<"chore" | "event">){
             state.type = action.payload;  
             console.log("activeType:", state.type);
         },
-        setAnimating(state, action) {
+        setAnimating(state, action : PayloadAction<boolean>) {
             state.isAnimating = action.payload;
         },
+        
     },
 });
 
 export default bookmarkSlice 
-export const  { toggleBookmarkValues, setAnimating } = bookmarkSlice.actions
+export const  { setBookmarkValue, setAnimating } = bookmarkSlice.actions

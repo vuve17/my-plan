@@ -1,10 +1,11 @@
 import type { Task, TaskString, UserTasksStringValuePairFormat, UserTasksValuePairFormat } from "../lib/types";
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { convertTaskToTaskString,  } from "../lib/user-tasks-functions";
+import { isTaskString } from "../lib/user-tasks-functions";
 
 interface TaskState {
     tasks: UserTasksStringValuePairFormat | null; 
-    selectedTask: TaskString | TaskString[] | null
+    selectedTask: TaskString | null
 }
 
 const initialState: TaskState = {
@@ -18,21 +19,24 @@ const UserTaskSlice = createSlice({
     reducers: {
         setTasks(state, action: PayloadAction<UserTasksStringValuePairFormat>) {
             const tasks = action.payload
-            // const formatedTasks = convertTaskToTaskString(tasks)
             console.log("formatedTasks; ", tasks)
             state.tasks = tasks
         },
-        getTask(state, action: PayloadAction<string>) {
+        getSingleTask(state, action: PayloadAction<string>) {
             if (state.tasks && state.tasks[action.payload]) {
-                state.selectedTask = state.tasks[action.payload]; 
+                const task = state.tasks[action.payload];
+                if (isTaskString(task)) {
+                    state.selectedTask = task; 
+                } else {
+                    state.selectedTask = null; 
+                }
             }
-            state.selectedTask = null; 
         },
-        setSelectedTask(state, action: PayloadAction<TaskString>) {
+        setSelectedTask(state, action: PayloadAction<TaskString | null>) {
             state.selectedTask = action.payload
         }   
     },
 });
 
-export const { setTasks, getTask, setSelectedTask } = UserTaskSlice.actions;
+export const { setTasks, getSingleTask, setSelectedTask } = UserTaskSlice.actions;
 export default UserTaskSlice.reducer;

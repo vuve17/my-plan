@@ -93,7 +93,11 @@ const TimeTable: React.FC = () => {
             sx={{
                 display: "flex",
                 flexDirection: "column",
-                paddingRight: "1em",
+                paddingRight: {
+                  xs: 0,
+                  sm: "0.5em",
+                  md: "1em"
+                },
                 alignItems: "flex-end",
                 zIndex: 2,
                 fontSize:  isMobile ? "12px" : "16px",
