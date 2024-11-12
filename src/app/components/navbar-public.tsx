@@ -13,8 +13,6 @@ const NavBar: React.FC = () => {
   };
 
   return (
-
-
   <>
         <div 
           className="w-full flex-none md:w-64"
@@ -26,7 +24,7 @@ const NavBar: React.FC = () => {
               onClick={toggleSidebar}
           />
           <div className="content" id='navContent'>
-            <nav className="navbar navbar-expand-lg " id='navbarTop'>
+            <nav className="navbar navbar-expand-lg" id='navbarTop'>
               <div className="container-fluid ">
                 <button
                   id="sidebarCollapse"

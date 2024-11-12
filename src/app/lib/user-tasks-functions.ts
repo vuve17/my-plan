@@ -134,19 +134,17 @@ export const convertTaskStringToTaskValuePair = (tasks: UserTasksStringValuePair
             };
         }
     });
-
     return parsedTasks;
 };
 
 
 export function formatJsonWithCellIds(tasks: UserTasksStringValuePairFormat) {
     const taskGroup : UserTasksStringValuePairFormat  = {};
-    
     Object.entries(tasks).forEach(([key, value]) => {
         const cellId = getCellIdFromStringTask(Array.isArray(value) ? value[0] : value);
         taskGroup[cellId] = Array.isArray(value) ? value : value;
     });
-    // console.log("taskGroup: ", taskGroup)
+    console.log("taskGroup: ", taskGroup)
     return taskGroup;
 }
 
@@ -176,11 +174,11 @@ export async function getTasks() {
         if (data.hasOwnProperty('tasks')) {
             const tasks = data.tasks
             const formatedTasks : UserTasksStringValuePairFormat | null  = tasks ? formatJsonWithCellIds(tasks) : null
-            // console.log("formatedTasks: ", formatedTasks) 
             if(formatedTasks == null)
             {
                 throw new Error("something went wrong in getTasks()");       
             } 
+            console.log(formatedTasks)
             return formatedTasks
         }
     }
@@ -192,11 +190,9 @@ export async function getTasks() {
 export function isTaskExpandingTroughoutMultipleDays(task : Task) {
     const startDate = new Date (task.startDate)
     const endDate = new Date (task.startDate)
-
     if((endDate.getDay() - startDate.getDay()) > 0)
     {
         console.log("more then 1 day, expland")
-        
     } else {
         return false
     }

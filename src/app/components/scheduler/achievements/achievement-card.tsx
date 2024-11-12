@@ -4,11 +4,17 @@ import React from "react";
 import { Box, Card, CardActions, CardContent, CardMedia, Typography, Grid, useMediaQuery } from '@mui/material';
 import AchievementStars from "./achievement-stars";
 import { Achievement } from "../../../lib/types";
+import colors from "@/app/ui/colors";
 
 
 const AchievementCard: React.FC<Achievement> = ({...props}) => {
 
-    const { description } = props;
+    const { 
+        description,
+        stars,
+        name,
+    } = props;
+    const activeAchievement = stars === 0 ? false : true
     const isSmallScreen = useMediaQuery('(max-width:600px)');
     const displayDescription = isSmallScreen ? 
     (description.length > 55 ? `${description.slice(0, 55)}...` : description) :
@@ -19,6 +25,7 @@ const AchievementCard: React.FC<Achievement> = ({...props}) => {
 
                     <Card variant="outlined" 
                     sx={{
+                        poisiton: "relative",
                         width: {
                             xl: "350px",
                             lg: "320px",
@@ -35,11 +42,26 @@ const AchievementCard: React.FC<Achievement> = ({...props}) => {
                             md: "200px",
                             xs: "300px"
                         },
-                        
+                        boxShadow: activeAchievement ?  `0px 0px 10px ${colors.achievements.active.Stroke}` : "",
+                        border: `1px solid ${activeAchievement ? colors.achievements.active.Stroke : colors.achievements.inactive.Stroke}`
                     }}
                     >
+                        {
+                            activeAchievement ? null : 
+                            <Box 
+                            sx={{
+                                position: "relative",
+                                backgroundColor: `${colors.achievements.inactive.DisabledCover}`,
+                                width: "100%",
+                                height: "inherit",
+                                zIndex: "50"
+                            }}
+                            >
+                            </Box>
+                        }
+
+
                         <CardContent 
-            
                         >
                     	    <Box
                             sx={{
@@ -131,13 +153,16 @@ const AchievementCard: React.FC<Achievement> = ({...props}) => {
                                                 sm: "0.5em",
                                                 xs: "10px",
                                             },
-
+                                        color: `${activeAchievement ? colors.achievements.active.Color : colors.achievements.inactive.Color }`
                                         }}
                                         >
                                             {props.name}
                                         </Typography>
         
-                                        <Typography fontFamily="Open Sans">
+                                        <Typography 
+                                        fontFamily="Open Sans"
+                                        color={`${activeAchievement ? colors.achievements.active.Color : colors.achievements.inactive.Color }`                                    }
+                                        >
                                         {displayDescription} 
                                         </Typography>
             

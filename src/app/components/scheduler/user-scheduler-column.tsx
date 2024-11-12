@@ -15,6 +15,7 @@ interface UserSchedulerColumnProps {
     headingDayName: string,
     headingDate: string,
     colNumber: number,
+    isToday?: boolean
 }
 
 const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => {
@@ -88,7 +89,7 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
                             lg: "18px",
                             xl: "20px"
                         },
-                        color: colors.lightBlack
+                        color: props.isToday ? colors.primaryBlue : colors.lightBlack
 
                     }}
                     >

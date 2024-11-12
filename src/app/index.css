@@ -195,5 +195,14 @@ h2 {
   font-size: 14px;
 }
 
+/* achievement carousel */
 
 
+.carousel-item {
+  transition: transform 0.3s ease;
+}
+
+.center-item {
+  transform: scale(1.2); /* Make the center item larger */
+  z-index: 1; /* Bring it to the front */
+}

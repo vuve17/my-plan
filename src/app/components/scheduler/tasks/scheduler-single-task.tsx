@@ -50,6 +50,10 @@ const UserTask: React.FC<taskProps> = ({ task, openUpdateTaskModal }) => {
     // task < 4, heading 25 po satu
     function descriptionAndHeighLenght(task: Task) {
         const diff = getDifferenceInHoursAndMinutes(task.startDate, task.endDate);
+        const startMinutes = task.startDate.getMinutes();
+        const topPercentage = (startMinutes / 60) * 100; 
+        setTopOffset(`${topPercentage}%`);
+        
         if (diff.hours <= 1) {
             setHeight("calc(100% - 4px)");
             sliceString(task.description, setDescription, 0, false);
@@ -58,15 +62,10 @@ const UserTask: React.FC<taskProps> = ({ task, openUpdateTaskModal }) => {
             const percentage = (diff.minutes / 60) * 100;
             const roundedPercentage = Math.round(percentage * 100) / 100;
             const time = (diff.hours * 100) + roundedPercentage;
-            // console.log(time, "time") 
             const bordersHeight = (diff.hours -1)
             const newHeight = `calc(${time}% - 4px + ${bordersHeight}px )`;
             const charsPerHourDes = 45 * diff.hours;
             const charsPerHourTitle = 10 * diff.hours
-
-            const startMinutes = task.startDate.getMinutes();
-            const topPercentage = (startMinutes / 60) * 100; 
-            setTopOffset(`${topPercentage}%`);
 
             setHeight(newHeight);
             sliceString(task.description, setDescription, charsPerHourDes, false);
@@ -102,7 +101,8 @@ const UserTask: React.FC<taskProps> = ({ task, openUpdateTaskModal }) => {
                     lg: `10px solid ${colors.tasks[task.taskType]?.Stroke}`,
                 },
                 borderRadius: "4px",
-                overflow: "hidden",
+                overflow: "hidden",             
+                cursor: "pointer",           
             }}
             key={task.id}
             onClick={() => dispatch(openUpdateTaskModal(taskString)) }

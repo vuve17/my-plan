@@ -145,7 +145,8 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openUpdateTaskModa
                     },
                     borderRadius: "4px",
                     overflow: "hidden",
-                    flexGrow: 1,                    
+                    flexGrow: 1,
+                    cursor: "pointer",                  
                 }}
                 key={task1.id}
                 onClick={() => dispatch(openUpdateTaskModal(task1String)) }
@@ -156,6 +157,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openUpdateTaskModa
                         flex: "1 1 auto",
                         display: "flex",
                         flexDirection: "column",
+                        alignItems: "flex-start",
                     }}
                 >
                     <Box
@@ -216,7 +218,8 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openUpdateTaskModa
                         padding: {
                             xs : "2px 0px", 
                             md : "2px 4px",
-                        }
+                        },
+                        cursor: "pointer",
                         
                     }}
                 >
@@ -263,7 +266,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openUpdateTaskModa
                     borderRadius: "4px",
                     overflow: "hidden",
                     flexGrow: 1,
-                    
+                    cursor: "pointer",
                 }}
                 key={task2.id}
                 onClick={() => dispatch(openUpdateTaskModal(task2String)) }
@@ -274,6 +277,7 @@ const  UserDoubleTask: React.FC<taskProps> = ({ task1, task2, openUpdateTaskModa
                         height: `calc(100%)`,
                         display: "flex",
                         flexDirection: "column",
+                        alignItems: "flex-start"
                     }}
                 >
                     <Box

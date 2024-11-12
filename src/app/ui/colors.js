@@ -31,6 +31,20 @@ const colors = {
         stroke: "#000000",
         dropShadow: "rgba(0, 0, 0, 0.2);",
     },
+    achievements: {
+        active: {
+            Background: "#FFFFFF",
+            Stroke: "#45B5E6",
+            Color: "#000000"
+        },
+        inactive: {
+            Background: "#FFFFFF",
+            Stroke: "#808080",
+            Color: "#808080",
+            DisabledCover: "rgba(128, 128, 128, 0.2)"
+        }
+    },
+    error: "#ff0033"
     
 }
 

@@ -10,7 +10,6 @@ import { RootState } from "@/app/redux/store";
 
 
 interface taskProps {
-    // tasks: UserTasksValuePairFormat,
     tasks: Task[],
 }
 
@@ -30,10 +29,11 @@ const UserMutipleTasks: React.FC<taskProps> = ({
     const isMobile = useSelector((state: RootState) => state.screen.isMobile);
     const tasksStartTimes : Date[] = []
     const tasksEndTimes : Date[] = []
-    const [startTime, setStartTime] = useState<Date>(new Date())
-    const [endTime, setEndTime] = useState<Date>(new Date())
+    const [startTime, setStartTime] = useState<Date | null>(null)
+    const [endTime, setEndTime] = useState<Date | null>(null)
     const [taskArray, setTaskArray] = useState<React.JSX.Element[]>([]);
     const [taskTooShortToDisplayAll, setTaskTooShortToDisplayAll] = useState<boolean>(false)
+    const [topOffset, setTopOffset] = useState<string | number>(0);
 
     function findEarliestTime (dates : Date[]) { 
         let earliestDate = dates[0];
@@ -43,6 +43,8 @@ const UserMutipleTasks: React.FC<taskProps> = ({
                 earliestDate = dates[i];
             }
         }
+        console.log("earliestDate",earliestDate)
+
         setStartTime(earliestDate)         
     }
 
@@ -54,6 +56,7 @@ const UserMutipleTasks: React.FC<taskProps> = ({
                 latestDate = dates[i];
             }
         }
+        console.log("latestDate",latestDate)
         setEndTime(latestDate)         
     }
 
@@ -63,6 +66,36 @@ const UserMutipleTasks: React.FC<taskProps> = ({
         } else {
             const str = inputString.substring(0, maxLength) + " ...";
             return str
+        }
+    }
+
+    function multipleTasksHeight() {
+        if(startTime && endTime){
+            console.log(startTime, " " , endTime)
+            const diff = getDifferenceInHoursAndMinutes(new Date(startTime), new Date(endTime));
+            console.log("diff: ", diff)
+
+            const mutipleTasksTitle =  `${tasks.length} tasks occuring`
+            
+            const startMinutes = startTime.getMinutes();
+            const topPercentage = (startMinutes / 60) * 100; 
+            setTopOffset(`${topPercentage}%`);
+            
+            if (diff.hours <= 1) {
+                setTaskTooShortToDisplayAll(true)
+                setHeight("calc(100% - 4px)");
+                setTitle(mutipleTasksTitle)
+            } else {
+                setTaskTooShortToDisplayAll(diff.hours <= 3 ? true : false)
+                const percentage = (diff.minutes / 60) * 100;
+                const roundedPercentage = Math.round(percentage * 100) / 100;
+                const time = (diff.hours * 100) + roundedPercentage;
+                const bordersHeight = (diff.hours -1)
+                const newHeight = `calc(${time}% - 4px + ${bordersHeight}px)`;
+
+                setHeight(newHeight);
+                setTitle(mutipleTasksTitle)
+            }
         }
     }
 
@@ -85,8 +118,9 @@ const UserMutipleTasks: React.FC<taskProps> = ({
                 sx={{
                     display: "flex",
                     flexDirection: "column",
+                    cursor: "pointer",
                 }}
-                
+                key={task.id}
                 >
                 <Box 
                     // onClick={openTaskModal(task)}
@@ -160,41 +194,23 @@ const UserMutipleTasks: React.FC<taskProps> = ({
         findEarliestTime(tasksStartTimes)
         findLatestTime(tasksEndTimes)
     }
-
-    // function checkSpaceForTaskInfo (taskNumber : number, height : string) {
-        
-    // }
-
-    function multipleTasksHeight() {
-        const diff = getDifferenceInHoursAndMinutes(startTime, endTime);
-        const mutipleTasksTitle =  `${taskArray.length} tasks occuring`
-        if (diff.hours <= 1) {
-            setTaskTooShortToDisplayAll(true)
-            setHeight("calc(100% - 4px)");
-            setTitle(mutipleTasksTitle)
-        } else {
-            setTaskTooShortToDisplayAll(diff.hours <= 3 ? true : false)
-            const percentage = (diff.minutes / 60) * 100;
-            const roundedPercentage = Math.round(percentage * 100) / 100;
-            const time = (diff.hours * 100) + roundedPercentage;
-            const newHeight = `calc(${time}% - 4px)`;
-            setHeight(newHeight);
-            setTitle(mutipleTasksTitle)
-        }
-    }
-
-    // useEffect(() => {
-    //     structureMultipleTaskElement(tasks);
-    // }, [tasks]); 
     
     useEffect(() => {
-        structureMultipleTaskElement(tasks);
-        multipleTasksHeight(); 
-    }, [tasks]); 
+        if (tasks.length > 0) {
+            structureMultipleTaskElement(tasks);
+        }
+    }, [tasks]);
+
+    useEffect(() => {
+        if (startTime && endTime) {
+            multipleTasksHeight();
+        }
+    }, [startTime, endTime]);
 
     return (
         <Box
             sx={{
+                top: topOffset,
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
@@ -216,7 +232,6 @@ const UserMutipleTasks: React.FC<taskProps> = ({
                 borderRadius: "4px",
                 overflow: "hidden",
             }}
-            // key={task.id}
             // onClick={() => openTaskModal?.(tasks)}
         >
                     <Box 

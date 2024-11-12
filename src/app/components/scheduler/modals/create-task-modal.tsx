@@ -16,6 +16,7 @@ import { Task } from "../../../lib/types";
 import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "../../../redux/snackbar-slice";
 import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/create-taks-modal-slice';
 import { setTasks } from "@/app/redux/tasks-slice";
+import ErrorBox from "../../authentication-error-messages-box";
 
 export const dynamic = 'force-dynamic'
 
@@ -33,7 +34,6 @@ function TimeMinutes(time: string) {
 function setDateTime (date: Date, time: string) {
     const newDate = new Date(date)
     newDate.setHours(TimeHours(time))
-    // newDate.setHours(TimeHours(time)+1)
     newDate.setMinutes(TimeMinutes(time))
     return newDate
 }
@@ -336,7 +336,6 @@ const CreateTaskModal: React.FC = () => {
                                     
                                 }}
                                 />
-                             {formik.errors.title && formik.touched.title ? <div>{formik.errors.title}</div> :null}
 
                             </Grid >
     
@@ -379,7 +378,6 @@ const CreateTaskModal: React.FC = () => {
                                                     onChange={(date) => {formik.setFieldValue('startDate', date); formik.handleChange}}
 
                                                      />
-                                                    {formik.errors.startDate && formik.touched.startDate ? <div>{String(formik.errors.startDate)}</div> : null}
                                                     
                                                 </Grid>
                                                 
@@ -396,7 +394,6 @@ const CreateTaskModal: React.FC = () => {
                                                     onChange={formik.handleChange}
                                                     />
                                                 </Grid>
-                                                {/* {formik.errors.startTime && formik.touched.startTime ? <div>{formik.errors.startTime}</div> :null} */}
 
                                             </Grid>
                                         </Grid >
@@ -434,7 +431,6 @@ const CreateTaskModal: React.FC = () => {
                                                     onChange={(date) => {formik.setFieldValue('endDate', date); formik.handleChange}}
                                                     twelvePmTime = {endTime === "00:00" ? true : false}
                                                     />
-                                                    {formik.errors.endDate && formik.touched.endDate ? <div>{String(formik.errors.endDate)}</div> : null}
 
                                                 </Grid>
                                                 <Grid item
@@ -449,8 +445,6 @@ const CreateTaskModal: React.FC = () => {
                                                     onBlur={formik.handleBlur}
                                                     onChange={formik.handleChange}
                                                     />
-
-                                                    {formik.errors.endTime && formik.touched.endTime ? <div>{formik.errors.endTime}</div> :null}
 
                                                 </Grid>
                                             </Grid>
@@ -476,10 +470,7 @@ const CreateTaskModal: React.FC = () => {
                                         onChange={formik.handleChange}
                                     />
 
-                                    {formik.errors.description && formik.touched.description ? <div>Description must be under 255 characters</div> : null}          
-                                </Grid>   
-                                          
-                                
+                                </Grid>                                  
     
                             <Grid  
                                 item
@@ -493,6 +484,18 @@ const CreateTaskModal: React.FC = () => {
                                     justifyContent: "space-between"
                                 }}
                             >
+
+                                {formik.errors.endDate && formik.touched.endDate ? <ErrorBox text="End Date must be the same or after Start Date"/> : 
+                                    (
+                                    formik.errors.endTime && formik.touched.endTime ? <ErrorBox text={formik.errors.endTime}/> : 
+                                        (
+                                            formik.errors.title && formik.touched.title ? <ErrorBox text={formik.errors.title}/> : 
+                                            (
+                                                formik.errors.description && formik.touched.description ? <ErrorBox text={formik.errors.description}/> : null
+                                            )
+                                        )
+                                    )   
+                                }
                             </Grid >
                             
                             <Grid  

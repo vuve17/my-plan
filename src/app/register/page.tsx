@@ -8,6 +8,7 @@ import colors from '../ui/colors';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import ErrorBox from "../components/authentication-error-messages-box";
 
 export const dynamic = 'force-dynamic'
 
@@ -30,6 +31,8 @@ const RegisterForm: React.FC = () => {
     const [passwordState, setPasswordState] = useState("show")
     const [passwordRepeatState, setpasswordRepeatState] = useState("show")
     const [emailError, setEmailError] = useState("")
+    const [disableButton, setDisableButtons] = useState<boolean>(false)
+
     const router = useRouter()
     const HandlePasswordState = () => {
         if(passwordState == "show"){
@@ -53,6 +56,7 @@ const RegisterForm: React.FC = () => {
         initialValues: initialValues,
         validationSchema: registerSchema,
         onSubmit: async (values) => {
+            setDisableButtons(true)
             try {
                 const response = await fetch('/api/register', {
                     method: 'POST',
@@ -81,6 +85,8 @@ const RegisterForm: React.FC = () => {
                 }
             } catch (error) {
                 console.error('Error registering user:', error);
+            } finally {
+                setDisableButtons(false)
             }
         },
     })
@@ -154,7 +160,6 @@ const RegisterForm: React.FC = () => {
                              }}
                             onClick={() => setEmailError("")}
                         />
-                        {formik.errors.email && formik.touched.email ? <div style={{textAlign: "left", marginTop: "0.5em"}}>{formik.errors.email}</div> :<div>{emailError}</div>}
                         <TextField
                             label="username"
                             name="username"
@@ -166,8 +171,8 @@ const RegisterForm: React.FC = () => {
                                 marginTop: "1em",
                                 minWidth: "267px",
                              }}
-                            />
-                        {formik.errors.username && formik.touched.username ? <div>{formik.errors.username}</div> : null}
+                        />
+
                         <TextField
                             label="password"
                             name="password"
@@ -178,6 +183,7 @@ const RegisterForm: React.FC = () => {
                             autoComplete="off"
                             style={{
                                 marginTop: "1em",
+                                minWidth: "267px",
                              }}
                              InputProps={{
                                 endAdornment: (
@@ -194,7 +200,6 @@ const RegisterForm: React.FC = () => {
                                 )
                             }}
                         />
-                        {formik.errors.password && formik.touched.password ? <div>{formik.errors.password}</div> :null}
 
                         <TextField
                             label="confirm password"
@@ -205,7 +210,8 @@ const RegisterForm: React.FC = () => {
                             onBlur={formik.handleBlur}
                             autoComplete="off"
                             style={{
-                                marginTop: "1em",
+                                margin: "1em 0 1em 0",
+                                minWidth: "267px",
                              }}
                              InputProps={{
                                 endAdornment: (
@@ -222,7 +228,20 @@ const RegisterForm: React.FC = () => {
                                 )
                             }}
                         />
-                        {formik.errors.passwordRepeat && formik.touched.passwordRepeat ? <div>confirm password has to match password</div> :null}
+
+                        
+                        {formik.errors.email && formik.touched.email ? <ErrorBox text={formik.errors.email}/> : 
+                            (
+                                formik.errors.username && formik.touched.username ? <ErrorBox text={formik.errors.username}/> :
+                                ( 
+                                    formik.errors.password && formik.touched.password ? <ErrorBox text={formik.errors.password}/> :
+                                    (
+                                        formik.errors.passwordRepeat && formik.touched.passwordRepeat ? <ErrorBox text="Confirm password has to match password"/> : null
+                                    )
+                                )
+                            )
+                        }
+
                     </div>
         
                     <div
@@ -234,9 +253,7 @@ const RegisterForm: React.FC = () => {
                         </div>
                        
                     </div>
-        
-
-                        
+                                
                     <div style={{ display: "flex", justifyContent: "center"}}>
                         <Button
                         variant="contained"
@@ -244,13 +261,13 @@ const RegisterForm: React.FC = () => {
                         sx={{
                             backgroundColor: `${colors.primaryBlue}`,
                         }}
+                        disabled={disableButton}
                         >
                             <div className="openSansSemiBold">
                                 Register
                             </div>
                         </Button>
                     </div>
-
             </form>
 
 
@@ -258,6 +275,9 @@ const RegisterForm: React.FC = () => {
                 Already have account? 
                 <Link
                 href="/login"
+                style={{
+                    marginLeft: "0.25em"
+                }}
                 >
                     Log in
                 </Link>

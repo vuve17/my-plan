@@ -8,6 +8,7 @@ import colors from '../ui/colors';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import ErrorBox from "../components/authentication-error-messages-box";
 
 export const dynamic = 'force-dynamic'
 
@@ -23,6 +24,7 @@ let initialValues = {
 
 const LogInForm: React.FC = () => {
 
+    const [disableButton, setDisableButtons] = useState<boolean>(false)
     const [passwordState, setPasswordState] = useState("show")
     const [passwordError, setPasswordError] = useState("")
     const router = useRouter()
@@ -40,34 +42,40 @@ const LogInForm: React.FC = () => {
         initialValues: initialValues,
         validationSchema: registerSchema,
         onSubmit: async (values) => {
-            const response = await fetch('/api/log-in', {
-                // cache: 'no-store',
-                method: 'POST',
-                body: JSON.stringify(values)
-            });
-             
-
-            if (!response.ok) {
-                console.log("Response error:", response.status, response.statusText);
-                const data = await response.json();
-                console.log("Error message:", data.message);
-                setPasswordError(data.message);
-            } else {
-                console.log("Response not OK");
-                const { refreshToken, accessToken, message} = await response.json();
-                console.log(refreshToken, " ", accessToken)
-                console.log(message)
+            setDisableButtons(true);
+    
+            try {
+                const response = await fetch('/api/log-in', {
+                    method: 'POST',
+                    body: JSON.stringify(values)
+                });
+    
+                if (!response.ok) {
+                    console.log("Response error:", response.status, response.statusText);
+                    const data = await response.json();
+                    console.log("Error message:", data.message);
+                    setPasswordError(data.message);
+                    console.log("Response not OK");
+                }
+    
+                const { refreshToken, accessToken, message } = await response.json();
+                console.log(refreshToken, accessToken, message);
+    
                 if (refreshToken && accessToken) {
-                    document.cookie = `refreshToken=${refreshToken};  path=/`;
+                    document.cookie = `refreshToken=${refreshToken}; path=/`;
                     document.cookie = `accessToken=${accessToken}; path=/`;
                     router.push("/scheduler");
-                } else {
-                    console.log("Else set pass error: Bad keys - frontend message");
-                    setPasswordError("Bad keys - frontend message");
                 }
+    
+            } catch (error) {
+                console.log("Else set pass error: Bad keys - frontend message");
+                setPasswordError("Bad keys - frontend message");
+    
+            } finally {
+                setDisableButtons(false);
             }
-        },
-    })
+        }
+    });
     
     
     return(
@@ -137,9 +145,10 @@ const LogInForm: React.FC = () => {
                             style={{
                                 marginTop: "1em",
                                 minWidth: "267px",
-                             }}
+                            }}
+
                         />
-                        {formik.errors.email && formik.touched.email ? <div>{formik.errors.email}</div> :null}
+                        
                         <TextField
                             label="password"
                             name="password"
@@ -150,7 +159,8 @@ const LogInForm: React.FC = () => {
                             onClick={() => setPasswordError("")}
                             autoComplete="off"
                             style={{
-                                marginTop: "1em",
+                                margin: " 1em 0 1em 0 ",
+                                minWidth: "267px",
                              }}
                             InputProps={{
                                 endAdornment: (
@@ -167,8 +177,9 @@ const LogInForm: React.FC = () => {
                                 )
                             }}
                         />
-                        {formik.errors.password && formik.touched.password ? <div>{formik.errors.password}</div> :<div>{passwordError}</div>}
-
+                        {formik.errors.email && formik.touched.email ? <ErrorBox text={formik.errors.email} /> : 
+                        (formik.errors.password && formik.touched.password ? <ErrorBox text={formik.errors.password}/> : <ErrorBox text={passwordError} /> )
+                        }
                     </div>
         
                     <div
@@ -177,8 +188,7 @@ const LogInForm: React.FC = () => {
                         <Checkbox/>
                         <div className="openSansRegular">
                             Remeber me
-                        </div>
-                       
+                        </div>            
                     </div>
 
                     <div style={{ display: "flex", justifyContent: "center"}}>
@@ -188,6 +198,7 @@ const LogInForm: React.FC = () => {
                         sx={{
                             backgroundColor: `${colors.primaryBlue}`
                         }}
+                        disabled={disableButton}
                         >
                             <div className="openSansSemiBold">
                                 Log in
@@ -202,6 +213,9 @@ const LogInForm: React.FC = () => {
                 {`Don't have an account? `}
                 <Link
                 href="/register"
+                style={{
+                    marginLeft: "0.1em"
+                }}
                 >
                     Register
                 </Link>

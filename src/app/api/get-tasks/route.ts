@@ -23,7 +23,6 @@ function formatTasksByTimeOverlap(tasks: QueryResultRow) {
     taskList.forEach((task: Task, index: number) => {
         if (!processed.has(task.id)) {
             const overlappingTasks: Task[] = [];
-            
             for (let j = index + 1; j < taskList.length; j++) {
                 const otherTask = taskList[j];
                 if (isOverlapping(task, otherTask)) {
@@ -39,8 +38,7 @@ function formatTasksByTimeOverlap(tasks: QueryResultRow) {
                 taskGroups[task.id] = task;
             }
         }
-    });
-
+    })
     return taskGroups;
 }
 
@@ -58,14 +56,12 @@ export async function GET(request: NextRequest) {
             FROM tasks
             WHERE user_id = ${userId}
         `;
-        console.log(tasks.rows);
-        
-        const jsonFormattedTasks =  formatTasksByTimeOverlap(tasks.rows);
-        // console.log("jsonFormattedTasks: backend : ", jsonFormattedTasks);
-
-        
+        const jsonFormattedTasks =  formatTasksByTimeOverlap(tasks.rows);        
         return NextResponse.json({tasks : jsonFormattedTasks}, {status: 200});
     } else {
         return NextResponse.json({ error: 'Unauthorized - Missing or invalid token' }, { status: 401 });
     }
 }
+
+
+// console.log(tasks.rows);

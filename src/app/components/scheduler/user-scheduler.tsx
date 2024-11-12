@@ -147,6 +147,9 @@ const UserScheduler : React.FC = () => {
             const headingDayName = `${ day.toLocaleDateString('en-US', { weekday: weekdayFormat})}`;
             const headingDate = `${(day.getDate() < 10 ? '0' : '') + day.getDate()}.${(day.getMonth() < 9 ? '0' : '')+ (day.getMonth() + 1)}`;
             const current_day = day.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'numeric' });
+            const isToday = day.getDate() === minDate.getDate() &&
+                day.getMonth() === minDate.getMonth() &&
+                day.getFullYear() === minDate.getFullYear();
 
             newSchedule.push(
                 <UserSchedulerColumn
@@ -155,6 +158,7 @@ const UserScheduler : React.FC = () => {
                     headingDayName={headingDayName}
                     headingDate={headingDate}
                     colNumber={i}
+                    {...(isToday && { isToday })}
                 />
             )
         } 

@@ -37,10 +37,6 @@ const links = [
         name: 'Achievements', 
         href: '/scheduler/achievements' 
     },
-    {
-        name: 'Statistics',
-        href: '/scheduler/statistics',
-    },
   ];
 
 
