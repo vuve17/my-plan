@@ -119,14 +119,20 @@ const AchievementPage: React.FC = () => {
             >
                 {loading ? <p>Loading...</p> : memorizeAchievements}
             </Grid>
-            {openCarousel && (
+            {/* {openCarousel && (
                 <AchievementCarousel
                     achievements={achievementCardsArray}
                     initialActiveIndex={selectedAchievement}
                     open={openCarousel}
                     hlandleClose={handleCarouselClosing}
                 />
-            )}
+            )} */}
+            <AchievementCarousel 
+                achievements={achievementCardsArray}
+                initialActiveIndex={selectedAchievement}
+                open={openCarousel}
+                hlandleClose={handleCarouselClosing}
+            />
         </div>
     );
 }

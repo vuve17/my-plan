@@ -5,7 +5,6 @@ import { JWTPayload } from "jose"
 import { db } from "@vercel/postgres"
 
 interface UserJwtPayload extends JWTPayload {
-    //jti - JWT ID, iat - Issued At, sub - subject (id)
     jti: string,
     iat: number,
     userId: string,
@@ -14,7 +13,6 @@ interface UserJwtPayload extends JWTPayload {
 
 export const getJwtSecretKey = () => {
     const secret = process.env.JWT_SECRET;
-  
     if (!secret || secret.length === 0) {
       throw new Error('JWT_SECRET environment variable is missing or empty');
     }
@@ -25,7 +23,6 @@ export async function getExpirationDate(token: string) {
     try {
       const verified = await jwtVerify(token, new TextEncoder().encode(getJwtSecretKey()));
       const expirationDateInSeconds = verified.payload.exp as number;
-      console.log("expirationDateInSeconds", expirationDateInSeconds);
       return expirationDateInSeconds * 1000;
     } catch (error) {
       console.log("Error verifying token:");

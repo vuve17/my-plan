@@ -32,6 +32,9 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({id, colNumber, t
         dispatch(setIsTaskModalActive(true))
     }
 
+    // if(tasks){
+    //     console.log("cell: ", tasks)
+    // }
 
     return(
         <Box 

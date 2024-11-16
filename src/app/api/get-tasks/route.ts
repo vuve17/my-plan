@@ -39,6 +39,7 @@ function formatTasksByTimeOverlap(tasks: QueryResultRow) {
             }
         }
     })
+    console.log("api tasks: ", taskGroups)
     return taskGroups;
 }
 
@@ -46,9 +47,6 @@ export async function GET(request: NextRequest) {
     const client = await db.connect();
     const authorizationHeader = request.headers.get('Authorization');
     const token = authorizationHeader ? authorizationHeader.replace("Bearer ", "") : null;
-    
-    console.log("Token received in backend:", token);
-
     if(token) {
         const userId = await getUserId(token);
         const tasks = await client.sql`
@@ -59,9 +57,7 @@ export async function GET(request: NextRequest) {
         const jsonFormattedTasks =  formatTasksByTimeOverlap(tasks.rows);        
         return NextResponse.json({tasks : jsonFormattedTasks}, {status: 200});
     } else {
+        console.log("bad token")
         return NextResponse.json({ error: 'Unauthorized - Missing or invalid token' }, { status: 401 });
     }
 }
-
-
-// console.log(tasks.rows);

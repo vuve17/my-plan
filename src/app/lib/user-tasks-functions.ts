@@ -2,7 +2,7 @@
 
 import Cookies from "js-cookie"
 import { Task, TaskString, UserTasksStringValuePairFormat, UserTasksValuePairFormat, TaskType} from '@/app/lib/types';
-import { getCellIdFromTask, getCellIdFromStringTask } from './date-functions';
+// import { getCellIdFromTask, getCellIdFromStringTask } from './date-functions';
 
 
 export const dynamic = 'force-dynamic'
@@ -93,10 +93,7 @@ export function convertTaskStringToTask (tasks : TaskString | TaskString[]) {
 }
 
 
-
-
 export function convertTaskToTaskStringValuePair(tasks : UserTasksValuePairFormat) {
-
     const parsedTasks: UserTasksStringValuePairFormat = {};
     Object.entries(tasks).forEach(([key, task]) => {
         if (Array.isArray(task)) {
@@ -111,6 +108,7 @@ export function convertTaskToTaskStringValuePair(tasks : UserTasksValuePairForma
     });
     return parsedTasks;
 }
+
 
 export const convertTaskStringToTaskValuePair = (tasks: UserTasksStringValuePairFormat): UserTasksValuePairFormat | null => {
     const parsedTasks: UserTasksValuePairFormat = {};
@@ -138,6 +136,12 @@ export const convertTaskStringToTaskValuePair = (tasks: UserTasksStringValuePair
 };
 
 
+function getCellIdFromStringTask(task: TaskString): string {
+    const date = new Date(task.startDate);
+    return `${date.getMonth() + 1}${date.getDate()}${date.getFullYear()}_${date.getHours()}`;
+}
+
+
 export function formatJsonWithCellIds(tasks: UserTasksStringValuePairFormat) {
     const taskGroup : UserTasksStringValuePairFormat  = {};
     Object.entries(tasks).forEach(([key, value]) => {
@@ -149,6 +153,7 @@ export function formatJsonWithCellIds(tasks: UserTasksStringValuePairFormat) {
 }
 
 
+  
 export function confirmTaskType(task: any): task is Task {
     return (
         task &&
@@ -173,6 +178,7 @@ export async function getTasks() {
         const data : returnedTasks = await response.json();
         if (data.hasOwnProperty('tasks')) {
             const tasks = data.tasks
+            console.log("tasks: get tasks initial !", tasks)
             const formatedTasks : UserTasksStringValuePairFormat | null  = tasks ? formatJsonWithCellIds(tasks) : null
             if(formatedTasks == null)
             {
@@ -197,5 +203,122 @@ export function isTaskExpandingTroughoutMultipleDays(task : Task) {
         return false
     }
 }
+
+
+// correct one !!!
+// export const convertTaskStringToTaskValuePair = (tasks: UserTasksStringValuePairFormat): UserTasksValuePairFormat | null => {
+//     const parsedTasks: UserTasksValuePairFormat = {};
+//     if(!tasks || Object.keys(tasks).length === 0) {
+//         return null
+//     }
+//     Object.entries(tasks).forEach(([key, task]) => {
+//         if (Array.isArray(task)) {
+//             parsedTasks[key] = task.map((t: TaskString) => ({
+//                 ...t,
+//                 startDate: new Date(t.startDate),
+//                 endDate: new Date(t.endDate),
+//                 taskType: validateTaskTypeField(t.taskType) ? t.taskType : "event"
+//             }));
+//         } else {
+//             parsedTasks[key] = {
+//                 ...task,
+//                 startDate: new Date(task.startDate),
+//                 endDate: new Date(task.endDate),
+//                 taskType: validateTaskTypeField(task.taskType) ? task.taskType : "event"
+//             };
+//         }
+//     });
+//     return parsedTasks;
+// };
+
+
+// export const convertTaskStringToTaskValuePair = (tasks: UserTasksStringValuePairFormat): UserTasksValuePairFormat | null => {
+//     const parsedTasks: UserTasksValuePairFormat = {};
+//     if (!tasks || Object.keys(tasks).length === 0) {
+//         return null;
+//     }
+
+//     Object.entries(tasks).forEach(([key, task]) => {
+//         if (Array.isArray(task)) {
+//             parsedTasks[key] = task.map((t: TaskString) => ({
+//                 ...t,
+//                 startDate: new Date(t.startDate),
+//                 endDate: new Date(t.endDate),
+//                 taskType: validateTaskTypeField(t.taskType) ? t.taskType : "event"
+//             }));
+//         } else {
+//             parsedTasks[key] = {
+//                 ...task,
+//                 startDate: new Date(task.startDate),
+//                 endDate: new Date(task.endDate),
+//                 taskType: validateTaskTypeField(task.taskType) ? task.taskType : "event"
+//             };
+//         }
+//     });
+//     return parsedTasks;
+// };
+
+//   // correct one !!!
+
+//   export function formatJsonWithCellIds(tasks: UserTasksStringValuePairFormat): UserTasksStringValuePairFormat {
+//     const taskGroup: UserTasksStringValuePairFormat = {};
+  
+//     Object.entries(tasks).forEach(([key, value]) => {
+//       const task = Array.isArray(value) ? value[0] : value;
+//       const start = new Date(task.startDate);
+//       const end = new Date(task.endDate);
+  
+//       // Handle tasks within a single day
+//       if (start.toDateString() === end.toDateString()) {
+//         const cellId = getDailyCellId(start);
+//         taskGroup[cellId] = task;
+//       } else {
+//         // Multi-day tasks need to be divided into daily entries
+//         let currentDate = new Date(start);
+//         let isFirstDay = true;
+  
+//         while (currentDate <= end) {
+//           const cellId = getDailyCellId(currentDate);
+  
+//           let dayStart = new Date(currentDate);
+//           let dayEnd = new Date(currentDate);
+  
+//           if (isFirstDay) {
+//             dayStart = new Date(start);
+//             dayEnd.setHours(23, 59, 59, 999);
+//             isFirstDay = false;
+//           } else if (currentDate.toDateString() === end.toDateString()) {
+//             dayStart.setHours(0, 0, 0, 0);
+//             dayEnd = new Date(end);
+//           } else {
+//             dayStart.setHours(0, 0, 0, 0);
+//             dayEnd.setHours(23, 59, 59, 999);
+//           }
+  
+//           // Create a task segment for each cell ID with adjusted start and end times
+//           const taskPart: TaskString = {
+//             ...task,
+//             startDate: dayStart.toISOString(),
+//             endDate: dayEnd.toISOString(),
+//           };
+  
+//           // Handle adding to taskGroup
+//           if (!taskGroup[cellId]) {
+//             taskGroup[cellId] = taskPart;
+//           } else if (Array.isArray(taskGroup[cellId])) {
+//             (taskGroup[cellId] as TaskString[]).push(taskPart);
+//           } else {
+//             taskGroup[cellId] = [taskGroup[cellId] as TaskString, taskPart];
+//           }
+  
+//           // Move to the next day
+//           currentDate.setDate(currentDate.getDate() + 1);
+//           currentDate.setHours(0, 0, 0, 0);
+//         }
+//       }
+//     });
+  
+//     return taskGroup;
+//   }
 
 

@@ -11,7 +11,7 @@ async function handleAccessToken(accessToken: string, userIdFromExistingRefreshK
     if (userIdFromExistingAccessKey) {
         if(userIdFromExistingAccessKey != userIdFromExistingRefreshKey)
         {
-            console.log("different userIds")
+            // console.log("different userIds")
             return NextResponse.redirect(new URL('/login', request.url));
         }
         const accessExp = await getExpirationDate(accessToken);
@@ -19,10 +19,10 @@ async function handleAccessToken(accessToken: string, userIdFromExistingRefreshK
             return NextResponse.next();
         } else {
             const newAccessKey: createToken = await createAccessKey(userIdFromExistingRefreshKey);
-            console.log(newAccessKey)
+            // console.log(newAccessKey)
             if(!newAccessKey.success)
             {
-                console.log("accessKey creation error")
+                // console.log("accessKey creation error")
                 return NextResponse.redirect(new URL('/login', request.url));
             }
                 return NextResponse.next();
@@ -33,7 +33,7 @@ async function handleAccessToken(accessToken: string, userIdFromExistingRefreshK
     if (newAccessKey.success) {
         return handleAccessToken(newAccessKey.token, userIdFromExistingRefreshKey, request);
     }
-    console.log('middleware error, access key creating error - sign in again');
+    // console.log('middleware error, access key creating error - sign in again');
     return NextResponse.redirect(new URL('/login', request.url));
 }
 

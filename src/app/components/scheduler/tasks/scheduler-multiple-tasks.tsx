@@ -43,7 +43,7 @@ const UserMutipleTasks: React.FC<taskProps> = ({
                 earliestDate = dates[i];
             }
         }
-        console.log("earliestDate",earliestDate)
+        // console.log("earliestDate",earliestDate)
 
         setStartTime(earliestDate)         
     }
@@ -56,7 +56,7 @@ const UserMutipleTasks: React.FC<taskProps> = ({
                 latestDate = dates[i];
             }
         }
-        console.log("latestDate",latestDate)
+        // console.log("latestDate",latestDate)
         setEndTime(latestDate)         
     }
 
@@ -73,7 +73,7 @@ const UserMutipleTasks: React.FC<taskProps> = ({
         if(startTime && endTime){
             console.log(startTime, " " , endTime)
             const diff = getDifferenceInHoursAndMinutes(new Date(startTime), new Date(endTime));
-            console.log("diff: ", diff)
+            // console.log("diff: ", diff)
 
             const mutipleTasksTitle =  `${tasks.length} tasks occuring`
             

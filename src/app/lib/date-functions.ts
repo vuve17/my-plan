@@ -8,7 +8,7 @@ export function getDifferenceInHoursAndMinutes(startDate: Date, endDate: Date) :
     const differenceInMs = Math.abs(endDate.getTime() - startDate.getTime());
     const hours = Math.abs(Math.floor(differenceInMs / (1000 * 60 * 60)));
     const minutes =  Math.abs(Math.floor((differenceInMs % (1000 * 60 * 60)) / (1000 * 60)));
-    console.log("hours",hours, minutes)
+    // console.log("hours",hours, minutes)
     return { hours, minutes };
 }
 
@@ -39,8 +39,6 @@ export function getCellIdFromTask(task: Task) {
 }
 
 export function getCellIdFromStringTask(task: TaskString) {
-
-
     const taskHours = new Date(task.startDate).getHours();
     const taskStartDate = new Date(task.startDate);
     const cellId: string = `${(taskStartDate.getMonth() + 1)
@@ -52,9 +50,9 @@ export function getCellIdFromStringTask(task: TaskString) {
 }
 
 
-export function isTaskExpandingTroughoutMultipleDays(startDate: Date, endDate: Date): number {
-    return endDate.getDay() - startDate.getDay()
-}
+// export function isTaskExpandingTroughoutMultipleDays(startDate: Date, endDate: Date): number {
+//     return endDate.getDay() - startDate.getDay()
+// }
 
 // export function checkForFlags(taskId: string): number | undefined{
 

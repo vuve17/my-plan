@@ -67,7 +67,6 @@ export async function insertKeyInDb( key : string, userId: string, expiration_da
         VALUES ($1, $2, $3)
         `;
         await client.query(query, [key, userId, expiration_date]);
-        console.log("inserted in db")
         return { success: true };
 
     } catch (error) {
@@ -386,7 +385,6 @@ export async function verifyExpirationDate(token: string) {
       const verified = await jwtVerify(token, new TextEncoder().encode(secret));
       console.log("pass");
       const expirationDateInSeconds = verified.payload.exp as number;
-      console.log("expirationDateInSeconds", expirationDateInSeconds);
       return expirationDateInSeconds * 1000;
     } catch (error) {
       console.error("Error verifying token:", error);

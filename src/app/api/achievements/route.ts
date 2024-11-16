@@ -7,7 +7,7 @@ import { Achievement } from "@/app/lib/types";
 
 
 async function getAchievements(userId:string) {
-    console.log(" IN getAchievements ")
+    // console.log(" IN getAchievements ")
     const client = await db.connect()
     const result = await client.sql`
         SELECT * FROM achievements
