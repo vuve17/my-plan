@@ -98,7 +98,7 @@ const UserDoubleTask: React.FC<taskProps> = ({
     const totalOffset = offsetHours * 100 + topPercentage;
     const topOffsetString = `${totalOffset}%`;
 
-    if (diff.hours <= 1 && diff.minutes === 0) {
+    if (diff.hours <= 1) {
       setHeightFunc("calc(100% - 4px)");
       sliceString(task.description, setDescriptionFunc, 0);
       sliceString(task.title, setTitleFunc, 12);
