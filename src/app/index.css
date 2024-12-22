@@ -115,7 +115,10 @@ h2 {
   }
 }
 
-
+.react-datepicker{
+  box-sizing: border-box;
+  border: 1px solid rgba(147, 147, 147, 0.2) !important;
+}
 
 @media screen and (min-width: 900px ) {
 
@@ -125,7 +128,7 @@ h2 {
     flex-direction: column;
     justify-content: space-around;
     align-items: center;
-    background-color:#F4F4F4; 
+    background-color:#F4F4F4;
     border-radius: 0;
     gap: 10px;
   }

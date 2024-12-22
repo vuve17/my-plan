@@ -22,10 +22,33 @@ export type Achievement = {
     name: string;
     image: string;
     description: string;
+}
+
+export type UserAchievement = {
+    id: number,
+    name: string;
+    image: string;
+    description: string;
+    // userId: string;
+    user_id: string;
     stars: 0 | 1 | 2 | 3;
 }
 
+
+
+export interface UserAchievementNoId extends Omit<UserAchievement, 'userId'> {}
+
 export type TaskType = "event" | "chore"
+
+export type ApiResponse<T> = {
+    status: number;
+    data: T;
+};
+
+export type CreateTaskResponse = {
+    message: string;
+    achievements: UserAchievement[];
+};
 
 export type Task = {
     id: number,
@@ -52,6 +75,11 @@ export type UserTasksValuePairFormat = {
 
 export type UserTasksStringValuePairFormat = {
     [key: string]: TaskString | TaskString[];
+}
+
+export interface setTasksInterface {
+    formatedTasks: UserTasksStringValuePairFormat;
+    fullTasks: TaskString[]
 }
 
 

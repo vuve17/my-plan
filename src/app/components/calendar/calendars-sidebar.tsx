@@ -96,11 +96,12 @@ const SidebarCalendars:React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         overflow: isMobile ? "scroll" : "hidden",
+        boxSizing: "border-box",
         width: {
           ...containerWidth
         },
         height: 
-          isMobile ? "calc(100vh - 80px)" : "100%"
+          isMobile ? "calc(100vh - 78px)" : "100%"
         ,
         zIndex: 50,
         bottom: 0,

@@ -1,27 +1,41 @@
 import type { Task, TaskString, UserTasksStringValuePairFormat, UserTasksValuePairFormat } from "../lib/types";
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { convertTaskToTaskString,  } from "../lib/user-tasks-functions";
+import { convertTaskToTaskString, getTasks,  } from "../lib/user-tasks-functions";
 import { isTaskString } from "../lib/user-tasks-functions";
+import { setTasksInterface } from "../lib/types";
+import { getTaskById } from "../lib/user-tasks-functions";
 
 interface TaskState {
+    fullTasks: TaskString[] | null;
     tasks: UserTasksStringValuePairFormat | null; 
-    selectedTask: TaskString | null
+    selectedTask: TaskString | null;
+    selectedTasksMultiple: TaskString[] | null
 }
 
 const initialState: TaskState = {
+    fullTasks: null,
     tasks: null,
-    selectedTask: null
+    selectedTask: null,
+    selectedTasksMultiple: null
 };
 
 const UserTaskSlice = createSlice({
     name: "userTaskSlice",
     initialState,
     reducers: {
-        setTasks(state, action: PayloadAction<UserTasksStringValuePairFormat>) {
-            const tasks = action.payload
-            console.log("formatedTasks; ", tasks)
-            state.tasks = tasks
+        setTasks(state, action: PayloadAction<setTasksInterface>) {
+            const tasks = action.payload.formatedTasks
+            console.log("formatedTasks; redux ", tasks)
+            console.log("full tasks redux; ", action.payload.fullTasks)
+            state.tasks = action.payload.formatedTasks
+            state.fullTasks = action.payload.fullTasks
         },
+        // getTaskById(state, action: PayloadAction<number>){
+        //     if(state.fullTasks !== null){
+        //         const task = state.fullTasks.find((t) => t.id === action.payload) || null;
+        //         state.selectedTask = task;
+        //     }
+        // },
         getSingleTask(state, action: PayloadAction<string>) {
             if (state.tasks && state.tasks[action.payload]) {
                 const task = state.tasks[action.payload];
@@ -33,10 +47,25 @@ const UserTaskSlice = createSlice({
             }
         },
         setSelectedTask(state, action: PayloadAction<TaskString | null>) {
-            state.selectedTask = action.payload
-        }   
+            // state.selectedTask = action.payload
+            if(action.payload === null){
+                state.selectedTask = action.payload
+            } else {
+                const task = getTaskById(state.fullTasks, action.payload.id);
+                state.selectedTask = task;
+            }
+        },
+        setSelectedTasksMultiple(state, action: PayloadAction<TaskString[] | null>) {
+            const fullTasksArray: TaskString[] = []
+            action.payload?.map((task) => {
+                const fullTask = getTaskById(state.fullTasks, task.id);
+                fullTasksArray.push(fullTask)
+            })
+
+            state.selectedTasksMultiple = fullTasksArray || null
+        } 
     },
 });
 
-export const { setTasks, getSingleTask, setSelectedTask } = UserTaskSlice.actions;
+export const { setTasks, getSingleTask, setSelectedTask, setSelectedTasksMultiple } = UserTaskSlice.actions;
 export default UserTaskSlice.reducer;

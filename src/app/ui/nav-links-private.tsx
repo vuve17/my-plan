@@ -1,88 +1,88 @@
-'use client'
+"use client";
 
-import Link from 'next/link';
-import { Box } from '@mui/material';
-import { navLinksStyle } from '../utils';
+import Link from "next/link";
+import { Box } from "@mui/material";
+import { navLinksStyle } from "../utils";
 
 interface navLinksProps {
-  onClick: () => void
-  
+  onClick: () => void;
 }
 
 async function logout() {
   try {
-      const response = await fetch('/api/logout', {
-          method: 'POST',
-          credentials: 'include'
-      });
+    const response = await fetch("/api/logout", {
+      method: "POST",
+      credentials: "include",
+    });
 
-      if (response.ok) {
-          console.log('Logged out successfully');
-          window.location.href = '/login';
-      } else {
-          const data = await response.json();
-          console.error('Logout failed:', data.message);
-      }
+    if (response.ok) {
+      console.log("Logged out successfully");
+      window.location.href = "/login";
+    } else {
+      const data = await response.json();
+      console.error("Logout failed:", data.message);
+    }
   } catch (error) {
-      console.error('Error during logout:', error);
+    console.error("Error during logout:", error);
   }
 }
 
 const links = [
-    { 
-        name: 'Scheduler', 
-        href: '/scheduler' 
-    },
-    { 
-        name: 'Achievements', 
-        href: '/scheduler/achievements' 
-    },
-  ];
+  {
+    name: "Scheduler",
+    href: "/scheduler",
+  },
+  {
+    name: "Achievements",
+    href: "/scheduler/achievements",
+  },
+];
 
-
-const  NavLinksPrivate: React.FC<navLinksProps> = ({onClick}) => {
-    return (
-      <Box
+const NavLinksPrivate: React.FC<navLinksProps> = ({ onClick }) => {
+  return (
+    <Box
       sx={{
-        padding: "3em"
+        padding: "3em",
       }}
+    >
+      {links.map((link) => {
+        return (
+          <Link
+            key={link.name}
+            href={link.href}
+            onClick={onClick}
+            style={{
+              ...navLinksStyle,
+            }}
+          >
+            <p>{link.name}</p>
+          </Link>
+        );
+      })}
+      <Link
+        key="logout"
+        href="/login"
+        onClick={() => logout()}
+        style={{
+          ...navLinksStyle,
+        }}
       >
-        <Link
-          key="logout"
-          href='/login'
-          onClick={() => logout()}
-          style={{
-            ...navLinksStyle
-          }}
-        >
-          <Box
+        <Box
           sx={{
             display: "flex",
             alignItems: "center",
           }}
-          >
-            {`Log out `}
-            <img src="../svg/log-out.svg" alt="log out icon" style={{marginLeft: "8px"}}/>
-          </Box>
-        </Link>
+        >
+          {`Log out `}
+          <img
+            src="../svg/log-out.svg"
+            alt="log out icon"
+            style={{ marginLeft: "8px" }}
+          />
+        </Box>
+      </Link>
+    </Box>
+  );
+};
 
-        {links.map((link) => {
-          return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={onClick}
-                  style={{
-                    ...navLinksStyle
-                  }}
-                >
-                  <p >{link.name}</p>
-                </Link>
-          );
-        })}
-      </Box>
-    );
-  }
-
-export default NavLinksPrivate
-  
+export default NavLinksPrivate;

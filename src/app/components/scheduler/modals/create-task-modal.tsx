@@ -12,11 +12,12 @@ import { Source_Serif_4 } from "next/font/google";
 import Bookmark from "../scheduler_utils/bookmark";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from '../../../redux/store';
-import { Task } from "../../../lib/types";
+import { CreateTaskResponse, Task, ApiResponse} from "../../../lib/types";
 import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "../../../redux/snackbar-slice";
-import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/create-taks-modal-slice';
+import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/task-modals-slice';
 import { setTasks } from "@/app/redux/tasks-slice";
 import ErrorBox from "../../authentication-error-messages-box";
+import { setNewAchievements } from "@/app/redux/achievements-slice";
 
 export const dynamic = 'force-dynamic'
 
@@ -211,10 +212,15 @@ const CreateTaskModal: React.FC = () => {
                 });
 
                 if (response.ok) {
+
+                    const result: CreateTaskResponse = await response.json();
+                    // check ahvivemnta funckija koja updatea stanja achieveenta
+                    if(result.achievements.length > 0){
+                        dispatch(setNewAchievements(result.achievements))
+                    }
                     dispatch(setSnackBarText(`Successfuly created ${sentData.title} ${sentData.taskType}`))
                     dispatch(setSnackbarAlertState("success"))
                     dispatch(setIsSnackBarOpen(true))
-
                     dispatch(setIsTaskModalActive(false))
                     console.log("created");
                     const tasks = await getTasks()

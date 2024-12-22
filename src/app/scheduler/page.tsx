@@ -1,7 +1,8 @@
 'use client'
 import dynamic from "next/dynamic";
 import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../redux/store"; 
+import { RootState } from "../redux/store";
+
 
 const Scheduler = dynamic(
   () => import('../components/scheduler/user-scheduler'),

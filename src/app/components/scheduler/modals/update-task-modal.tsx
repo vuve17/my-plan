@@ -14,7 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { Task, apiDeletedTask } from "@/app/lib/types";
 import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "@/app/redux/snackbar-slice";
-import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/create-taks-modal-slice';
+import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/task-modals-slice';
 import { setTasks, setSelectedTask } from '@/app/redux/tasks-slice';
 import { convertTaskStringToTaskValuePair, convertTaskStringToTask } from "@/app/lib/user-tasks-functions";
 import { setBookmarkValue } from "@/app/redux/bookmark-slice";
@@ -169,7 +169,6 @@ const UpdateTaskModal: React.FC<UpdateTaskModalProps> = ({task}) => {
         try {
             setDisableButtons(true)
             const token = Cookies.get("refreshToken");
-            console.log("token" , token)
     
             const response = await fetch(`/api/delete-task/${task.id}`, {
                 method: 'DELETE',

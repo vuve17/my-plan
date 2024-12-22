@@ -7,7 +7,7 @@ import schedulerVisibilitySlice from './scheduler-visibility-slice';
 import bookmarkSlice from './bookmark-slice';
 import testSlice from './test-slice';
 import snackbarSlice from './snackbar-slice';
-import createTaskModalSlice from './create-taks-modal-slice';
+import createTaskModalSlice from './task-modals-slice';
 import UserTaskSlice from './tasks-slice';
 import achievementsSlice from './achievements-slice';
 

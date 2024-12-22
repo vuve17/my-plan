@@ -23,10 +23,10 @@ const UserSchedulerColumn: React.FC<UserSchedulerColumnProps> = ({...props}) => 
     const dispatch = useDispatch()
     const isMobile = useSelector((state : RootState) => state.screen.isMobile)
     const tasksStringifyed = useSelector((state: RootState) => state.tasks.tasks)
-    console.log("task from tasksStringifyed:", tasksStringifyed)
+    // console.log("task from tasksStringifyed:", tasksStringifyed)
     const tasks = tasksStringifyed ? convertTaskStringToTaskValuePair(tasksStringifyed) : null
     const tasksRefFlag = useRef<boolean>(true)
-    console.log("task from redux:", tasks)
+    // console.log("task from redux:", tasks)
     const generatedSchedulerCells = useMemo(() => {
         const daySchedule = [];
         for (let j = 0; j < 24; j++) {

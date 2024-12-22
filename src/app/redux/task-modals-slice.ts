@@ -4,7 +4,8 @@ import type { Task } from '@/app/lib/types';
 const initialState = {
     isTaskModalActive : false,
     taskModalDate: new Date().toISOString(),
-        // task: new Date().toISOString(),
+    isTaskModalMultipleActive : false,
+    // task: new Date().toISOString(),
 };
 
 const createTaskModalSlice = createSlice({
@@ -17,11 +18,14 @@ const createTaskModalSlice = createSlice({
         setTaskModalDate(state, action:PayloadAction<string>){
             state.taskModalDate = action.payload
         },
+        setIsTaskModalMultipleActive(state, action: PayloadAction<boolean>){
+            state.isTaskModalMultipleActive = action.payload 
+        },
         // setTaskModalTask(state, action:PayloadAction<string>){
         //     state.task = action.payload
         // },
     } 
 })
 
-export const { setIsTaskModalActive, setTaskModalDate } = createTaskModalSlice.actions;
+export const { setIsTaskModalActive, setTaskModalDate, setIsTaskModalMultipleActive } = createTaskModalSlice.actions;
 export default createTaskModalSlice.reducer;
