@@ -11,6 +11,14 @@ export async function GET(request: NextRequest) {
     SET daily_check_tasks = false
   `;
 
+  const message = "Hello, world!";
+  const bool = true;
+
+  await client.sql`
+    INSERT INTO test (message, bool)
+    VALUES (${message}, ${bool})
+  `;
+
   client.release();
   return NextResponse.json({ message: 'Daily check tasks reset for all users' });
 }
