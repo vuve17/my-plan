@@ -36,7 +36,7 @@ export type UserAchievement = {
 
 
 
-export interface UserAchievementNoId extends Omit<UserAchievement, 'userId'> {}
+export interface UserAchievementNoId extends Omit<UserAchievement, 'user_id'> {}
 
 export type TaskType = "event" | "chore"
 
@@ -57,6 +57,14 @@ export type Task = {
     endDate: Date,
     description: string,
     taskType: TaskType
+}
+
+export interface ProcessedTask extends Task {
+    processed: boolean
+}
+
+export interface ProcessedTaskString extends TaskString {
+    processed: boolean
 }
 
 export interface TaskString extends Omit<Task, 'startDate' | 'endDate' | 'taskType'> {

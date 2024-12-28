@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { setSelectedTasksMultiple } from "@/app/redux/tasks-slice";
 import { setIsTaskModalMultipleActive } from "@/app/redux/task-modals-slice";
-import { formatTime } from "@/app/lib/user-tasks-functions";
+import { formatTime, formatDate } from "@/app/lib/user-tasks-functions";
 import { convertSingleTaskToTaskString } from '../../../lib/user-tasks-functions';
 import colors from "@/app/ui/colors";
 
@@ -63,17 +63,16 @@ const MultipleTasksModal: React.FC= () => {
           }}
         >
 
-          <Typography variant="h5" mb={2}>{tasks.length} simultanius tasks</Typography>
+          <Typography variant="h5" mb={2}>{tasks && tasks.length} simultanius tasks</Typography>
 
-          {tasks.map((task) => {
-            console.log("task:", task)
-            const startTime = formatTime(new Date(task.startDate));
-            const endTime = formatTime(new Date(task.endDate));
+          {tasks && tasks.map((task) => {
+            // console.log("task:", task)
+            const startTime = formatDate(new Date(task.startDate));
+            const endTime = formatDate(new Date(task.endDate));
 
             return (
 
                 <Stack
-                  // divider={<Divider />}
                   sx={{ cursor: "pointer", borderBottom: `2px solid ${colors.lightGrey}`,     "&:hover": {
                     backgroundColor: colors.tasks.chore.TimeBackground,
                   },}}  
@@ -86,12 +85,11 @@ const MultipleTasksModal: React.FC= () => {
                   key={task.id}
                   onClick={() => handleSingleTaskModalOpen(task)}
                 >
-                  <Typography>{task.title}</Typography>
-                  <Stack width={"50%"}>
-                    <Typography>{task.description}</Typography>
-                  </Stack>
+                  <Stack width={'40%'}><Typography>{task.title}</Typography></Stack>
                   <Stack direction={"column"} key={task.id} justifyContent={"flex-end"}>
-                    <Typography>{startTime} - {endTime}</Typography>
+                    <Typography sx={{fontStyle: 'italic'}}>
+                      {startTime} - {endTime}
+                    </Typography>
                   </Stack>
                 </Stack>
             );

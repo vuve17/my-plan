@@ -57,7 +57,7 @@ const UserTask: React.FC<taskProps> = ({ task, openUpdateTaskModal }) => {
     const startMinutes = task.startDate.getMinutes();
     const topPercentage = (startMinutes / 60) * 100;
     setTopOffset(`${topPercentage}%`);
-    if (diff.hours <= 1) {
+    if (diff.hours === 0) {
       setHeight("calc(100% - 4px)");
       sliceString(task.description, setDescription, 0, false);
       sliceString(task.title, setTitle, 15, true);

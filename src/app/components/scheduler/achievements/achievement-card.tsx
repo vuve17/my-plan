@@ -53,6 +53,7 @@ const AchievementCard: React.FC<UserAchievementNoId> = ({ ...props }) => {
         : colors.achievements.inactive.Stroke
     }`,
     boxSizing: "border-box",
+    cursor: "pointer",
   }}
 >
   {/* Overlay */}

@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography } from "@mui/material";
 import colors from "@/app/ui/colors";
-import type { Task, UserTasksValuePairFormat } from "@/app/lib/types";
+import type { Task, TaskString, UserTasksValuePairFormat } from "@/app/lib/types";
 import { getDifferenceInHoursAndMinutes } from "../../../lib/date-functions";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 import { setIsTaskModalMultipleActive } from "@/app/redux/task-modals-slice";
 import { setSelectedTasksMultiple } from "@/app/redux/tasks-slice";
 import { setIsTaskModalActive } from "@/app/redux/task-modals-slice";
-import { convertTaskToTaskString } from "@/app/lib/user-tasks-functions";
+import { convertTaskArrayToTaskStringArray, convertTaskToTaskString } from "@/app/lib/user-tasks-functions";
 
 interface taskProps {
   tasks: Task[];
@@ -116,8 +116,7 @@ const UserMutipleTasks: React.FC<taskProps> = ({
       tasksEndTimes.push(task.endDate);
       const startTime = formatTime(task.startDate);
       const endTime = formatTime(task.endDate);
-      const taskTitle = sliceString(task.title, 25);
-
+      const taskTitle = task.title.length >= 20 ? sliceString(task.title, 20) : task.title;
       newTaskArray.push(
         <Box
           sx={{
@@ -129,7 +128,6 @@ const UserMutipleTasks: React.FC<taskProps> = ({
           // onClick={() => dispatch(openUpdateTaskModal(taskString))}
         >
           <Box
-            // onClick={openTaskModal(task)}
             sx={{
               display: "flex",
               alignItems: "center",
@@ -145,11 +143,11 @@ const UserMutipleTasks: React.FC<taskProps> = ({
               sx={{
                 fontWeight: "bold",
                 fontSize: {
-                  xs: "12px",
-                  sm: "14px",
-                  md: "1em",
-                  lg: "1.2em",
-                  xl: "1.5em",
+                  xs: "14px",
+                  sm: "16px",
+                  md: "18px",
+                  lg: "18px",
+                  xl: "20px",
                 },
                 textAlign: "left",
               }}
@@ -199,10 +197,11 @@ const UserMutipleTasks: React.FC<taskProps> = ({
     findLatestTime(tasksEndTimes);
   }
 
-  function setTaskModalMultipleActive(event: Event) {
+  function setTaskModalMultipleActive(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    if(Array.isArray(tasks))
     event.preventDefault()
     dispatch(setIsTaskModalMultipleActive(true));
-    dispatch(setSelectedTasksMultiple(tasks));
+    dispatch(setSelectedTasksMultiple(convertTaskArrayToTaskStringArray(tasks)));
     dispatch(setIsTaskModalActive(false))
   }
 

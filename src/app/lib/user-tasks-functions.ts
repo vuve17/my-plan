@@ -92,9 +92,6 @@ export function splitMultipleTasksByDaysTest(tasks: Task[]): Task[] {
         (1000 * 60 * 60 * 24)
     ) + 1;
 
-  console.log(startOfMinDate, startOfMaxDate);
-  console.log(totalDays);
-
   let daySplitGroups: Task[][] = Array.from({ length: totalDays }, () => []);
 
   tasks.forEach((task) => {
@@ -114,7 +111,7 @@ export function splitMultipleTasksByDaysTest(tasks: Task[]): Task[] {
     group.length === 1 ? group[0] : group
   );
 
-  console.log("result:", result);
+  // console.log("result:", result);
   return result as Task[];
 }
 
@@ -146,21 +143,20 @@ export function isTaskString(task: any): task is TaskString {
   );
 }
 
+export function convertTaskArrayToTaskStringArray(tasks: Task[]) {
+  const tasksFormated = tasks.map((t: Task) => ({
+    ...t,
+    startDate: new Date(t.startDate).toISOString(),
+    endDate: new Date(t.endDate).toISOString(),
+  }));
+  return tasksFormated;
+}
+
 export function convertTaskToTaskString(tasks: Task | Task[]) {
   if (Array.isArray(tasks)) {
-    const tasksFormated = tasks.map((t: Task) => ({
-      ...t,
-      startDate: new Date(t.startDate).toISOString(),
-      endDate: new Date(t.endDate).toISOString(),
-    }));
-    return tasksFormated;
+    return convertTaskArrayToTaskStringArray(tasks);
   } else {
-    const taskFormated = {
-      ...tasks,
-      startDate: new Date(tasks.startDate).toISOString(),
-      endDate: new Date(tasks.endDate).toISOString(),
-    };
-    return taskFormated;
+    return convertSingleTaskToTaskString(tasks);
   }
 }
 
@@ -184,8 +180,9 @@ export function convertTaskArrayToTaskArrayString(tasks: Task[]): Promise<TaskSt
     };
     taskArray.push(taskFormated)
   })
-  console.log("taskArray; ", taskArray)
-  return taskArray;
+  // console.log("taskArray; ", taskArray)
+  // reutnr taskArray
+  return Promise.resolve(taskArray);
 }
 
 export function convertSingleTaskToTaskString(task: Task) {
@@ -227,7 +224,7 @@ export function convertTaskToTaskStringValuePair(
       parsedTasks[key] = convertSingleTaskToTaskString(task);
     }
   });
-  console.log("parsed Tasks: ", parsedTasks)
+  // console.log("parsed Tasks: ", parsedTasks)
   return parsedTasks;
 }
 
@@ -260,15 +257,44 @@ export const convertTaskStringToTaskValuePair = (
   return parsedTasks;
 };
 
+
 export function formatJsonWithCellIds(tasks: UserTasksStringValuePairFormat) {
   const taskGroup: UserTasksStringValuePairFormat = {};
+
+  console.log("formatJsonWithCellIds intial tasks: ", tasks);
   Object.entries(tasks).forEach(([key, value]) => {
     const cellId = getCellIdFromStringTask(
       Array.isArray(value) ? value[0] : value
     );
-    taskGroup[cellId] = Array.isArray(value) ? value : value;
+
+    if (!taskGroup[cellId]) {
+      taskGroup[cellId] = value;
+    } else {
+      if (Array.isArray(taskGroup[cellId]) && Array.isArray(value)) {
+        taskGroup[cellId] = [...taskGroup[cellId], ...value];
+      } else if (Array.isArray(taskGroup[cellId])) {
+        if (Array.isArray(value)) {
+          taskGroup[cellId].push(...value);
+        } else {
+          taskGroup[cellId].push(value);
+        }
+      } else if (Array.isArray(value)) {
+        taskGroup[cellId] = [taskGroup[cellId], ...value];
+      } else {
+        taskGroup[cellId] = [taskGroup[cellId], value];
+      }
+    }
   });
-  console.log("taskGroup: ", taskGroup);
+
+  console.log("formatJsonWithCellIds taskGroup: ", taskGroup);
+  // Ensure single objects are not arrays
+  Object.keys(taskGroup).forEach((key) => {
+    if (Array.isArray(taskGroup[key]) && taskGroup[key].length === 1) {
+      taskGroup[key] = taskGroup[key][0];
+    }
+  });
+
+  console.log("formatJsonWithCellIds final taskGroup: ", taskGroup);
   return taskGroup;
 }
 
@@ -300,13 +326,12 @@ export async function getTasks(): Promise<setTasksInterface | undefined> {
   });
   if (response.ok) {
     const data: returnedTasks = await response.json();
+    console.log("data from getTasks: ", data);
     if (data.hasOwnProperty("tasks")) {
       const tasks = convertTaskToTaskStringValuePair(data.tasks);
-      // const fullTasks = convertTaskToTaskStringValuePair(data.fullTasks);
-      console.log("tasks: get tasks initial !", tasks);
-      const formatedTasks: UserTasksStringValuePairFormat | null = tasks
-        ? formatJsonWithCellIds(tasks)
-        : null;
+      const formatedTasks: UserTasksStringValuePairFormat = tasks && formatJsonWithCellIds(tasks)
+        
+        
       console.log("formatedTasks with  formatJsonWithCellIds: ", formatedTasks);
       return {formatedTasks : formatedTasks, fullTasks: data.fullTasks};
     }
@@ -319,10 +344,25 @@ export function isTaskExpandingTroughoutMultipleDays(task: Task) {
   const startDate = new Date(task.startDate);
   const endDate = new Date(task.startDate);
   if (endDate.getDay() - startDate.getDay() > 0) {
-    console.log("more then 1 day, expland");
+    // console.log("more then 1 day, expland");
   } else {
     return false;
   }
+}
+
+export function formatDate(date: Date): string {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = [
+    "January", "February", "March", "April", "May", "June", 
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const dayName = days[date.getDay()];
+  const day = date.getDate();
+  const monthName = months[date.getMonth()];
+  const time = formatTime(date);
+
+  return `${dayName}, ${day}. ${monthName}, ${time}`;
 }
 
 export function formatTime(date: Date) {

@@ -28,7 +28,10 @@ const UserDoubleTask: React.FC<taskProps> = ({
   task2,
   openUpdateTaskModal,
 }) => {
-  // update time , and pass it to open task modal 
+  // console.log("inside two tasks")
+  // console.log("task 1: ", task1)
+  // console.log("task 2: ", task1)
+
   const fullTasks = useSelector((state: RootState) => state.tasks.fullTasks);
   const startTime = formatTime(task1.startDate);
   const endTime = formatTime(task1.endDate);
@@ -98,7 +101,7 @@ const UserDoubleTask: React.FC<taskProps> = ({
     const totalOffset = offsetHours * 100 + topPercentage;
     const topOffsetString = `${totalOffset}%`;
 
-    if (diff.hours <= 1) {
+    if (diff.hours === 0) {
       setHeightFunc("calc(100% - 4px)");
       sliceString(task.description, setDescriptionFunc, 0);
       sliceString(task.title, setTitleFunc, 12);
@@ -143,6 +146,7 @@ const UserDoubleTask: React.FC<taskProps> = ({
         display: "flex",
         width: "100%",
         height: "inherit",
+        pointerEvents: "none",
       }}
     >
       <Box
@@ -165,6 +169,7 @@ const UserDoubleTask: React.FC<taskProps> = ({
           overflow: "hidden",
           flexGrow: 1,
           cursor: "pointer",
+          pointerEvents: "auto",
         }}
         key={task1.id}
         onClick={() => dispatch(openUpdateTaskModal(task1String))}
@@ -277,6 +282,7 @@ const UserDoubleTask: React.FC<taskProps> = ({
           overflow: "hidden",
           flexGrow: 1,
           cursor: "pointer",
+          pointerEvents: "auto",
         }}
         key={task2.id}
         onClick={() => dispatch(openUpdateTaskModal(task2String))}

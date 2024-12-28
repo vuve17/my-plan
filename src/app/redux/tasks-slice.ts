@@ -24,18 +24,12 @@ const UserTaskSlice = createSlice({
     initialState,
     reducers: {
         setTasks(state, action: PayloadAction<setTasksInterface>) {
-            const tasks = action.payload.formatedTasks
-            console.log("formatedTasks; redux ", tasks)
+            // const tasks = action.payload.formatedTasks
+            console.log("formatedTasks; redux ", action.payload.formatedTasks)
             console.log("full tasks redux; ", action.payload.fullTasks)
             state.tasks = action.payload.formatedTasks
             state.fullTasks = action.payload.fullTasks
         },
-        // getTaskById(state, action: PayloadAction<number>){
-        //     if(state.fullTasks !== null){
-        //         const task = state.fullTasks.find((t) => t.id === action.payload) || null;
-        //         state.selectedTask = task;
-        //     }
-        // },
         getSingleTask(state, action: PayloadAction<string>) {
             if (state.tasks && state.tasks[action.payload]) {
                 const task = state.tasks[action.payload];
@@ -59,13 +53,21 @@ const UserTaskSlice = createSlice({
             const fullTasksArray: TaskString[] = []
             action.payload?.map((task) => {
                 const fullTask = getTaskById(state.fullTasks, task.id);
-                fullTasksArray.push(fullTask)
+                if (fullTask) {
+                    fullTasksArray.push(fullTask);
+                }
             })
 
             state.selectedTasksMultiple = fullTasksArray || null
-        } 
+        },
+        resetStates(state){
+            state.fullTasks = null
+            state.selectedTask = null
+            state.tasks = null
+            state.selectedTasksMultiple = null
+        }
     },
 });
 
-export const { setTasks, getSingleTask, setSelectedTask, setSelectedTasksMultiple } = UserTaskSlice.actions;
+export const { setTasks, getSingleTask, setSelectedTask, setSelectedTasksMultiple, resetStates } = UserTaskSlice.actions;
 export default UserTaskSlice.reducer;

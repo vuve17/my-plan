@@ -33,7 +33,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: numb
             const result = await client.query(query,
             [title, description, startDate, endDate, taskType ,userId, id]
             );
-            console.log("result: ", result);
+            // console.log("result: ", result);
             if (result.rows.length === 0) {
                 return NextResponse.json({ error: "Task not found or unauthorized" }, { status: 404 });
             } 

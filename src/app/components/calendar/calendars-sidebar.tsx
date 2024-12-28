@@ -65,7 +65,7 @@ const SidebarCalendars:React.FC = () => {
       if (date?.toISOString() !== selectedDate) {
         setDate(new Date(selectedDate));
       }
-    }, [selectedDate]);
+    }, [selectedDate, date]);
 
     useEffect(() => {
       const nextButtonSpan = document.querySelector(' .react-datepicker__navigation-icon--next');

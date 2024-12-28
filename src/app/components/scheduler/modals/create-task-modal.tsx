@@ -17,7 +17,7 @@ import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "../..
 import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/task-modals-slice';
 import { setTasks } from "@/app/redux/tasks-slice";
 import ErrorBox from "../../authentication-error-messages-box";
-import { setNewAchievements } from "@/app/redux/achievements-slice";
+import { openNewAchievementModal, setNewAchievements } from "@/app/redux/achievements-slice";
 
 export const dynamic = 'force-dynamic'
 
@@ -210,13 +210,16 @@ const CreateTaskModal: React.FC = () => {
                         taskType: sentData.taskType
                     })
                 });
-
+                console.log("responding??")
                 if (response.ok) {
 
                     const result: CreateTaskResponse = await response.json();
                     // check ahvivemnta funckija koja updatea stanja achieveenta
+                    console.log("result response.ok: ",  result)
                     if(result.achievements.length > 0){
+                        console.log("result.achievements: ", result.achievements)
                         dispatch(setNewAchievements(result.achievements))
+                        dispatch(openNewAchievementModal())
                     }
                     dispatch(setSnackBarText(`Successfuly created ${sentData.title} ${sentData.taskType}`))
                     dispatch(setSnackbarAlertState("success"))
@@ -227,7 +230,7 @@ const CreateTaskModal: React.FC = () => {
                     if(tasks)
                     {
                         dispatch(setTasks(tasks))
-                        // console.log(tasks);
+                        console.log("tasks: ",tasks);
                     }
                 } 
                 else {

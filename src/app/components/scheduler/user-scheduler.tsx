@@ -26,6 +26,7 @@ import UserSchedulerColumn from "./user-scheduler-column";
 import TimeTable from "./user-scheduler-day-time";
 import AchievementModal from "./achievements/achievement-modal";
 import MultipleTasksModal from "./modals/multiple-tasks-select-modal";
+import { closeAchievementModal } from "@/app/redux/achievements-slice";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +53,7 @@ function getChosenDateTime(divId: string) {
 const UserScheduler: React.FC = () => {
   const dispatch = useDispatch();
   const isMobile = useSelector((state: RootState) => state.screen.isMobile);
+  const [openNewAchievementModal, setOpenNewAchievementModal] = useState<boolean>(false)
   const maxDateString = useSelector(
     (state: RootState) => state.selectedDate.maxDate
   );
@@ -79,9 +81,9 @@ const UserScheduler: React.FC = () => {
   const selectedTaskString = useSelector(
     (state: RootState) => state.tasks.selectedTask
   );
-  const isNewAchievementModalOpen = useSelector(
-    (state: RootState) => state.achievements.isModalOpen
-  );
+  // const isNewAchievementModalOpen = useSelector(
+  //   (state: RootState) => state.achievements.isModalOpen
+  // );
   const currentlyOpenAchievement = useSelector(
     (state: RootState) => state.achievements.currentlyOpenAchievement
   );
@@ -122,6 +124,11 @@ const UserScheduler: React.FC = () => {
   const handleSnackbarText = (text: string) => {
     dispatch(setSnackBarText(text));
   };
+
+  function handleNewAchievementModalClose(){
+    dispatch(closeAchievementModal())
+    setOpenNewAchievementModal(false)
+  }
 
   function getISOWeekInfo(date: Date): { week: number; year: number } {
     const currentDate = new Date(date.getTime());
@@ -237,6 +244,14 @@ const UserScheduler: React.FC = () => {
     }
   }, [selectedDate]);
 
+
+  useEffect(() => {
+    if (currentlyOpenAchievement) {
+      setOpenNewAchievementModal(true)
+      console.log("Opening Achievement Modal", currentlyOpenAchievement);
+    }
+  }, [currentlyOpenAchievement]);
+
   useEffect(() => {
     async function fetchAndSetTasks() {
       try {
@@ -250,11 +265,14 @@ const UserScheduler: React.FC = () => {
       }
     }
     if (tasksRefFlag.current) {
-      console.log("calling fetchAndSetTasks()");
+      // console.log("calling fetchAndSetTasks()");
       fetchAndSetTasks();
       tasksRefFlag.current = false;
     }
   }, []);
+
+  // console.log( "scheduler redux logs : isNewAchievementModalOpen && currentlyOpenAchievement : ", 
+  //    " ", currentlyOpenAchievement)
 
   return (
     <>
@@ -282,10 +300,11 @@ const UserScheduler: React.FC = () => {
         </Alert>
       </Snackbar>
 
-      {isNewAchievementModalOpen && currentlyOpenAchievement && (
+      {openNewAchievementModal && currentlyOpenAchievement && (
         <AchievementModal
           achievement={currentlyOpenAchievement}
-          open={isNewAchievementModalOpen}
+          open={openNewAchievementModal}
+          onClose={handleNewAchievementModalClose}
         />
       )}
 

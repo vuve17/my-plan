@@ -23,18 +23,33 @@ function sortTasksByHours(tasks: Task[]): Task[] {
 }
 
 
-function pushSingleTaskObjectFromArray (taskGroups: {
-  [key: number | string ]: Task[];
-}){
+function pushSingleTaskObjectFromArray(taskGroups: { [key: string | number]: Task | Task[] }) {
   Object.keys(taskGroups).forEach((key) => {
-    if (Array.isArray(taskGroups[key]) && taskGroups[key].length === 1) {
-      taskGroups[key] = taskGroups[key][0];
+    const taskGroup = taskGroups[key];
+    if (Array.isArray(taskGroup) && taskGroup.length === 1) {
+      taskGroups[key] = taskGroup[0];
     }
   });
 }
+// function pushSingleTaskObjectFromArray(taskGroups: { [key: string | number]: Task[] }) {
+//   Object.keys(taskGroups).forEach((key) => {
+//     if (taskGroups[parseInt(key)].length === 1) {
+//       taskGroups[key] = taskGroups[parseInt(key)][0];
+//     }
+//   });
+// }
+// function pushSingleTaskObjectFromArray (taskGroups: {
+//   [key: number | string ]: Task[];
+// }){
+//   Object.keys(taskGroups).forEach((key) => {
+//     if (Array.isArray(taskGroups[key]) && taskGroups[key].length === 1) {
+//       taskGroups[key] = taskGroups[key][0];
+//     }
+//   });
+// }
 
 function formatTasksByTimeOverlap(tasks: QueryResultRow) {
-  // console.log("formatTasksByTimeOverlap tasks", tasks);
+  console.log("formatTasksByTimeOverlap tasks", tasks);
 
   const taskGroups: { [key: number]: Task[] } = {};
   const processed: Set<number> = new Set();
@@ -60,7 +75,7 @@ function formatTasksByTimeOverlap(tasks: QueryResultRow) {
     }
   });
 
-  pushSingleTaskObjectFromArray(taskGroups)
+  pushSingleTaskObjectFromArray(taskGroups);
 
   console.log("formatTasksByTimeOverlap result: ", taskGroups);
   return taskGroups;
@@ -120,32 +135,26 @@ function splitMultipleTasksByDays(tasks: Task[]): Task[][] {
 }
 
 
-function formatTasksByDayOverlap(tasks: { [key: number]: Task | Task[] }): {
-  [key: number]: Task | Task[];
-} {
-  // console.log("tasks (final) initialy gotten tasks inside formatTasksByDayOverlap: ", tasks)
-  const taskGroups: { [key: number]: Task | Task[] } = {};
-  // console.log(Object.entries(tasks));
-  Object.entries(tasks).forEach(([key, value], index) => {
+function formatTasksByDayOverlap(tasks: { [key: number]: Task | Task[] }): { [key: number]: Task | Task[] } {
+  const taskGroups: { [key: string]: Task | Task[] } = {};
+  let uniqueKeyIndex = 0;
+
+  Object.entries(tasks).forEach(([key, value]) => {
     if (Array.isArray(value)) {
-      // console.log("value", value);
-      taskGroups[index] = value;
       const splitTaskGroups = splitMultipleTasksByDays(value);
-      // console.log("splitTaskGroups: ", splitTaskGroups);
-      splitTaskGroups.forEach((group, index) => {
-        const newKey = `${key}_${index}`;
-        taskGroups[index] = group;
+      splitTaskGroups.forEach((group) => {
+        const newKey = `${key}_${uniqueKeyIndex++}`;
+        taskGroups[newKey] = group;
       });
     } else {
       const splitTasks = splitSingleTaskByDays(value);
-      // console.log("splitTask: ", splitTasks )
-      splitTasks.forEach((splitTask, index) => {
-        const newKey = `${key}_${index}`;
+      splitTasks.forEach((splitTask) => {
+        const newKey = `${key}_${uniqueKeyIndex++}`;
         taskGroups[newKey] = splitTask;
       });
     }
   });
-  // console.log("taskGroups (final) inside formatTasksByDayOverlap: ", taskGroups)
+
   return taskGroups;
 }
 
@@ -162,11 +171,11 @@ export async function GET(request: NextRequest) {
             FROM tasks
             WHERE user_id = ${userId}
         `;
-    // console.log(" fetched tasks :", tasks.rows)
+    console.log(" fetched tasks :", tasks.rows)
     const jsonFormattedTasks = formatTasksByTimeOverlap(tasks.rows);
-    // console.log("jsonFormattedTasksByHours", jsonFormattedTasks);
+    console.log("jsonFormattedTasksBy time overlap: ", jsonFormattedTasks);
     const jsonFormattedTasksByDay = formatTasksByDayOverlap(jsonFormattedTasks);
-    // console.log("jsonFormattedTasksByDay", jsonFormattedTasksByDay);
+    console.log("jsonFormattedTasksByDay", jsonFormattedTasksByDay);
     return NextResponse.json(
       { 
         tasks: jsonFormattedTasksByDay,

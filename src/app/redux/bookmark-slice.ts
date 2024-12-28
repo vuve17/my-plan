@@ -61,7 +61,7 @@ const bookmarkSlice = createSlice({
     reducers: {
         setBookmarkValue(state, action : PayloadAction<"chore" | "event">){
             state.type = action.payload;  
-            console.log("activeType:", state.type);
+            // console.log("activeType:", state.type);
         },
         setAnimating(state, action : PayloadAction<boolean>) {
             state.isAnimating = action.payload;

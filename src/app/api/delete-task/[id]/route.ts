@@ -4,6 +4,8 @@ import { getUserId } from "@/app/lib/auth";
 import { db } from "@vercel/postgres";
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { checkNewAchievements } from "@/app/lib/achievement-requirements";
+import { UserAchievement } from "@/app/lib/types";
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: number }}) {
     try {
@@ -20,7 +22,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: n
                             RETURNING id, title;`
 
             const result = await client.query(query, [userId, id]);
-            console.log("result: ", result);
+            // console.log("result: ", result);
 
 
             if (result.rows.length === 0) {
@@ -29,10 +31,12 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: n
             const title: string = result.rows[0].title
             console.log("title: ", title);
             console.log("result.rows[0]: ", result.rows[0]);
-             
+            // const achievements: UserAchievement[] = await checkNewAchievements(userId);
+            
             return NextResponse.json({ title: title }, { status: 200 });
         }
 
+        
         return NextResponse.json({ error: "User token is invalid" }, { status: 401 });
 
     } catch (error) {

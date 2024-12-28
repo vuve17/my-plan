@@ -48,6 +48,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
           color: "white",
           cursor: "pointer",
           fontSize: "2rem",
+          zIndex: "1000",
         }}
       />
 
@@ -58,6 +59,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
         pagination={{
           clickable: true,
         }}
+        style={{ width: "100vw", height: "100vh"}}
         onSlideChange={(swiper) => setCurrentItemIndex(swiper.activeIndex)}
         modules={[Pagination]}
         className="mySwiper"
@@ -66,14 +68,20 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
           <SwiperSlide
             key={index}
             style={{
+              display: "flex",
               transition: "transform 0.3s ease",
               transform: currentItemIndex === index ? "scale(1.3)" : "scale(1)", 
               zIndex: currentItemIndex === index ? 10 : 1, 
               opacity: currentItemIndex === index ? 1 : 0.8, 
               marginRight: "30px", 
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100vh"
             }}
           >
-            {item}
+            {/* <div style={{ width: "100vw"}}> */}
+              {item}
+            {/* </div> */}
           </SwiperSlide>
         ))}
       </Swiper>

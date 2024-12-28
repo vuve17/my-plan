@@ -10,11 +10,13 @@ import NewAchievementCard from "./new-achievement-card";
 interface AchievementModalProps {
   achievement: UserAchievementNoId;
   open?: boolean;
+  onClose?: () => void;
 }
 
 const AchievementModal: React.FC<AchievementModalProps> = ({
   achievement,
-  open=true,
+  open,
+  onClose
 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -28,6 +30,21 @@ const AchievementModal: React.FC<AchievementModalProps> = ({
   }, [open]);
 
   return (
+            <Box
+                width="100vw" 
+                height="100vh"
+                
+                sx={{
+                    position: "fixed", 
+                    top: 0, 
+                    left: 0,
+                    zIndex:100,
+                    display: "flex",
+                    alignItems: 'center',
+                    justifyContent: "center"
+                }}
+                onClick={onClose}
+            >
     <Backdrop open={true}>
       <Stack
         display="flex"
@@ -80,6 +97,7 @@ const AchievementModal: React.FC<AchievementModalProps> = ({
 
       <AchievementModalSpinner />
     </Backdrop>
+    </Box>
   );
 };
 

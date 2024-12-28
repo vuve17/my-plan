@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getUserId } from "../../lib/auth";
-import { getUserAchievements } from "../create-task/route";
+import { getUserAchievements } from "@/app/lib/achievement-requirements";
 
 export async function GET(request: NextRequest) {
   try {

@@ -220,8 +220,8 @@ const LogInForm: React.FC = () => {
       </form>
 
       <div style={{ marginTop: "1em", display:"flex", justifyContent:"center", flexDirection:"column", alignItems:"center" }}>
-        <div>Don't have an account? </div>
-        <Link
+      <div>Don&apos;t have an account? </div>
+      <Link
           href="/register"
           style={{
             marginLeft: "0.1em",

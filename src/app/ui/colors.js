@@ -45,6 +45,8 @@ const colors = {
     },
   },
   error: "#ff0033",
+  chore: "#0081D1",
+  event: "#3CE239"
 };
 
 

@@ -15,10 +15,11 @@ import { RootState } from "@/app/redux/store";
 import { Task, apiDeletedTask } from "@/app/lib/types";
 import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from "@/app/redux/snackbar-slice";
 import { setIsTaskModalActive, setTaskModalDate } from '@/app/redux/task-modals-slice';
-import { setTasks, setSelectedTask } from '@/app/redux/tasks-slice';
+import { setTasks, setSelectedTask, resetStates } from '@/app/redux/tasks-slice';
 import { convertTaskStringToTaskValuePair, convertTaskStringToTask } from "@/app/lib/user-tasks-functions";
 import { setBookmarkValue } from "@/app/redux/bookmark-slice";
 import ErrorBox from "../../authentication-error-messages-box";
+
 
 export const dynamic = 'force-dynamic'
 
@@ -246,6 +247,7 @@ const UpdateTaskModal: React.FC<UpdateTaskModalProps> = ({task}) => {
                 });
                 const responseData = await response.json()
                 if (response.ok) {
+                    dispatch(resetStates())
                     dispatch(setSnackBarText(`Successfuly created ${sentData.title} ${sentData.taskType}`))
                     dispatch(setSnackbarAlertState("success"))
                     dispatch(setIsSnackBarOpen(true))
@@ -256,7 +258,7 @@ const UpdateTaskModal: React.FC<UpdateTaskModalProps> = ({task}) => {
                     if(tasks)
                     {
                         dispatch(setTasks(tasks))
-                        console.log(tasks);
+                        console.log("tasks: ",tasks);
                     }
                     
                 } 
