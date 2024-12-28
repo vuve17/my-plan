@@ -169,7 +169,7 @@ export async function GET(request: NextRequest) {
     const tasks = await client.sql`
             SELECT id, title, start_date as "startDate", end_date as "endDate", description, task_type as "taskType"
             FROM tasks
-            WHERE user_id = ${userId}
+            WHERE user_id = ${userId} AND proccessed = false
         `;
     console.log(" fetched tasks :", tasks.rows)
     const jsonFormattedTasks = formatTasksByTimeOverlap(tasks.rows);

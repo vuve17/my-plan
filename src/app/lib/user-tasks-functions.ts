@@ -152,6 +152,16 @@ export function convertTaskArrayToTaskStringArray(tasks: Task[]) {
   return tasksFormated;
 }
 
+export function convertTaskStringArrayToTaskArray(tasks: TaskString[]) {
+  const tasksFormated = tasks.map((t: TaskString) => ({
+    ...t,
+    taskType: t.taskType as TaskType,
+    startDate: new Date(t.startDate),
+    endDate: new Date(t.endDate),
+  }));
+  return tasksFormated;
+}
+
 export function convertTaskToTaskString(tasks: Task | Task[]) {
   if (Array.isArray(tasks)) {
     return convertTaskArrayToTaskStringArray(tasks);

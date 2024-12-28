@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AchievementModal from "../components/scheduler/achievements/achievement-modal";
 import { Achievement, Task, UserAchievement } from "../lib/types";
 import { splitSingleTaskByDays, splitMultipleTasksByDaysTest } from "../lib/user-tasks-functions";
@@ -10,7 +10,7 @@ const AboutPage: React.FC = () => {
 
   const [open, setOpen] = useState(false);
   const [selectedTasks, setSelectedTasks] = useState<Task[] | null>(null);
-
+  const [taskArray, setTaskArray] = useState<Task[]>([]);
   const handleOpen = () => setOpen(true);
   const handleClose = (tasks?: Task[]) => {
     setOpen(false);
@@ -18,6 +18,15 @@ const AboutPage: React.FC = () => {
       setSelectedTasks(tasks);
     }
   };
+
+  const openModal = () => {
+    setOpen(true);
+  };
+
+  const closeModal = () => {
+    setOpen(false);
+  };
+
   const tasksArray: Task[] = [
     {
       id: 476,
@@ -102,12 +111,12 @@ const AboutPage: React.FC = () => {
   ];
 
 
-  // const splitedTasksArray = splitMultipleTasksByDaysTest(achievementsArray)
 
-  // console.log(splitedTasksArray)
-  
   return <div>
-    <CompleteTasksModal tasks={tasksArray} open={true} onClose={handleClose}/>
+    <button onClick={openModal}>
+      Open Modal
+    </button>
+    <CompleteTasksModal tasks={tasksArray} open={open} onClose={closeModal}/>
   </div>
 };
 
