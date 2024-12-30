@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef, } from "react";
+import React, { useState, useEffect, useRef, ChangeEvent, } from "react";
 import { Form, Formik, useFormik } from 'formik';
 import * as Yup from 'yup';
 import {Backdrop, Box, TextField, Button, Paper, Grid, OutlinedInput, InputLabel, Snackbar, IconButton } from '@mui/material';
@@ -66,7 +66,22 @@ const SourceSerif4 = Source_Serif_4({
 
 let newTaskSchema = Yup.object().shape({
     title: Yup.string().max(50).min(1).required("Title is required"),
-    startDate: Yup.date().required("Start Date is required"),
+    startDate: Yup.date()
+        .required("Start Date is required")
+        .test({
+          name: 'is-after-current-date',
+          exclusive: false,
+          message: 'Start Date must be the same as or after the current date and time',
+          test: function(startDate) {
+            if (!startDate) {
+              return true;
+            }
+            const now = new Date();
+            console.log("now: ", now, "true false? ", new Date(startDate) >= now) 
+            console.log("startDate: ", new Date(startDate))
+            return new Date(startDate) >= now;
+          },
+        }),
     endDate: Yup.date()
     .required("End Date is required")
     .when('startDate', (startDate, schema) => {
@@ -136,6 +151,24 @@ interface UpdateTaskModalProps {
 
 const UpdateTaskModal: React.FC<UpdateTaskModalProps> = ({task}) => {
 
+        const handleStartTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
+            formik.handleChange(e);
+            formik.setFieldValue('startDate', applyTimeToDate(formik.values.startDate, e.target.value));
+          };
+        
+          const handleEndTimeChange = (e: ChangeEvent<HTMLInputElement>) => {
+            formik.handleChange(e);
+            formik.setFieldValue('endDate', applyTimeToDate(formik.values.endDate, e.target.value));
+          };
+      
+        const applyTimeToDate = (date: Date, time: string): Date => {
+            const [hours, minutes] = time.split(':').map(Number);
+            const updatedDate = new Date(date);
+            updatedDate.setHours(hours);
+            updatedDate.setMinutes(minutes);
+            console.log("updatedDate: ", updatedDate)
+            return updatedDate;
+          };
 
     // zanijeniti sve sa taskom 
     // const [twelvePmNewDay, setTwelvePmNewDay] = useState<Boolean>(false)
@@ -431,7 +464,8 @@ const UpdateTaskModal: React.FC<UpdateTaskModalProps> = ({task}) => {
                                                     name="startTime" 
                                                     value={formik.values.startTime} 
                                                     onBlur={formik.handleBlur}
-                                                    onChange={formik.handleChange}
+                                                    // onChange={formik.handleChange}
+                                                    onChange={handleStartTimeChange}
                                                     />
                                                 </Grid>
 
@@ -483,7 +517,8 @@ const UpdateTaskModal: React.FC<UpdateTaskModalProps> = ({task}) => {
                                                     name="endTime"
                                                     value={formik.values.endTime}
                                                     onBlur={formik.handleBlur}
-                                                    onChange={formik.handleChange}
+                                                    // onChange={formik.handleChange}
+                                                    onChange={handleEndTimeChange}
                                                     />
 
                                                 </Grid>
@@ -525,7 +560,9 @@ const UpdateTaskModal: React.FC<UpdateTaskModalProps> = ({task}) => {
                                 }}
                             >
 
-                                {formik.errors.endDate && formik.touched.endDate ? <ErrorBox text="End Date must be the same or after Start Date"/> : 
+                            {
+                                formik.errors.startDate && formik.touched.startDate ? <ErrorBox text="Start Date must be the same as or after the current date and time"/> : 
+                                (formik.errors.endDate && formik.touched.endDate ? <ErrorBox text="End Date must be the same or after Start Date"/> : 
                                     (
                                     formik.errors.endTime && formik.touched.endTime ? <ErrorBox text={formik.errors.endTime}/> : 
                                         (
@@ -534,8 +571,9 @@ const UpdateTaskModal: React.FC<UpdateTaskModalProps> = ({task}) => {
                                                 formik.errors.description && formik.touched.description ? <ErrorBox text={formik.errors.description}/> : null
                                             )
                                         )
-                                    )   
-                                }
+                                    )
+                                )   
+                            }
 
                             </Grid >
                             

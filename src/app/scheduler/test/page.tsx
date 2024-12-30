@@ -31,7 +31,7 @@ const TestPage: React.FC = () => {
           endDate: new Date(task.endDate),
           description: task.description,
           taskType: task.taskType as TaskType,
-          proccessed: task.proccessed,
+          processed: task.processed,
         }));
         setTaskArray(tasks);
         console.log("Updated taskArray: ", tasks);

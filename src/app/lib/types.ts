@@ -57,7 +57,7 @@ export type Task = {
     endDate: Date,
     description: string,
     taskType: TaskType,
-    proccessed?: boolean
+    processed?: boolean
 }
 
 export interface ProcessedTask extends Task {

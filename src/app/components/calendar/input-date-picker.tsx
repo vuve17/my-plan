@@ -40,7 +40,8 @@ const CustomButton = forwardRef(({ value, onClick }: any, ref :any) => {
                   color: 'white',
                   borderRadius: "6%",
                   border: "0px",
-                  fontWeight: "600"
+                  fontWeight: "600",
+                  cursor: "pointer",
               }}
               type="text"
               value={value}

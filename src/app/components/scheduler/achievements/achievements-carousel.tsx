@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Backdrop, SvgIcon } from "@mui/material";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { useSelector } from "react-redux";
@@ -21,10 +21,17 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
   open,
   hlandleClose,
 }) => {
-  const [currentItemIndex, setCurrentItemIndex] = useState(initialActiveIndex);
+  const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const isMobile = useSelector((state: RootState) => state.screen.isMobile);
+  const swiperRef = useRef<any>(null);
+  useEffect(() => {
+    setCurrentItemIndex(initialActiveIndex);
+    if (swiperRef.current) {
+      swiperRef.current.swiper.slideTo(initialActiveIndex, 0, false); // Slide to the initial active index without animation
+    }
+  }, [initialActiveIndex]);
 
-  return (
+    return (
     <Backdrop
       open={open}
       style={{
@@ -53,6 +60,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
       />
 
       <Swiper
+        ref={swiperRef}
         slidesPerView={isMobile ? 1 : 4}
         spaceBetween={30}
         centeredSlides={true}
@@ -63,6 +71,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
         onSlideChange={(swiper) => setCurrentItemIndex(swiper.activeIndex)}
         modules={[Pagination]}
         className="mySwiper"
+        initialSlide={currentItemIndex} 
       >
         {achievements.map((item, index) => (
           <SwiperSlide
@@ -79,9 +88,7 @@ const AchievementCarousel: React.FC<AchievementCarouselProps> = ({
               height: "100vh"
             }}
           >
-            {/* <div style={{ width: "100vw"}}> */}
               {item}
-            {/* </div> */}
           </SwiperSlide>
         ))}
       </Swiper>

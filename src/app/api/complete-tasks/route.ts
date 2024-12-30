@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
       endDate: new Date(task.end_date),
       description: task.description,
       taskType: task.task_type as TaskType,
-      proccessed: task.processed,
+      processed: task.processed,
     }));
     
     return NextResponse.json({ tasks: tasks });
