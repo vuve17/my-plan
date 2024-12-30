@@ -13,7 +13,7 @@ import React from "react";
 import { UserAchievementNoId } from "../../../lib/types";
 import AchievementStars from "./achievement-stars";
 
-const AchievementCard: React.FC<UserAchievementNoId> = ({ ...props }) => {
+const AchievementCardCarousel: React.FC<UserAchievementNoId> = ({ ...props }) => {
   const { description, stars, name } = props;
   const activeAchievement = stars === 0 ? false : true;
   const isSmallScreen = useMediaQuery("(max-width:600px)");
@@ -34,10 +34,6 @@ const AchievementCard: React.FC<UserAchievementNoId> = ({ ...props }) => {
       md: "100%",
       sm: "100%",
       xs: "100%",
-      "@media (max-width:475px)": {
-        width: "100%",
-        marginRight: "0.5em",
-      },
     },
     height: {
       lg: "175px",
@@ -74,7 +70,6 @@ const AchievementCard: React.FC<UserAchievementNoId> = ({ ...props }) => {
     />
   )}
 
-  {/* Card Content */}
   <CardContent>
     <Box
       sx={{
@@ -188,4 +183,4 @@ const AchievementCard: React.FC<UserAchievementNoId> = ({ ...props }) => {
   );
 };
 
-export default AchievementCard;
+export default AchievementCardCarousel;

@@ -1,6 +1,6 @@
 "use client";
 
-import AchievementCard from "@/app/components/scheduler/achievements/achievement-card";
+import AchievementCardCarousel from "@/app/components/scheduler/achievements/achievement-card";
 import AchievementCarousel from "@/app/components/scheduler/achievements/achievements-carousel";
 import { UserAchievement } from "@/app/lib/types";
 import { setReduxAchievements } from "@/app/redux/achievements-slice";
@@ -32,7 +32,7 @@ const AchievementPage: React.FC = () => {
   const achievementCardsArray: React.ReactNode[] = useMemo(() => {
     return achievementsRedux.map((achievement, index) => (
       <div key={achievement.id} style={{ overflow: "hidden" }}>
-        <AchievementCard
+        <AchievementCardCarousel
           id={achievement.id}
           name={achievement.name}
           image={achievement.image}
@@ -59,7 +59,7 @@ const AchievementPage: React.FC = () => {
           overflow: "visible",
         }}
       >
-        <AchievementCard
+        <AchievementCardCarousel
           id={achievement.id}
           name={achievement.name}
           image={achievement.image}
