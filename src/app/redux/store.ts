@@ -6,6 +6,7 @@ import selectedDateSlice from './selected-date-slice';
 import schedulerVisibilitySlice from './scheduler-visibility-slice';
 import bookmarkSlice from './bookmark-slice';
 import testSlice from './test-slice';
+import userSlice from './user-slice';
 import snackbarSlice from './snackbar-slice';
 import createTaskModalSlice from './task-modals-slice';
 import UserTaskSlice from './tasks-slice';
@@ -22,6 +23,7 @@ export const store = configureStore({
       createTaskModal: createTaskModalSlice,
       tasks: UserTaskSlice,
       achievements: achievementsSlice,
+      user: userSlice,
   },
 })
 

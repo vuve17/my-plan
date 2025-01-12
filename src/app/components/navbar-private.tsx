@@ -8,6 +8,7 @@ import NavLinksPrivate from '../ui/nav-links-private';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSchedulerVisibility } from '../redux/scheduler-visibility-slice';
 import { RootState } from "@/app/redux/store";
+import UserLevelProgressBar from './nav/xp-status-bar';
 
 
 interface NavbarProps  {
@@ -59,6 +60,7 @@ const NavBar: React.FC <NavbarProps> = ({...props}) => {
                   />
                 </i>
               </button>
+              <UserLevelProgressBar />
               <button
                 id="sidebarCollapse"
                 onClick={() => dispatch(setSchedulerVisibility(!schedulerVisibility))}
@@ -66,7 +68,7 @@ const NavBar: React.FC <NavbarProps> = ({...props}) => {
                   visibility: props.deviceSmall ? "visible" : "hidden"
                 }}
               >
-  
+                  
                   <DateRangeOutlinedIcon 
                       id="calendar_menu" 
                       

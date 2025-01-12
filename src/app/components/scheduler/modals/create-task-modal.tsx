@@ -243,7 +243,7 @@ const CreateTaskModal: React.FC = () => {
                 });
                 console.log("responding??")
                 if (response.ok) {
-
+                    
                     const result: CreateTaskResponse = await response.json();
                     // check ahvivemnta funckija koja updatea stanja achieveenta
                     console.log("result response.ok: ",  result)

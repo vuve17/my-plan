@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 import {
   Dialog,
   DialogTitle,
@@ -15,14 +15,21 @@ import {
   IconButton,
   Typography,
   Snackbar,
-} from '@mui/material';
-import { Task } from '@/app/lib/types';
-import { formatDate } from '@/app/lib/user-tasks-functions';
-import colors from '@/app/ui/colors';
+} from "@mui/material";
+import { Task } from "@/app/lib/types";
+import { formatDate } from "@/app/lib/user-tasks-functions";
+import colors from "@/app/ui/colors";
 import Cookies from "js-cookie";
-import { RootState } from '@/app/redux/store';
-import { useDispatch, useSelector } from 'react-redux';
-import { setIsSnackBarOpen, setSnackBarText, setSnackbarAlertState } from '@/app/redux/snackbar-slice';
+import { RootState } from "@/app/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  setIsSnackBarOpen,
+  setSnackBarText,
+  setSnackbarAlertState,
+} from "@/app/redux/snackbar-slice";
+import { setDailyTaskCheck, setXp } from "@/app/redux/user-slice";
+import { getTasks } from "@/app/lib/user-tasks-functions";
+import { setTasks } from "@/app/redux/tasks-slice";
 
 interface CompleteTasksDialogProps {
   tasks: Task[];
@@ -30,25 +37,22 @@ interface CompleteTasksDialogProps {
   onClose: () => void;
 }
 
-const CompleteTasksDialog: React.FC<CompleteTasksDialogProps> = ({ tasks, open, onClose }) => {
+const CompleteTasksDialog: React.FC<CompleteTasksDialogProps> = ({
+  tasks,
+  open,
+  onClose,
+}) => {
   console.log("tasks: ", tasks);
   const [checked, setChecked] = React.useState<number[]>([]);
-  const taskIds : number[] = []
+  const taskIds: number[] = [];
   const [disableSubmit, setDisableSubmit] = React.useState<boolean>(false);
   const dispatch = useDispatch();
-  const isSnackBarOpen = useSelector(
-    (state: RootState) => state.snackbar.isSnackBarOpen
-  );
-  const snackbarText = useSelector(
-    (state: RootState) => state.snackbar.snackbarText
-  );
-  const snackbarAlertState: "success" | "warning" | "error" = useSelector(
-    (state: RootState) => state.snackbar.snackbarAlertState
-  );
-    const handleSnackbarClose = () => {
-      dispatch(setIsSnackBarOpen(false));
-    };
-  
+
+  const handleSnackbarClose = () => {
+    dispatch(setIsSnackBarOpen(false));
+  };
+
+  console.log("checked: ", checked);
   const handleToggle = (taskId: number) => () => {
     const currentIndex = checked.indexOf(taskId);
     const newChecked = [...checked];
@@ -70,20 +74,43 @@ const CompleteTasksDialog: React.FC<CompleteTasksDialogProps> = ({ tasks, open, 
     const token = Cookies.get("refreshToken");
     console.log("taskIds: ", taskIds);
     try {
-      const response = await fetch('/api/complete-tasks', {
-        method: 'POST',
+      const response = await fetch("/api/complete-tasks", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           taskIds: taskIds,
-          completedTaskIds: checked
-        })
-    });
-    dispatch(setSnackBarText("Tasks completed successfully"));
-    dispatch(setSnackbarAlertState("success"));
-    dispatch(setIsSnackBarOpen(true));
+          completedTaskIds: checked,
+          tasks: tasks
+        }),
+      });
+      if (response.ok) {
+        const fetchedTasks = await getTasks();
+        if (fetchedTasks) {
+          dispatch(setTasks(fetchedTasks));
+          console.log("tasks setting from COMPLETE TASK MODAL: ", fetchedTasks);
+        }
+        const token = Cookies.get("refreshToken");
+        const userXp = await await fetch(`/api/xp`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const responseXp: { xp: number } = await userXp.json();
+        console.log("userXp: ", responseXp.xp);
+
+        if (userXp) {
+          dispatch(setXp(responseXp.xp));
+        }
+        dispatch(setSnackBarText("Tasks completed successfully"));
+        dispatch(setSnackbarAlertState("success"));
+        dispatch(setIsSnackBarOpen(true));
+        dispatch(setDailyTaskCheck(true));
+      }
     } catch {
       dispatch(setSnackBarText("Error completing tasks"));
       dispatch(setSnackbarAlertState("error"));
@@ -93,78 +120,97 @@ const CompleteTasksDialog: React.FC<CompleteTasksDialogProps> = ({ tasks, open, 
   };
 
   return (
-          <>
+    <>
       <Dialog
-        sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 600 } }}
+        sx={{ "& .MuiDialog-paper": { width: "80%", maxHeight: 600 } }}
         maxWidth="sm"
         open={open}
         onClose={handleCancel}
       >
         <DialogTitle>Select tasks You have completed</DialogTitle>
         <DialogContent dividers>
-          <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            {tasks.map((task) => {
-              const labelId = `checkbox-list-label-${task.id}`;
-              const date = `${formatDate(task.startDate)} - ${formatDate(task.endDate)}`;
-              taskIds.push(task.id);
-              return (
-                <ListItem
-                  key={task.id}
-                  disablePadding
-                  alignItems="flex-start"
-                  secondaryAction={
-                    <IconButton edge="end" aria-label="comments">
-                      <Chip
-                        label={task.taskType}
-                        size="small"
-                        sx={{
-                          bgcolor: `${task.taskType === 'chore' ? colors.chore : colors.event}`,
-                          color: 'white',
-                          marginTop: '4px',
-                        }}
+          <List sx={{ width: "100%", bgcolor: "background.paper" }}>
+            {tasks &&
+              tasks.map((task) => {
+                const labelId = `checkbox-list-label-${task.id}`;
+                const date = `${formatDate(
+                  new Date(task.startDate)
+                )} - ${formatDate(new Date(task.endDate))}`;
+                taskIds.push(task.id);
+                return (
+                  <ListItem
+                    key={task.id}
+                    disablePadding
+                    alignItems="flex-start"
+                    secondaryAction={
+                      <IconButton edge="end" aria-label="comments">
+                        <Chip
+                          label={task.taskType}
+                          size="small"
+                          sx={{
+                            bgcolor: `${
+                              task.taskType === "chore"
+                                ? colors.chore
+                                : colors.event
+                            }`,
+                            color: "white",
+                            marginTop: "4px",
+                          }}
+                        />
+                      </IconButton>
+                    }
+                  >
+                    <ListItemButton
+                      role={undefined}
+                      onClick={handleToggle(task.id)}
+                      dense
+                    >
+                      <ListItemIcon>
+                        <Checkbox
+                          edge="start"
+                          checked={checked.includes(task.id)}
+                          tabIndex={-1}
+                          disableRipple
+                          inputProps={{ "aria-labelledby": labelId }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText
+                        id={labelId}
+                        primary={
+                          <Typography
+                            component="span"
+                            variant="body1"
+                            sx={{ fontWeight: "bold" }}
+                          >
+                            {task.title}
+                          </Typography>
+                        }
+                        secondary={
+                          <Typography
+                            component="span"
+                            variant="body2"
+                            sx={{ display: "block", color: "text.secondary" }}
+                          >
+                            {date}
+                          </Typography>
+                        }
                       />
-                    </IconButton>
-                  }
-                >
-                  <ListItemButton role={undefined} onClick={handleToggle(task.id)} dense>
-                    <ListItemIcon>
-                      <Checkbox
-                        edge="start"
-                        checked={checked.includes(task.id)}
-                        tabIndex={-1}
-                        disableRipple
-                        inputProps={{ 'aria-labelledby': labelId }}
-                      />
-                    </ListItemIcon>
-                    <ListItemText
-                      id={labelId}
-                      primary={
-                        <Typography component="span" variant="body1" sx={{ fontWeight: 'bold' }}>
-                          {task.title}
-                        </Typography>
-                      }
-                      secondary={
-                        <Typography
-                          component="span"
-                          variant="body2"
-                          sx={{ display: 'block', color: 'text.secondary' }}
-                        >
-                          {date}
-                        </Typography>
-                      }
-                    />
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
+                    </ListItemButton>
+                  </ListItem>
+                );
+              })}
           </List>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancel} disabled={disableSubmit}>Cancel</Button>
-          <Button onClick={handleConfirm} disabled={disableSubmit}>Confirm</Button>
+          <Button onClick={handleCancel} disabled={disableSubmit}>
+            Later
+          </Button>
+          <Button onClick={handleConfirm} disabled={disableSubmit}>
+            Confirm
+          </Button>
         </DialogActions>
       </Dialog>
-          </>
+    </>
   );
 };
 

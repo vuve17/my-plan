@@ -4,13 +4,13 @@ import { getUserId } from "@/app/lib/auth";  // Your user authentication helper
 import { db } from "@vercel/postgres";  // Vercel Postgres integration
 import { NextRequest, NextResponse } from "next/server";  // Next.js server types
 import { headers } from "next/headers";  // To get headers for token
-import { ProcessedTaskString, Task, TaskType } from "@/app/lib/types";  // Assuming this type exists for tasks
-
-
+import { ProcessedTaskString, Task, TaskString, TaskType } from "@/app/lib/types";  // Assuming this type exists for tasks
+import { addUserTaskXp } from "@/app/lib/user-level-functions";
 
 // update tasks
 // set processed = false
 // where processed = true
+
 export async function GET(request: NextRequest) {
   const client = await db.connect();
   
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
   const client = await db.connect();
 
   try {
-    const { taskIds, completedTaskIds } = await request.json();
+    const { taskIds, completedTaskIds, tasks } = await request.json();
     console.log("taskIds: ", taskIds);
     console.log("completedTaskIds: ", completedTaskIds);
 
@@ -106,7 +106,15 @@ export async function POST(request: NextRequest) {
     WHERE user_id = $1 AND id = ANY($2::int[])
     RETURNING id, title, description, processed;
   `;
-    const result2 = await client.query(query2, [userId, completedTaskIds]);
+   await client.query(query2, [userId, completedTaskIds]);
+
+   for(const completedTaskId of completedTaskIds){
+    const task = tasks.find((task: TaskString) => task.id === completedTaskId);
+    console.log("task by coml id : ", task)
+    if (task) {
+      await addUserTaskXp(task, userId, client);
+    }
+   }
 
     const query3 = `
     UPDATE users

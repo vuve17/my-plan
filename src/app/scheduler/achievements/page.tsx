@@ -9,6 +9,8 @@ import { Grid } from "@mui/material";
 import Cookies from "js-cookie";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import AchievementsLoadingSkeletonPage from "@/app/components/scheduler/achievements/achievements-loading-skeleton";
+import UserLevelProgressBar from "@/app/components/nav/xp-status-bar";
 
 interface AchievementsApiresponse {
   achievementsArray: UserAchievement[];
@@ -113,6 +115,7 @@ const AchievementPage: React.FC = () => {
     <div
       style={{ display: "flex", justifyContent: "center", marginTop: "80px" }}
     >
+      {/* <UserLevelProgressBar /> */}
       <Grid
         container
         spacing={2}
@@ -125,7 +128,7 @@ const AchievementPage: React.FC = () => {
           maxWidth: "1500px",
         }}
       >
-        {loading ? <p>Loading...</p> : memorizeAchievements}
+        {loading ? <AchievementsLoadingSkeletonPage /> : memorizeAchievements}
       </Grid>
       <AchievementCarousel
         achievements={achievementCardsArray}

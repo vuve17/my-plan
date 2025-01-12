@@ -27,6 +27,8 @@ import TimeTable from "./user-scheduler-day-time";
 import AchievementModal from "./achievements/achievement-modal";
 import MultipleTasksModal from "./modals/multiple-tasks-select-modal";
 import { closeAchievementModal } from "@/app/redux/achievements-slice";
+import Cookies from "js-cookie";
+import { setXp } from "@/app/redux/user-slice";
 
 export const dynamic = "force-dynamic";
 
@@ -53,7 +55,8 @@ function getChosenDateTime(divId: string) {
 const UserScheduler: React.FC = () => {
   const dispatch = useDispatch();
   const isMobile = useSelector((state: RootState) => state.screen.isMobile);
-  const [openNewAchievementModal, setOpenNewAchievementModal] = useState<boolean>(false)
+  const [openNewAchievementModal, setOpenNewAchievementModal] =
+    useState<boolean>(false);
   const maxDateString = useSelector(
     (state: RootState) => state.selectedDate.maxDate
   );
@@ -81,9 +84,9 @@ const UserScheduler: React.FC = () => {
   const selectedTaskString = useSelector(
     (state: RootState) => state.tasks.selectedTask
   );
-  // const isNewAchievementModalOpen = useSelector(
-  //   (state: RootState) => state.achievements.isModalOpen
-  // );
+  const areDailyTaskChecked = useSelector(
+    (state: RootState) => state.user.dailyTaskCheck
+  );
   const currentlyOpenAchievement = useSelector(
     (state: RootState) => state.achievements.currentlyOpenAchievement
   );
@@ -125,9 +128,9 @@ const UserScheduler: React.FC = () => {
     dispatch(setSnackBarText(text));
   };
 
-  function handleNewAchievementModalClose(){
-    dispatch(closeAchievementModal())
-    setOpenNewAchievementModal(false)
+  function handleNewAchievementModalClose() {
+    dispatch(closeAchievementModal());
+    setOpenNewAchievementModal(false);
   }
 
   function getISOWeekInfo(date: Date): { week: number; year: number } {
@@ -244,10 +247,9 @@ const UserScheduler: React.FC = () => {
     }
   }, [selectedDate]);
 
-
   useEffect(() => {
     if (currentlyOpenAchievement) {
-      setOpenNewAchievementModal(true)
+      setOpenNewAchievementModal(true);
       console.log("Opening Achievement Modal", currentlyOpenAchievement);
     }
   }, [currentlyOpenAchievement]);
@@ -258,7 +260,21 @@ const UserScheduler: React.FC = () => {
         const fetchedTasks = await getTasks();
         if (fetchedTasks) {
           dispatch(setTasks(fetchedTasks));
-          console.log()
+        }
+        const token = Cookies.get("refreshToken");
+        const userXp = await await fetch(`/api/xp`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log("userXp: ", userXp);
+        const responseXp: { xp: number } = await userXp.json();
+        console.log("userXp: ", responseXp.xp);
+
+        if (userXp) {
+          dispatch(setXp(responseXp.xp));
         }
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -271,7 +287,7 @@ const UserScheduler: React.FC = () => {
     }
   }, []);
 
-  // console.log( "scheduler redux logs : isNewAchievementModalOpen && currentlyOpenAchievement : ", 
+  // console.log( "scheduler redux logs : isNewAchievementModalOpen && currentlyOpenAchievement : ",
   //    " ", currentlyOpenAchievement)
 
   return (
@@ -280,7 +296,9 @@ const UserScheduler: React.FC = () => {
         ? selectedTask && <UpdateTaskModal task={selectedTask} />
         : isTaskModalActive && <CreateTaskModal />}
 
-      {isTasksMultipleModalOpen && selectedTasksMultiple && <MultipleTasksModal />}
+      {isTasksMultipleModalOpen && selectedTasksMultiple && (
+        <MultipleTasksModal />
+      )}
 
       <Snackbar
         open={isSnackBarOpen}

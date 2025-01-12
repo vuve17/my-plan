@@ -3,7 +3,7 @@
 import { Box } from "@mui/material";
 import React, { useEffect, useRef } from "react";
 import colors from "@/app/ui/colors";
-import { cellHeight } from "@/app/utils";
+import { cellHeight, fixedDanHeaderWidth } from "@/app/utils";
 import type { Task } from "@/app/lib/types";
 import { RootState } from "@/app/redux/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +40,7 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({
     }
   };
   // if(tasks){
-    // console.log("Cell tasks: ", tasks)
+  // console.log("Cell tasks: ", tasks)
   // }
   return (
     <Box
@@ -52,6 +52,9 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({
       sx={{
         height: {
           ...cellHeight,
+        },
+        width: {
+          ...fixedDanHeaderWidth,
         },
         textAlign: "center",
         zIndex: 5,

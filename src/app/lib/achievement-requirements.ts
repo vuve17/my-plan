@@ -2,6 +2,7 @@
 
 import { UserAchievement } from "@/app/lib/types";
 import { db } from "@vercel/postgres";
+import { addUserAchievementXp } from "./user-level-functions";
 
 export async function checkHustler(
   currentAch: UserAchievement
@@ -35,33 +36,30 @@ export async function checkHustler(
   return false;
 }
 
-
-export async function checkTest(
-  currentAch: UserAchievement
-): Promise<boolean> {
-  console.log("CHECKING TEST")
+export async function checkTest(currentAch: UserAchievement): Promise<boolean> {
+  console.log("CHECKING TEST");
   if (currentAch.stars == 3) return false;
   const client = await db.connect();
-  console.log("user id from achievement: ", currentAch.user_id)
-  const query =   `SELECT COUNT(*) as cnt FROM tasks WHERE user_id = $1`
+  console.log("user id from achievement: ", currentAch.user_id);
+  const query = `SELECT COUNT(*) as cnt FROM tasks WHERE user_id = $1`;
   const result = await client.query(query, [currentAch.user_id]);
-  const count = parseInt(result.rows[0].cnt, 10); 
-  console.log("count : ", count)
+  const count = parseInt(result.rows[0].cnt, 10);
+  console.log("count : ", count);
 
   if (currentAch.stars == 0 && count >= 1) {
-    console.log("bigger than 1")
-    const query =   `Update user_achievements SET stars = 1 where id = $1`
+    console.log("bigger than 1");
+    const query = `Update user_achievements SET stars = 1 where id = $1`;
     const result = await client.query(query, [currentAch.id]);
-    console.log("result update: ", result, "rows: ", result.rows)
+    console.log("result update: ", result, "rows: ", result.rows);
     currentAch.stars = 1;
     return true;
   } else if (currentAch.stars == 1 && count >= 2) {
-    const query =   `Update user_achievements SET stars = 2 where id = $1`
+    const query = `Update user_achievements SET stars = 2 where id = $1`;
     const result = await client.query(query, [currentAch.id]);
     currentAch.stars = 2;
     return true;
   } else if (currentAch.stars == 2 && count >= 3) {
-    const query =   `Update user_achievements SET stars = 3 where id = $1`
+    const query = `Update user_achievements SET stars = 3 where id = $1`;
     const result = await client.query(query, [currentAch.id]);
     currentAch.stars = 3;
     return true;
@@ -69,21 +67,30 @@ export async function checkTest(
   return false;
 }
 
-
 // Utility function to update user achievements
-async function updateAchievement(client: any, stars: number, id: number): Promise<void> {
+async function updateAchievement(
+  client: any,
+  stars: number,
+  id: number
+): Promise<void> {
   const query = `UPDATE user_achievements SET stars = $1 WHERE id = $2`;
   await client.query(query, [stars, id]);
 }
 
 // Common function to count tasks
-async function getTaskCount(client: any, query: string, params: any[]): Promise<number> {
+async function getTaskCount(
+  client: any,
+  query: string,
+  params: any[]
+): Promise<number> {
   const result = await client.query(query, params);
   return parseInt(result.rows[0].cnt, 10);
 }
 
 // Check PartyParty achievement
-export async function checkPartyParty(currentAch: UserAchievement): Promise<boolean> {
+export async function checkPartyParty(
+  currentAch: UserAchievement
+): Promise<boolean> {
   if (currentAch.stars === 3) return false;
   const client = await db.connect();
   try {
@@ -114,7 +121,9 @@ export async function checkPartyParty(currentAch: UserAchievement): Promise<bool
 }
 
 // Check EarlyBird achievement
-export async function checkEarlyBird(currentAch: UserAchievement): Promise<boolean> {
+export async function checkEarlyBird(
+  currentAch: UserAchievement
+): Promise<boolean> {
   if (currentAch.stars === 3) return false;
   const client = await db.connect();
   try {
@@ -147,7 +156,9 @@ export async function checkEarlyBird(currentAch: UserAchievement): Promise<boole
 }
 
 // Check LateNightGrind achievement
-export async function checkLateNightGrind(currentAch: UserAchievement): Promise<boolean> {
+export async function checkLateNightGrind(
+  currentAch: UserAchievement
+): Promise<boolean> {
   if (currentAch.stars === 3) return false;
   const client = await db.connect();
   try {
@@ -180,7 +191,9 @@ export async function checkLateNightGrind(currentAch: UserAchievement): Promise<
 }
 
 // Check WorkWorkAndMoreWork achievement
-export async function checkWorkWorkAndMoreWork(currentAch: UserAchievement): Promise<boolean> {
+export async function checkWorkWorkAndMoreWork(
+  currentAch: UserAchievement
+): Promise<boolean> {
   if (currentAch.stars === 3) return false;
   const client = await db.connect();
   try {
@@ -211,7 +224,9 @@ export async function checkWorkWorkAndMoreWork(currentAch: UserAchievement): Pro
 }
 
 // Check Overworking Achievement
-export async function checkOverworking(currentAch: UserAchievement): Promise<boolean> {
+export async function checkOverworking(
+  currentAch: UserAchievement
+): Promise<boolean> {
   if (currentAch.stars === 3) return false;
   const client = await db.connect();
   try {
@@ -246,7 +261,9 @@ export async function checkOverworking(currentAch: UserAchievement): Promise<boo
 }
 
 // Check Morning Routine Achievement
-export async function checkMorningRoutine(currentAch: UserAchievement): Promise<boolean> {
+export async function checkMorningRoutine(
+  currentAch: UserAchievement
+): Promise<boolean> {
   if (currentAch.stars === 3) return false;
   const client = await db.connect();
   try {
@@ -282,7 +299,9 @@ export async function checkMorningRoutine(currentAch: UserAchievement): Promise<
 }
 
 // Check Star Collector Achievement
-export async function checkStarCollector(currentAch: UserAchievement): Promise<boolean> {
+export async function checkStarCollector(
+  currentAch: UserAchievement
+): Promise<boolean> {
   if (currentAch.stars === 3) return false;
   const client = await db.connect();
   try {
@@ -313,44 +332,53 @@ export async function checkStarCollector(currentAch: UserAchievement): Promise<b
   }
 }
 
-
-export async function checkNewAchievements(userId: string): Promise<UserAchievement[]> {
+export async function checkNewAchievements(
+  userId: string
+): Promise<UserAchievement[]> {
   const userAchievements = await getUserAchievements(userId);
   console.log("userAchievements: ", userAchievements);
 
   const newAchievements: UserAchievement[] = [];
-  // const achievementCheckers: 
-  const achievementCheckers: { [key: string]: (currentAch: UserAchievement) => Promise<boolean> } = {
-    // Hustler: checkHustler,
-    // EarlyBird: checkEarlyBird,
-    // LateNightGrind: checkLateNightGrind,
-    // MorningRoutine: checkMorningRoutine,
-    // Overworking: checkOverworking,
-    // PartyParty: checkPartyParty,
-    // StarCollector: checkStarCollector,
-    // WorkWorkAndMoreWork: checkWorkWorkAndMoreWork,
-    Test: checkTest
+  const achievementCheckers: {
+    [key: string]: (currentAch: UserAchievement) => Promise<boolean>;
+  } = {
+    Hustler: checkHustler,
+    EarlyBird: checkEarlyBird,
+    LateNightGrind: checkLateNightGrind,
+    MorningRoutine: checkMorningRoutine,
+    Overworking: checkOverworking,
+    PartyParty: checkPartyParty,
+    StarCollector: checkStarCollector,
+    WorkWorkAndMoreWork: checkWorkWorkAndMoreWork,
+    Test: checkTest,
   };
 
   for (const achievement of userAchievements) {
     const checkerFunction = achievementCheckers[achievement.name];
 
     if (checkerFunction) {
-      console.log("achievement with user id?", achievement)
       const isNew = await checkerFunction(achievement);
 
       if (isNew) {
-        console.log("new achievement!!!!")
+        console.log("new achievement!!!!", achievement);
         newAchievements.push(achievement);
       }
     }
   }
-  console.log("newAchievements array?: ", newAchievements)
+  if (newAchievements.length !== 0) {
+    const client = await db.connect();
+    for(const achievement of newAchievements){
+      await addUserAchievementXp(achievement, userId, client);
+    }  
+    client.release();
+  }
+
+  console.log("newAchievements array?: ", newAchievements);
   return newAchievements;
 }
 
-export async function getUserAchievements(userId:string) {
-  const client = await db.connect()
+export async function getUserAchievements(userId: string) {
+  const client = await db.connect();
   const result = await client.sql`
       SELECT user_achievements.id as id, user_id, name, image, description, stars 
           FROM user_achievements JOIN achievements

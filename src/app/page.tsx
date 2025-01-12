@@ -1,11 +1,9 @@
 'use client'
 
 import React from 'react';
-import CustomTestInput from "./components/test/custom-input-test";
 import UserScheduler from './components/scheduler/user-scheduler'
 import { useState  } from 'react';
 import { Button } from '@mui/material';
-import DatePickerInput from './components/test/custom-input-test-ts';
 import SidebarCalendars from './components/calendar/calendars-sidebar';
 import NavBar from './components/navbar-public';
 import Bookmark from './components/scheduler/scheduler_utils/bookmark';
@@ -15,6 +13,8 @@ export const dynamic = "force-dynamic"
 
 
 export default function Page() {
+
+    
 
     return (
         

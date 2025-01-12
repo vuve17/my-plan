@@ -25,8 +25,8 @@ const UserTaskSlice = createSlice({
     reducers: {
         setTasks(state, action: PayloadAction<setTasksInterface>) {
             // const tasks = action.payload.formatedTasks
-            console.log("formatedTasks; redux ", action.payload.formatedTasks)
-            console.log("full tasks redux; ", action.payload.fullTasks)
+            // console.log("formatedTasks; redux ", action.payload.formatedTasks)
+            // console.log("full tasks redux; ", action.payload.fullTasks)
             state.tasks = action.payload.formatedTasks
             state.fullTasks = action.payload.fullTasks
         },

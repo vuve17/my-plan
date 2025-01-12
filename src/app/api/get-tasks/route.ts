@@ -49,7 +49,7 @@ function pushSingleTaskObjectFromArray(taskGroups: { [key: string | number]: Tas
 // }
 
 function formatTasksByTimeOverlap(tasks: QueryResultRow) {
-  console.log("formatTasksByTimeOverlap tasks", tasks);
+  // console.log("formatTasksByTimeOverlap tasks", tasks);
 
   const taskGroups: { [key: number]: Task[] } = {};
   const processed: Set<number> = new Set();
@@ -77,7 +77,7 @@ function formatTasksByTimeOverlap(tasks: QueryResultRow) {
 
   pushSingleTaskObjectFromArray(taskGroups);
 
-  console.log("formatTasksByTimeOverlap result: ", taskGroups);
+  // console.log("formatTasksByTimeOverlap result: ", taskGroups);
   return taskGroups;
 }
 
@@ -171,11 +171,11 @@ export async function GET(request: NextRequest) {
             FROM tasks
             WHERE user_id = ${userId} AND processed = false
         `;
-    console.log(" fetched tasks :", tasks.rows)
+    // console.log(" fetched tasks :", tasks.rows)
     const jsonFormattedTasks = formatTasksByTimeOverlap(tasks.rows);
-    console.log("jsonFormattedTasksBy time overlap: ", jsonFormattedTasks);
+    // console.log("jsonFormattedTasksBy time overlap: ", jsonFormattedTasks);
     const jsonFormattedTasksByDay = formatTasksByDayOverlap(jsonFormattedTasks);
-    console.log("jsonFormattedTasksByDay", jsonFormattedTasksByDay);
+    // console.log("jsonFormattedTasksByDay", jsonFormattedTasksByDay);
     return NextResponse.json(
       { 
         tasks: jsonFormattedTasksByDay,

@@ -15,6 +15,8 @@ export async function POST(request: NextRequest) {
     ...body,
   };
 
+  console.log("body: ", body);
+
   const authorizationHeader = headers().get("authorization");
   const token = authorizationHeader
     ? authorizationHeader.replace("Bearer ", "")
