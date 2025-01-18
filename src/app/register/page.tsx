@@ -77,6 +77,7 @@ const RegisterForm: React.FC = () => {
                     if (refreshToken && accessToken) {
                         document.cookie = `refreshToken=${refreshToken};  path=/`;
                         document.cookie = `accessToken=${accessToken}; path=/`;
+                        sessionStorage.setItem('cameFromRegister', 'true');
                         router.push("/scheduler");
                     } else {
                         console.log("Else set pass error: Bad keys - frontend message");

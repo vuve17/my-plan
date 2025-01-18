@@ -16,3 +16,9 @@ export function calculateProgressBarValue(xp: number): number {
 
   return 100;
 }
+
+//  "functions": {
+//   "app/api/**/*": {
+//     "maxDuration": 5 // All functions can run for a maximum of 5 seconds
+//   }
+// }

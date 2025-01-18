@@ -271,7 +271,6 @@ export const convertTaskStringToTaskValuePair = (
 export function formatJsonWithCellIds(tasks: UserTasksStringValuePairFormat) {
   const taskGroup: UserTasksStringValuePairFormat = {};
 
-  console.log("formatJsonWithCellIds intial tasks: ", tasks);
   Object.entries(tasks).forEach(([key, value]) => {
     const cellId = getCellIdFromStringTask(
       Array.isArray(value) ? value[0] : value
@@ -296,7 +295,6 @@ export function formatJsonWithCellIds(tasks: UserTasksStringValuePairFormat) {
     }
   });
 
-  console.log("formatJsonWithCellIds taskGroup: ", taskGroup);
   // Ensure single objects are not arrays
   Object.keys(taskGroup).forEach((key) => {
     if (Array.isArray(taskGroup[key]) && taskGroup[key].length === 1) {
@@ -304,7 +302,6 @@ export function formatJsonWithCellIds(tasks: UserTasksStringValuePairFormat) {
     }
   });
 
-  console.log("formatJsonWithCellIds final taskGroup: ", taskGroup);
   return taskGroup;
 }
 

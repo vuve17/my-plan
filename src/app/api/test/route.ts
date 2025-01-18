@@ -8,15 +8,6 @@ import { sendEmail } from '@/app/lib/send-user-tasks-via-email';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET(request: NextRequest) {
-  const client = await db.connect();
-
-  await client.sql`
-    UPDATE users
-    SET daily_check_tasks = false
-  `;
-
   await sendEmail()
-
-  client.release();
   return NextResponse.json({ message: 'Daily check tasks reset for all users' });
 }

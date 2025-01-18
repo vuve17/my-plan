@@ -29,6 +29,8 @@ import MultipleTasksModal from "./modals/multiple-tasks-select-modal";
 import { closeAchievementModal } from "@/app/redux/achievements-slice";
 import Cookies from "js-cookie";
 import { setXp } from "@/app/redux/user-slice";
+import Tutorial from '../tutorial/tutorial';
+
 
 export const dynamic = "force-dynamic";
 
@@ -107,9 +109,12 @@ const UserScheduler: React.FC = () => {
   const weekdayFormat = isMobile ? "short" : "long";
   const [scheduleHeader, setScheduleHeader] = useState<string>("");
   const [schedule, setSchedule] = useState<JSX.Element[]>([]);
-
+  const [startTutorial, setStartTutorial] = useState<boolean>(false)
   const tasksRefFlag = useRef<boolean>(true);
 
+  function handleTutorialClose(){
+    setStartTutorial(false)
+  }
   const handleTaskModalState = (id: string) => {
     const dateTime = getChosenDateTime(id);
     setTaskModalDate(dateTime.date.toISOString());
@@ -269,10 +274,15 @@ const UserScheduler: React.FC = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("userXp: ", userXp);
         const responseXp: { xp: number } = await userXp.json();
-        console.log("userXp: ", responseXp.xp);
-
+        const emailAllUsers = await fetch(`/api/test`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(emailAllUsers)
         if (userXp) {
           dispatch(setXp(responseXp.xp));
         }
@@ -285,6 +295,14 @@ const UserScheduler: React.FC = () => {
       fetchAndSetTasks();
       tasksRefFlag.current = false;
     }
+
+    const cameFromRegister = sessionStorage.getItem('cameFromRegister');
+    
+    if (cameFromRegister === 'true') {
+      setStartTutorial(true)      
+      console.log("User came from the Register page!");
+    }
+
   }, []);
 
   // console.log( "scheduler redux logs : isNewAchievementModalOpen && currentlyOpenAchievement : ",
@@ -299,6 +317,7 @@ const UserScheduler: React.FC = () => {
       {isTasksMultipleModalOpen && selectedTasksMultiple && (
         <MultipleTasksModal />
       )}
+      {startTutorial && <Tutorial closeTutorial={handleTutorialClose}/>}
 
       <Snackbar
         open={isSnackBarOpen}

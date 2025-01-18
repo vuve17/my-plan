@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Stack,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -33,9 +34,9 @@ const AchievementCardCarousel: React.FC<UserAchievementNoId> = ({
         width: {
           xl: "350px",
           lg: "320px",
-          md: "100%",
-          sm: "100%",
-          xs: "100%",
+          md: "500px",
+          sm: "300px",
+          xs: "250px",
         },
         height: {
           lg: "175px",
@@ -66,8 +67,8 @@ const AchievementCardCarousel: React.FC<UserAchievementNoId> = ({
             backgroundColor: `${colors.achievements.inactive.DisabledCover}`,
             width: "100%",
             height: "100%",
-            zIndex: 10, // Ensure it stays above the content
-            pointerEvents: "none", // Allows interaction with card buttons if needed
+            zIndex: 10,
+            pointerEvents: "none",
           }}
         />
       )}
@@ -146,7 +147,8 @@ const AchievementCardCarousel: React.FC<UserAchievementNoId> = ({
             <AchievementStars starCount={props.stars} />
           </Box>
 
-          <Box>
+          <Box
+          >
             <Typography
               fontFamily="Open Sans"
               variant="h5"
@@ -168,15 +170,18 @@ const AchievementCardCarousel: React.FC<UserAchievementNoId> = ({
             </Typography>
 
             {props.stars === 3 ? (
-              <CardMedia
-                component="img"
-                sx={{
-                  objectFit: "cover",
-                  zIndex: 3,
-                }}
-                image={`/svg/achievements/achievement-stars/completed.png`}
-                alt="Achievement Completed!"
-              />
+<Stack direction="row" justifyContent="center" sx={{ width: "100%"}}>
+                <CardMedia
+                  component="img"
+                  sx={{
+                    width: "70%",
+                    objectFit: "cover",
+                    zIndex: 3,
+                  }}
+                  image={`/svg/achievements/achievement-stars/completed.png`}
+                  alt="Achievement Completed!"
+                />
+</Stack>
             ) : (
               <Typography
                 fontFamily="Open Sans"

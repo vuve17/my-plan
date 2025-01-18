@@ -1,3 +1,13 @@
+@font-face {
+  font-family: FredokaOne;
+  src: url(/fonts/FredokaOne-Regular.woff);
+}
+
+.fredoka-font {
+  font-family: 'FredokaOne', sans-serif;
+}
+
+
 body {
   margin: 0;
   font-family: 'Open Sans', sans-serif;

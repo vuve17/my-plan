@@ -48,7 +48,6 @@ export async function POST(req:Request): Promise <NextResponse <KeysInDb> > {
 
             const newUserAchievements = await client.sql`
             SELECT id FROM Achievements
-            WHERE stars = 0
             `;
             
             newUserAchievements.rows.forEach(async (row) => {

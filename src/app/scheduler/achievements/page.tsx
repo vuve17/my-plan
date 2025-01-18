@@ -1,6 +1,6 @@
 "use client";
 
-import AchievementCardCarousel from "@/app/components/scheduler/achievements/achievement-card";
+import AchievementCardCarousel from "@/app/components/scheduler/achievements/achievement-card-carousel";
 import AchievementCarousel from "@/app/components/scheduler/achievements/achievements-carousel";
 import { UserAchievement } from "@/app/lib/types";
 import { setReduxAchievements } from "@/app/redux/achievements-slice";

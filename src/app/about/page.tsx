@@ -5,6 +5,7 @@ import { Achievement, Task, UserAchievement } from "../lib/types";
 import { splitSingleTaskByDays, splitMultipleTasksByDaysTest } from "../lib/user-tasks-functions";
 import { useRef } from "react";
 import CompleteTasksModal from "../components/scheduler/modals/complete-tasks-modal";
+import UserScheduler from '../components/scheduler/user-scheduler';
 
 const AboutPage: React.FC = () => {
 
@@ -12,12 +13,12 @@ const AboutPage: React.FC = () => {
   const [selectedTasks, setSelectedTasks] = useState<Task[] | null>(null);
   const [taskArray, setTaskArray] = useState<Task[]>([]);
   const handleOpen = () => setOpen(true);
-  const handleClose = (tasks?: Task[]) => {
-    setOpen(false);
-    if (tasks) {
-      setSelectedTasks(tasks);
-    }
-  };
+  // const handleClose = (tasks?: Task[]) => {
+  //   setOpen(false);
+  //   if (tasks) {
+  //     setSelectedTasks(tasks);
+  //   }
+  // };
 
   const openModal = () => {
     setOpen(true);
@@ -110,13 +111,27 @@ const AboutPage: React.FC = () => {
     }
   ];
 
-
+  const userAchievement: UserAchievement = {
+    id: 1,
+    name: "Master of Tasks",
+    image: "C:/my-plan/public/svg/achievements/achievement-thumbnails/test.svg",
+    description: "Awarded for completing all daily tasks for a month.",
+    user_id: "12345", // Replace with actual user ID
+    stars: 3, // Can be 0, 1, 2, or 3
+  };
+  function handleClose(){
+    return
+  }
 
   return <div>
-    <button onClick={openModal}>
+    {/* <button onClick={openModal}>
       Open Modal
     </button>
-    <CompleteTasksModal tasks={tasksArray} open={open} onClose={closeModal}/>
+    <AchievementModal achievement={userAchievement} open={true} onClose={handleClose}/>
+
+    <CompleteTasksModal tasks={tasksArray} open={open} onClose={closeModal}/> */}
+
+    <UserScheduler />
   </div>
 };
 
