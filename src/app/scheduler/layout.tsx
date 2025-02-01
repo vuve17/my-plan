@@ -1,17 +1,18 @@
 "use client";
 
+import Cookies from "js-cookie";
+import { Open_Sans } from "next/font/google";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NavBar from "../components/navbar-private";
+import AchievementModal from "../components/scheduler/achievements/achievement-modal";
+import CompleteTasksDialog from "../components/scheduler/modals/complete-tasks-modal";
 import "../index.css";
-import { Open_Sans } from "next/font/google";
+import { Task } from "../lib/types";
+import { closeAchievementModal } from "../redux/achievements-slice";
 import { ReduxProvider } from "../redux/provider";
 import { setIsMobile } from "../redux/screen-1200-slice";
-import { setDailyTaskCheck } from "../redux/user-slice";
 import { RootState } from "../redux/store";
-import CompleteTasksDialog from "../components/scheduler/modals/complete-tasks-modal";
-import Cookies from "js-cookie";
-import { Task } from "../lib/types";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -32,6 +33,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const areDailyTaskChecked = useSelector(
     (state: RootState) => state.user.dailyTaskCheck
   );
+  const currentlyOpenAchievement = useSelector(
+    (state: RootState) => state.achievements.currentlyOpenAchievement
+  );
+  const [openNewAchievementModal, setOpenNewAchievementModal] =
+    useState<boolean>(false);
+
+  function handleNewAchievementModalClose() {
+    dispatch(closeAchievementModal());
+    setOpenNewAchievementModal(false);
+  }
 
   const handleClose = () => {
     setOpen(false);
@@ -78,11 +89,23 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    if (currentlyOpenAchievement) {
+      setOpenNewAchievementModal(true);
+    }
+  }, [currentlyOpenAchievement]);
   return (
     <>
       <ReduxProvider>
         <NavBar deviceSmall={isDevice1200} />
         <CompleteTasksDialog onClose={handleClose} open={open} tasks={tasks} />
+        {openNewAchievementModal && currentlyOpenAchievement && (
+          <AchievementModal
+            achievement={currentlyOpenAchievement}
+            open={openNewAchievementModal}
+            onClose={handleNewAchievementModalClose}
+          />
+        )}
         <div>{children}</div>
       </ReduxProvider>
     </>

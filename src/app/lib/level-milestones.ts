@@ -2,15 +2,15 @@
 
 export const userLevelGap = {
   LVL1: 0,
-  LVL2: 20,
-  LVL3: 50,
-  LVL4: 100,
-  LVL5: 200,
-  LVL6: 350,
-  LVL7: 600,
-  LVL8: 1000,
-  LVL9: 1500,
-  LVL10: 2000,
+  LVL2: 200,
+  LVL3: 400,
+  LVL4: 1000,
+  LVL5: 3000,
+  LVL6: 5000,
+  LVL7: 7500,
+  LVL8: 10000,
+  LVL9: 15000,
+  LVL10: 20000,
 };
 
 export function levelMilestones(xp: number): number {

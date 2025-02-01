@@ -1,12 +1,13 @@
 "use client";
 
-import { UserAchievementNoId } from "@/app/lib/types";
+import { UserAchievement, UserAchievementNoId } from "@/app/lib/types";
 import { Backdrop, Box, Stack } from "@mui/material";
 import React, { useState, useEffect } from "react";
 import ReactCurvedText from "react-curved-text";
 import AchievementModalSpinner from "./achievement-modal-background-spinner";
 import NewAchievementCard from "./new-achievement-card";
 import colors from "@/app/ui/colors";
+import { getAchievementDetails } from "@/app/lib/achievement-functions";
 
 interface AchievementModalProps {
   achievement: UserAchievementNoId;
@@ -30,6 +31,10 @@ const AchievementModal: React.FC<AchievementModalProps> = ({
     }
   }, [open]);
 
+  const { image, description } = getAchievementDetails(
+    achievement as UserAchievement
+  );
+
   return (
     <Box
       width="100vw"
@@ -45,8 +50,6 @@ const AchievementModal: React.FC<AchievementModalProps> = ({
       }}
       onClick={onClose}
     >
-
-
       <Backdrop open={true}>
         <Stack
           display="flex"
@@ -60,7 +63,7 @@ const AchievementModal: React.FC<AchievementModalProps> = ({
             opacity: isVisible ? 1 : 0, // Fade-in effect
             transition: "transform 0.5s ease-in-out, opacity 0.5s ease-in-out",
             overflow: "visible",
-            '@media (max-width:600px)': {
+            "@media (max-width:600px)": {
               transform: isVisible ? "scale(0.7)" : "scale(0.1)",
             },
           }}
@@ -95,8 +98,8 @@ const AchievementModal: React.FC<AchievementModalProps> = ({
             <NewAchievementCard
               id={achievement.id}
               name={achievement.name}
-              image={achievement.image}
-              description={achievement.description}
+              image={image}
+              description={description}
               stars={achievement.stars}
             />
           </Box>

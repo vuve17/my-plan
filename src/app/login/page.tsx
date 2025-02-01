@@ -1,26 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import {
-  Backdrop,
-  Box,
-  TextField,
   Button,
   IconButton,
-  Paper,
-  Grid,
-  OutlinedInput,
-  InputLabel,
-  Checkbox,
   InputAdornment,
+  Paper,
+  TextField
 } from "@mui/material";
-import colors from "../ui/colors";
+import { useFormik } from "formik";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
+import React, { useState } from "react";
+import * as Yup from "yup";
 import ErrorBox from "../components/authentication-error-messages-box";
+import colors from "../ui/colors";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +70,7 @@ const LogInForm: React.FC = () => {
         if (refreshToken && accessToken) {
           document.cookie = `refreshToken=${refreshToken}; path=/`;
           document.cookie = `accessToken=${accessToken}; path=/`;
-          sessionStorage.setItem('cameFromRegister', 'true');
+          // sessionStorage.setItem('cameFromRegister', 'true');
           router.push("/scheduler");
         }
       } catch (error) {
@@ -194,18 +188,6 @@ const LogInForm: React.FC = () => {
           )}
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            marginBottom: "2em",
-            marginTop: "1em",
-          }}
-        >
-          <Checkbox />
-          <div className="openSansRegular">Remeber me</div>
-        </div>
-
         <div style={{ display: "flex", justifyContent: "center" }}>
           <Button
             variant="contained"
@@ -220,9 +202,17 @@ const LogInForm: React.FC = () => {
         </div>
       </form>
 
-      <div style={{ marginTop: "1em", display:"flex", justifyContent:"center", flexDirection:"column", alignItems:"center" }}>
-      <div>Don&apos;t have an account? </div>
-      <Link
+      <div
+        style={{
+          marginTop: "1em",
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <div>Don&apos;t have an account? </div>
+        <Link
           href="/register"
           style={{
             marginLeft: "0.1em",

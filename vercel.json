@@ -1,5 +1,4 @@
 {
-    "regions": ["fra1"],
     "crons": [
         {
           "path": "/api/cron",
@@ -8,7 +7,7 @@
       ],
       "functions": {
         "app/api/**/*": {
-          "maxDuration": 20
+          "maxDuration": 60
         }
       }
     

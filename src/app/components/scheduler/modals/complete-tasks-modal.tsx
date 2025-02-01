@@ -30,6 +30,10 @@ import {
 import { setDailyTaskCheck, setXp } from "@/app/redux/user-slice";
 import { getTasks } from "@/app/lib/user-tasks-functions";
 import { setTasks } from "@/app/redux/tasks-slice";
+import {
+  openNewAchievementModal,
+  setNewAchievements,
+} from "@/app/redux/achievements-slice";
 
 interface CompleteTasksDialogProps {
   tasks: Task[];
@@ -42,7 +46,6 @@ const CompleteTasksDialog: React.FC<CompleteTasksDialogProps> = ({
   open,
   onClose,
 }) => {
-  console.log("tasks: ", tasks);
   const [checked, setChecked] = React.useState<number[]>([]);
   const taskIds: number[] = [];
   const [disableSubmit, setDisableSubmit] = React.useState<boolean>(false);
@@ -52,7 +55,6 @@ const CompleteTasksDialog: React.FC<CompleteTasksDialogProps> = ({
     dispatch(setIsSnackBarOpen(false));
   };
 
-  console.log("checked: ", checked);
   const handleToggle = (taskId: number) => () => {
     const currentIndex = checked.indexOf(taskId);
     const newChecked = [...checked];
@@ -72,7 +74,6 @@ const CompleteTasksDialog: React.FC<CompleteTasksDialogProps> = ({
 
   const handleConfirm = async () => {
     const token = Cookies.get("refreshToken");
-    console.log("taskIds: ", taskIds);
     try {
       const response = await fetch("/api/complete-tasks", {
         method: "POST",
@@ -83,14 +84,21 @@ const CompleteTasksDialog: React.FC<CompleteTasksDialogProps> = ({
         body: JSON.stringify({
           taskIds: taskIds,
           completedTaskIds: checked,
-          tasks: tasks
+          tasks: tasks,
         }),
       });
       if (response.ok) {
+        console.log("response: ", response);
+        const data = await response.json();
+        console.log("response: ", data);
+
+        if (data.achievements && data.achievements.length !== 0) {
+          dispatch(setNewAchievements(data.achievements));
+          dispatch(openNewAchievementModal());
+        }
         const fetchedTasks = await getTasks();
         if (fetchedTasks) {
           dispatch(setTasks(fetchedTasks));
-          console.log("tasks setting from COMPLETE TASK MODAL: ", fetchedTasks);
         }
         const token = Cookies.get("refreshToken");
         const userXp = await await fetch(`/api/xp`, {

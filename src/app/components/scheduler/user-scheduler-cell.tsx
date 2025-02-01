@@ -39,9 +39,7 @@ const UserSchedulerCell: React.FC<UserSchedulerColumnProps> = ({
       dispatch(setIsTaskModalActive(true));
     }
   };
-  // if(tasks){
-  // console.log("Cell tasks: ", tasks)
-  // }
+
   return (
     <Box
       onClick={(event: React.MouseEvent) => {

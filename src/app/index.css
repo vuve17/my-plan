@@ -155,8 +155,10 @@ h2 {
 @media screen and (max-width: 1200px ) {
 
   .vertical-datepicker-container .react-datepicker {
-    height:100%;
-    border: none
+
+    border: none;
+    background-size: 500%;
+
   }
 }
 

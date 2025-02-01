@@ -6,15 +6,14 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Stack,
   Typography,
   useMediaQuery,
 } from "@mui/material";
 import React from "react";
-import { UserAchievementNoId } from "../../../lib/types";
+import { AchievementGeneric, UserAchievementNoId } from "../../../lib/types";
 
-
-
-const NewAchievementCard: React.FC<UserAchievementNoId> = ({
+const NewAchievementCard: React.FC<AchievementGeneric> = ({
   description,
   stars,
   name,
@@ -26,26 +25,26 @@ const NewAchievementCard: React.FC<UserAchievementNoId> = ({
       ? `${description.slice(0, 55)}...`
       : description;
 
-      const AchievementStars = () => (
-        <CardMedia
-          component="img"
-          image={`/svg/achievements/achievement-stars/${stars}-star.svg`}
-          alt={`${stars}-star`}
-          sx={{
-            width: "69.82px",
-            height: "42px",
-            zIndex: 4,
-            marginTop: "-2em"
-          }}
-        />
-      );
+  const AchievementStars = () => (
+    <CardMedia
+      component="img"
+      image={`/svg/achievements/achievement-stars/${stars}-star.svg`}
+      alt={`${stars}-star`}
+      sx={{
+        width: "69.82px",
+        height: "42px",
+        zIndex: 4,
+        marginTop: "-2em",
+      }}
+    />
+  );
 
   return (
     <Card
       variant="outlined"
       sx={{
-        width: "350px" ,
-        height:  "175px",
+        width: "350px",
+        height: "175px",
         boxShadow: `0px 0px 20px yellow`,
         border: `1px solid ${colors.darkGrey}`,
         overflow: "hidden",
@@ -65,7 +64,7 @@ const NewAchievementCard: React.FC<UserAchievementNoId> = ({
               flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              paddingRight: "1em" ,
+              paddingRight: "1em",
             }}
           >
             <CardMedia
@@ -82,7 +81,6 @@ const NewAchievementCard: React.FC<UserAchievementNoId> = ({
             <AchievementStars />
           </Box>
 
-          {/* Text Section */}
           <Box>
             <Typography
               variant="h5"
@@ -94,12 +92,35 @@ const NewAchievementCard: React.FC<UserAchievementNoId> = ({
             >
               {name}
             </Typography>
-            <Typography
-              fontFamily="Open Sans"
-              color={colors.achievements.active.Color}
-            >
-              {truncatedDescription}
-            </Typography>
+
+            {stars === 3 ? (
+              <Stack
+                direction="row"
+                justifyContent="center"
+                sx={{ width: "100%" }}
+              >
+                <CardMedia
+                  component="img"
+                  sx={{
+                    width: "70%",
+                    objectFit: "cover",
+                    zIndex: 3,
+                  }}
+                  image={`/svg/achievements/achievement-stars/completed.png`}
+                  alt="Achievement Completed!"
+                />
+              </Stack>
+            ) : (
+              <Typography
+                variant="h5"
+                fontFamily="Open Sans"
+                sx={{
+                  marginBottom: "0.5em",
+                }}
+              >
+                {truncatedDescription}
+              </Typography>
+            )}
           </Box>
         </Box>
       </CardContent>

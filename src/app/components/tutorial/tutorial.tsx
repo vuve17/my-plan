@@ -10,17 +10,16 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/redux/store";
 
 interface TutorialProps {
-  closeTutorial: () => void
+  closeTutorial: () => void;
 }
 
-const Tutorial: React.FC<TutorialProps> = ({closeTutorial}) => {
-  
-  sessionStorage.removeItem('cameFromRegister');
+const Tutorial: React.FC<TutorialProps> = ({ closeTutorial }) => {
+  sessionStorage.removeItem("cameFromRegister");
   const divRef = useRef<HTMLDivElement | null>(null);
   const isMobile = useSelector((state: RootState) => state.screen.isMobile);
   const [isAnimatingToRightSide, setIsAnimatingToRightSide] =
     useState<boolean>(false);
-    const [areInstuctionsVisible, setAreInstuctionsVisible] =
+  const [areInstuctionsVisible, setAreInstuctionsVisible] =
     useState<boolean>(true);
   const [counter, setCounter] = useState<number>(0);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
@@ -28,15 +27,13 @@ const Tutorial: React.FC<TutorialProps> = ({closeTutorial}) => {
   const animationEndPosition = isMobile ? 20 : 100;
   let charactersLeftPoistion = isMobile ? 20 : 100
 
-
-  // const [animationId, setAnimationId] = useState<number | null>(null)
   const animationId = useRef<number | null>(null);
 
   const cancelAnimation = () => {
     if (animationId.current !== null) {
       cancelAnimationFrame(animationId.current);
       animationId.current = null;
-      setIsAnimating(false); 
+      setIsAnimating(false);
     }
   };
 
@@ -44,21 +41,22 @@ const Tutorial: React.FC<TutorialProps> = ({closeTutorial}) => {
     if (!divRef.current) return;
     setAreInstuctionsVisible(false);
     setIsAnimating(true);
-  
+
     const screenWidth = window.innerWidth;
     const divWidth = divRef.current.offsetWidth || 0;
-    const targetPosition = screenWidth - divWidth - animationEndPosition - charactersLeftPoistion; // Target position offset by `animationEndPosition`
-  
+    const targetPosition =
+      screenWidth - divWidth - animationEndPosition - charactersLeftPoistion;
+
     const currentTransform = divRef.current.style.transform;
     let currentPosition = currentTransform.includes("translateX")
       ? parseFloat(currentTransform.replace(/translateX\((-?\d+)px\)/, "$1"))
       : 0;
-  
+
     const animate = () => {
       if (currentPosition < targetPosition) {
         currentPosition += animationSpeed;
         if (currentPosition >= targetPosition) {
-          currentPosition = targetPosition; 
+          currentPosition = targetPosition;
           setIsAnimating(false);
           setAreInstuctionsVisible(true); // Trigger function when animation ends
           return; // Exit the animation loop
@@ -69,22 +67,22 @@ const Tutorial: React.FC<TutorialProps> = ({closeTutorial}) => {
         animationId.current = requestAnimationFrame(animate);
       }
     };
-  
+
     animationId.current = requestAnimationFrame(animate);
   };
-  
+
   const moveToLeft = () => {
     if (!divRef.current) return;
     setAreInstuctionsVisible(false);
     setIsAnimating(true);
-  
+
     const targetPosition = animationEndPosition;
-  
+
     const currentTransform = divRef.current.style.transform;
     let currentPosition = currentTransform.includes("translateX")
       ? parseFloat(currentTransform.replace(/translateX\((-?\d+)px\)/, "$1"))
       : 0;
-  
+
     const animate = () => {
       if (currentPosition > targetPosition) {
         currentPosition -= animationSpeed;
@@ -100,14 +98,14 @@ const Tutorial: React.FC<TutorialProps> = ({closeTutorial}) => {
         animationId.current = requestAnimationFrame(animate);
       }
     };
-  
+
     animationId.current = requestAnimationFrame(animate);
   };
 
   const handleBackdropClick = () => {
-    console.log("click")
+    console.log("click");
     if (isAnimating) return;
-    setAreInstuctionsVisible(false)
+    setAreInstuctionsVisible(false);
     cancelAnimation();
     setIsAnimatingToRightSide((prev) => {
       const newValue = !prev;
@@ -116,11 +114,11 @@ const Tutorial: React.FC<TutorialProps> = ({closeTutorial}) => {
       } else {
         moveToLeft();
       }
-      return newValue; // Ensure the new value is returned
+      return newValue;
     });
     const incrementedCounter = counter + 1;
-    if(incrementedCounter === 5) {
-      closeTutorial()
+    if (incrementedCounter === 5) {
+      closeTutorial();
     }
     setCounter(incrementedCounter);
   };
@@ -141,7 +139,7 @@ const Tutorial: React.FC<TutorialProps> = ({closeTutorial}) => {
         // width: "100vw",
         // height: "100vh",
         backgroundColor: "transparent",
-        opacity: 1,      
+        opacity: 1,
       }}
     >
       <TutorialBackdropBackground
@@ -149,43 +147,53 @@ const Tutorial: React.FC<TutorialProps> = ({closeTutorial}) => {
         activate={areInstuctionsVisible}
         isMobile={isMobile}
       />
-      {areInstuctionsVisible && 
-      <Paper
-        square={false}
-        elevation={3}
-        sx={{
-          position: "relative",
-          width: {
-            lg: "50vw",
-            sm: "80vw",
-            xs: "70vw",
-          },
-          maxWidth: "50rem",
-          padding: "2em",
-          zIndex: "10",
-          boxSizing: "border-box",
-          paddingRight: isAnimatingToRightSide && isMobile ? "5em" : "auto",
-          paddingLeft: !isAnimatingToRightSide && isMobile ? "5em" : "auto"
-        }}
-      >
-        <Typography variant="h4" fontWeight="bold" marginBottom="0.5em">{instuctionsArrayHeading[counter]}</Typography>
-        <Typography variant="body1">{instuctionsArrayText[counter]}</Typography>
-      </Paper>
-    }
-
-        <div
-          ref={divRef}
-          style={{
-            zIndex: 101,
-            position: "absolute",
-            top: "25%",
-            left: charactersLeftPoistion,
-            transform: "translateX(0px)",
-            transition: "none",
+      {areInstuctionsVisible && (
+        <Paper
+          square={false}
+          elevation={3}
+          sx={{
+            position: "relative",
+            width: {
+              lg: "50vw",
+              sm: "80vw",
+              xs: "70vw",
+            },
+            maxWidth: "50rem",
+            padding: "2em",
+            zIndex: "10",
+            boxSizing: "border-box",
+            paddingRight: isAnimatingToRightSide && isMobile ? "5em" : "auto",
+            paddingLeft: !isAnimatingToRightSide && isMobile ? "5em" : "auto",
           }}
         >
-          <TutorialCharacter />
-        </div>
+          <Typography variant="h4" fontWeight="bold" marginBottom="0.5em">
+            {instuctionsArrayHeading[counter]}
+          </Typography>
+          <Typography variant="body1">
+            {instuctionsArrayText[counter]}
+          </Typography>
+        </Paper>
+      )}
+
+      <Box
+        ref={divRef}
+        sx={{
+          zIndex: 101,
+          position: "absolute",
+          top: "25%",
+          left: charactersLeftPoistion,
+          transform:  "translateX(0px)",
+          transition: "none",
+          scale: {
+            xs: 0.5, // Extra small screens (default for sm)
+            sm: 0.5, // Small screens
+            md: 0.8, // Medium screens
+            lg: 1,   // Large screens and up
+          },
+        }}
+      >
+        <TutorialCharacter mouthAnimation={!isAnimating} />
+      </Box>
     </Backdrop>
   );
 };

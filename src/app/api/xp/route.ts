@@ -1,4 +1,4 @@
-'use server'
+"use server";
 
 import { NextRequest, NextResponse } from "next/server";
 import { getUserId } from "../../lib/auth";
@@ -7,9 +7,10 @@ import { db } from "@vercel/postgres";
 
 export async function GET(request: NextRequest) {
   try {
-
-    const authorizationHeader = request.headers.get('Authorization');
-    const token = authorizationHeader ? authorizationHeader.replace("Bearer ", "").trim() : null;
+    const authorizationHeader = request.headers.get("Authorization");
+    const token = authorizationHeader
+      ? authorizationHeader.replace("Bearer ", "").trim()
+      : null;
 
     if (!token) {
       return NextResponse.json(
@@ -27,14 +28,11 @@ export async function GET(request: NextRequest) {
       SELECT xp from users WHERE id = $1
     `;
 
-    const userXp = await client.query(userXpQuery, [userId])
+    const userXp = await client.query(userXpQuery, [userId]);
 
-    console.log("userXpQuery: ", userXp.rows[0].xp)
-    client.release()
-    return NextResponse.json(
-      { xp: userXp.rows[0].xp },
-      { status: 200 }
-    );
+    // console.log("userXpQuery: ", userXp.rows[0].xp)
+    client.release();
+    return NextResponse.json({ xp: userXp.rows[0].xp }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "get user xp error 500" },

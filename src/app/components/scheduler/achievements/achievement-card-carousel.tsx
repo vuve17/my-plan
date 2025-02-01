@@ -11,18 +11,18 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import React from "react";
-import { UserAchievementNoId } from "../../../lib/types";
+import { AchievementGeneric, UserAchievementNoId } from "../../../lib/types";
 import AchievementStars from "./achievement-stars";
 
-const AchievementCardCarousel: React.FC<UserAchievementNoId> = ({
+const AchievementCardCarousel: React.FC<AchievementGeneric> = ({
   ...props
 }) => {
   const { description, stars, name } = props;
   const activeAchievement = stars === 0 ? false : true;
   const isSmallScreen = useMediaQuery("(max-width:600px)");
   const displayDescription = isSmallScreen
-    ? description.length > 55
-      ? `${description.slice(0, 55)}...`
+    ? (description || "").length > 55
+      ? `${(description || "").slice(0, 55)}...`
       : description
     : description;
 
@@ -147,8 +147,7 @@ const AchievementCardCarousel: React.FC<UserAchievementNoId> = ({
             <AchievementStars starCount={props.stars} />
           </Box>
 
-          <Box
-          >
+          <Box>
             <Typography
               fontFamily="Open Sans"
               variant="h5"
@@ -170,7 +169,11 @@ const AchievementCardCarousel: React.FC<UserAchievementNoId> = ({
             </Typography>
 
             {props.stars === 3 ? (
-<Stack direction="row" justifyContent="center" sx={{ width: "100%"}}>
+              <Stack
+                direction="row"
+                justifyContent="center"
+                sx={{ width: "100%" }}
+              >
                 <CardMedia
                   component="img"
                   sx={{
@@ -181,7 +184,7 @@ const AchievementCardCarousel: React.FC<UserAchievementNoId> = ({
                   image={`/svg/achievements/achievement-stars/completed.png`}
                   alt="Achievement Completed!"
                 />
-</Stack>
+              </Stack>
             ) : (
               <Typography
                 fontFamily="Open Sans"

@@ -29,14 +29,13 @@ import MultipleTasksModal from "./modals/multiple-tasks-select-modal";
 import { closeAchievementModal } from "@/app/redux/achievements-slice";
 import Cookies from "js-cookie";
 import { setXp } from "@/app/redux/user-slice";
-import Tutorial from '../tutorial/tutorial';
-
+import Tutorial from "../tutorial/tutorial";
 
 export const dynamic = "force-dynamic";
 
 const width = {
-  xl: "80vw",
-  lg: "70vw",
+  xl: "80%",
+  lg: "70%",
   md: "100vw",
   sm: "100vw",
   xs: "100vw",
@@ -89,9 +88,9 @@ const UserScheduler: React.FC = () => {
   const areDailyTaskChecked = useSelector(
     (state: RootState) => state.user.dailyTaskCheck
   );
-  const currentlyOpenAchievement = useSelector(
-    (state: RootState) => state.achievements.currentlyOpenAchievement
-  );
+  // const currentlyOpenAchievement = useSelector(
+  //   (state: RootState) => state.achievements.currentlyOpenAchievement
+  // );
   const selectedTask = selectedTaskString
     ? convertSingleTaskStringToTask(selectedTaskString)
     : null;
@@ -109,11 +108,11 @@ const UserScheduler: React.FC = () => {
   const weekdayFormat = isMobile ? "short" : "long";
   const [scheduleHeader, setScheduleHeader] = useState<string>("");
   const [schedule, setSchedule] = useState<JSX.Element[]>([]);
-  const [startTutorial, setStartTutorial] = useState<boolean>(false)
+  const [startTutorial, setStartTutorial] = useState<boolean>(false);
   const tasksRefFlag = useRef<boolean>(true);
 
-  function handleTutorialClose(){
-    setStartTutorial(false)
+  function handleTutorialClose() {
+    setStartTutorial(false);
   }
   const handleTaskModalState = (id: string) => {
     const dateTime = getChosenDateTime(id);
@@ -252,12 +251,11 @@ const UserScheduler: React.FC = () => {
     }
   }, [selectedDate]);
 
-  useEffect(() => {
-    if (currentlyOpenAchievement) {
-      setOpenNewAchievementModal(true);
-      console.log("Opening Achievement Modal", currentlyOpenAchievement);
-    }
-  }, [currentlyOpenAchievement]);
+  // useEffect(() => {
+  //   if (currentlyOpenAchievement) {
+  //     setOpenNewAchievementModal(true);
+  //   }
+  // }, [currentlyOpenAchievement]);
 
   useEffect(() => {
     async function fetchAndSetTasks() {
@@ -275,14 +273,6 @@ const UserScheduler: React.FC = () => {
           },
         });
         const responseXp: { xp: number } = await userXp.json();
-        const emailAllUsers = await fetch(`/api/test`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        console.log(emailAllUsers)
         if (userXp) {
           dispatch(setXp(responseXp.xp));
         }
@@ -290,19 +280,15 @@ const UserScheduler: React.FC = () => {
         console.error("Error fetching tasks:", error);
       }
     }
-    if (tasksRefFlag.current) {
-      // console.log("calling fetchAndSetTasks()");
-      fetchAndSetTasks();
-      tasksRefFlag.current = false;
-    }
 
-    const cameFromRegister = sessionStorage.getItem('cameFromRegister');
-    
-    if (cameFromRegister === 'true') {
-      setStartTutorial(true)      
+    fetchAndSetTasks();
+
+    const cameFromRegister = sessionStorage.getItem("cameFromRegister");
+
+    if (cameFromRegister === "true") {
+      setStartTutorial(true);
       console.log("User came from the Register page!");
     }
-
   }, []);
 
   // console.log( "scheduler redux logs : isNewAchievementModalOpen && currentlyOpenAchievement : ",
@@ -317,7 +303,7 @@ const UserScheduler: React.FC = () => {
       {isTasksMultipleModalOpen && selectedTasksMultiple && (
         <MultipleTasksModal />
       )}
-      {startTutorial && <Tutorial closeTutorial={handleTutorialClose}/>}
+      {startTutorial && <Tutorial closeTutorial={handleTutorialClose} />}
 
       <Snackbar
         open={isSnackBarOpen}
@@ -336,14 +322,14 @@ const UserScheduler: React.FC = () => {
           {snackbarText}
         </Alert>
       </Snackbar>
-
+      {/* 
       {openNewAchievementModal && currentlyOpenAchievement && (
         <AchievementModal
           achievement={currentlyOpenAchievement}
           open={openNewAchievementModal}
           onClose={handleNewAchievementModalClose}
         />
-      )}
+      )} */}
 
       <Box
         sx={{
@@ -430,21 +416,26 @@ const UserScheduler: React.FC = () => {
             height: {
               sm: "100%",
               lg: `calc(100vh - 142px)`,
-              //80px 62px
             },
             width: {
               ...width,
             },
+
             marginTop: 0,
             position: isMobile ? "relative" : "fixed",
             bottom: 0,
             overflowY: "auto",
             overflowX: isMobile ? "auto" : "hidden",
+            overflow: "overlay",
             "&::-webkit-scrollbar": {
-              display: isMobile ? "auto" : "none",
+              width: isMobile ? "8px" : "0px", // Width for mobile, hidden elsewhere
             },
-            msOverflowStyle: isMobile ? "auto" : "none",
-            scrollbarWidth: "none",
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "rgba(0, 0, 0, 0.3)", // Custom thumb color
+              borderRadius: "4px",
+            },
+            msOverflowStyle: "none", // For IE/Edge
+            scrollbarWidth: "none", // For Firefox
           }}
         >
           <TimeTable />
@@ -456,3 +447,5 @@ const UserScheduler: React.FC = () => {
 };
 
 export default UserScheduler;
+
+//bussy_bee.png
