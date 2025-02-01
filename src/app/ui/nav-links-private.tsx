@@ -35,11 +35,7 @@ const links = [
   {
     name: "Achievements",
     href: "/scheduler/achievements",
-  },
-  {
-    name: "Test",
-    href: "/scheduler/test",
-  },
+  }
 ];
 
 const NavLinksPrivate: React.FC<navLinksProps> = ({ onClick }) => {
