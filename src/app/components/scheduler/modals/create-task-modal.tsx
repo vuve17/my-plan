@@ -1,44 +1,41 @@
 "use client";
 
-import React, { useState, useEffect, useRef, ChangeEvent } from "react";
-import { Form, Formik, useFormik } from "formik";
-import * as Yup from "yup";
+import {
+  openNewAchievementModal,
+  setNewAchievements,
+} from "@/app/redux/achievements-slice";
+import {
+  setIsTaskModalActive
+} from "@/app/redux/task-modals-slice";
+import { setTasks } from "@/app/redux/tasks-slice";
 import {
   Backdrop,
   Box,
-  TextField,
   Button,
-  Paper,
   Grid,
-  OutlinedInput,
   InputLabel,
-  Snackbar,
-  IconButton,
+  OutlinedInput,
+  Paper,
+  TextField
 } from "@mui/material";
-import DatePickerInput from "../../calendar/input-date-picker";
-import moment from "moment";
+import { useFormik } from "formik";
 import Cookies from "js-cookie";
-import { getTasks } from "../../../lib/user-tasks-functions";
+import moment from "moment";
 import { Source_Serif_4 } from "next/font/google";
-import Bookmark from "../scheduler_utils/bookmark";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { CreateTaskResponse, Task, ApiResponse } from "../../../lib/types";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import * as Yup from "yup";
+import { CreateTaskResponse } from "../../../lib/types";
+import { getTasks } from "../../../lib/user-tasks-functions";
 import {
   setIsSnackBarOpen,
   setSnackBarText,
   setSnackbarAlertState,
 } from "../../../redux/snackbar-slice";
-import {
-  setIsTaskModalActive,
-  setTaskModalDate,
-} from "@/app/redux/task-modals-slice";
-import { setTasks } from "@/app/redux/tasks-slice";
+import { RootState } from "../../../redux/store";
 import ErrorBox from "../../authentication-error-messages-box";
-import {
-  openNewAchievementModal,
-  setNewAchievements,
-} from "@/app/redux/achievements-slice";
+import DatePickerInput from "../../calendar/input-date-picker";
+import Bookmark from "../scheduler_utils/bookmark";
 
 export const dynamic = "force-dynamic";
 
@@ -550,45 +547,3 @@ const CreateTaskModal: React.FC = () => {
 };
 
 export default CreateTaskModal;
-
-// const [bookmarkValue, setBookmarkValue] = useState<boolean | null>(null);
-// const choreBookmarkRef = useRef<HTMLDivElement>(null);
-// const eventBookmarkRef = useRef<HTMLDivElement>(null);
-
-// useEffect(() => {
-//     if (bookmarkValue === true) {
-//         animateBookmark(choreBookmarkRef.current, 100);
-//         animateBookmark(eventBookmarkRef.current, 150);
-//     } else if (bookmarkValue === false) {
-//         animateBookmark(eventBookmarkRef.current, 100);
-//         animateBookmark(choreBookmarkRef.current, 150);
-//     } else {
-//         animateBookmark(choreBookmarkRef.current, 100);
-//         animateBookmark(eventBookmarkRef.current, 100);
-//     }
-
-// }, [bookmarkValue]);
-
-// const animateBookmark = (element: HTMLElement | null, finalHeight: number) => {
-//     if (element) {
-//         const initialHeight = element.clientHeight;
-//         if (initialHeight !== finalHeight) {
-//             let currentHeight = initialHeight;
-//             const interval = setInterval(() => {
-//                 if (currentHeight < finalHeight && finalHeight > initialHeight) {
-//                     currentHeight += 1;
-//                 } else if (currentHeight > finalHeight && finalHeight < initialHeight) {
-//                     currentHeight -= 1;
-//                 } else {
-//                     clearInterval(interval);
-//                 }
-//                 element.style.height = currentHeight + "px";
-//             }, 10);
-//         }
-//     }
-// };
-
-// const handleBookmarkClick = ( newValue: boolean | null) => {
-//     setBookmarkValue(newValue);
-//     formik.setFieldValue('taskType', newValue)
-// };
