@@ -41,6 +41,7 @@ export type AchievementGeneric = {
   image: string;
   description: string;
   stars: 0 | 1 | 2 | 3;
+  isNewAchievement?: boolean
 };
 
 export interface UserAchievementNoId extends Omit<UserAchievement, "user_id"> {}

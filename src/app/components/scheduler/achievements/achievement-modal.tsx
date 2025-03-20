@@ -101,6 +101,7 @@ const AchievementModal: React.FC<AchievementModalProps> = ({
               image={image}
               description={description}
               stars={achievement.stars}
+              isNewAchievement={true}
             />
           </Box>
         </Stack>

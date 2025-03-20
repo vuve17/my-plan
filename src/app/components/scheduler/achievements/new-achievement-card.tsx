@@ -18,6 +18,7 @@ const NewAchievementCard: React.FC<AchievementGeneric> = ({
   stars,
   name,
   image,
+  isNewAchievement
 }) => {
   const isSmallScreen = useMediaQuery("(max-width:600px)");
   const truncatedDescription =
@@ -94,33 +95,36 @@ const NewAchievementCard: React.FC<AchievementGeneric> = ({
             </Typography>
 
             {stars === 3 ? (
-              <Stack
-                direction="row"
-                justifyContent="center"
-                sx={{ width: "100%" }}
-              >
-                <CardMedia
-                  component="img"
-                  sx={{
-                    width: "70%",
-                    objectFit: "cover",
-                    zIndex: 3,
-                  }}
-                  image={`/svg/achievements/achievement-stars/completed.png`}
-                  alt="Achievement Completed!"
-                />
-              </Stack>
-            ) : (
-              <Typography
-                variant="h5"
-                fontFamily="Open Sans"
-                sx={{
-                  marginBottom: "0.5em",
-                }}
-              >
-                {truncatedDescription}
-              </Typography>
-            )}
+  <Stack
+    direction="row"
+    justifyContent="center"
+    sx={{ width: "100%" }}
+  >
+    <CardMedia
+      component="img"
+      sx={{
+        width: "70%",
+        objectFit: "cover",
+        zIndex: 3,
+      }}
+      image={`/svg/achievements/achievement-stars/completed.png`}
+      alt="Achievement Completed!"
+    />
+  </Stack>
+) : (
+  !isNewAchievement && (
+    <Typography
+      variant="h5"
+      fontFamily="Open Sans"
+      sx={{
+        marginBottom: "0.5em",
+      }}
+    >
+      {truncatedDescription}
+    </Typography>
+  )
+)}
+
           </Box>
         </Box>
       </CardContent>
