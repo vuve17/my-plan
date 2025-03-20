@@ -3,9 +3,7 @@
 import { getUserId } from "@/app/lib/auth";
 import { db } from "@vercel/postgres";
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { checkNewAchievements } from "@/app/lib/achievement-requirements";
-import { UserAchievement } from "@/app/lib/types";
+
 
 export async function DELETE(
   request: NextRequest,

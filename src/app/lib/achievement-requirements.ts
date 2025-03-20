@@ -1,17 +1,17 @@
 "use server";
 
 import { UserAchievement } from "@/app/lib/types";
-import { db } from "@vercel/postgres";
+import { db, VercelPoolClient } from '@vercel/postgres';
 import { addUserAchievementXp } from "./user-level-functions";
 
 export async function checkHustler(
-  currentAch: UserAchievement
+  currentAch: UserAchievement,
+  client: VercelPoolClient
 ): Promise<boolean> {
   console.log("CHECKING Hustler");
   if (currentAch.stars == 3) return false;
-  const client = await db.connect();
-  try {
-    const query = `SELECT COUNT(*) as cnt FROM tasks WHERE user_id = $1`;
+
+    const query = `SELECT COUNT(*) as cnt FROM tasks WHERE user_id = $1 AND completed = TRUE`;
     const result = await client.query(query, [currentAch.user_id]);
     const count = parseInt(result.rows[0].cnt, 10);
 
@@ -32,14 +32,12 @@ export async function checkHustler(
       return true;
     }
     return false;
-  } finally {
-    client.release();
-  }
+  
 }
-export async function checkTest(currentAch: UserAchievement): Promise<boolean> {
+export async function checkTest(currentAch: UserAchievement,   client: VercelPoolClient
+): Promise<boolean> {
   console.log("CHECKING TEST");
   if (currentAch.stars == 3) return false;
-  const client = await db.connect();
   console.log("user id from achievement: ", currentAch.user_id);
   const query = `SELECT COUNT(*) as cnt FROM tasks WHERE user_id = $1`;
   const result = await client.query(query, [currentAch.user_id]);
@@ -68,11 +66,11 @@ export async function checkTest(currentAch: UserAchievement): Promise<boolean> {
 }
 
 export async function checkChoreMaster(
-  currentAch: UserAchievement
+  currentAch: UserAchievement,
+  client: VercelPoolClient
 ): Promise<boolean> {
   console.log("CHECKING checkChoreMaster");
   if (currentAch.stars == 3) return false;
-  const client = await db.connect();
   console.log("user id from achievement: ", currentAch.user_id);
   const query = `SELECT COUNT(*) as cnt FROM tasks WHERE user_id = $1 AND task_type = 'chore'`;
   const result = await client.query(query, [currentAch.user_id]);
@@ -122,13 +120,12 @@ async function getTaskCount(
 
 // Check PartyParty achievement
 export async function checkPartyParty(
-  currentAch: UserAchievement
+  currentAch: UserAchievement,
+  client: VercelPoolClient
 ): Promise<boolean> {
   console.log("CHECKING checkPartyParty");
 
   if (currentAch.stars === 3) return false;
-  const client = await db.connect();
-  try {
     const countQuery = `
       SELECT COUNT(*) as cnt 
       FROM tasks 
@@ -150,20 +147,17 @@ export async function checkPartyParty(
       return true;
     }
     return false;
-  } finally {
-    client.release();
-  }
+  
 }
 
 // Check EarlyBird achievement
 export async function checkEarlyBird(
-  currentAch: UserAchievement
+  currentAch: UserAchievement,
+  client: VercelPoolClient
 ): Promise<boolean> {
   console.log("CHECKING checkEarlyBird");
 
   if (currentAch.stars === 3) return false;
-  const client = await db.connect();
-  try {
     const countQuery = `
       SELECT COUNT(*) as cnt 
       FROM tasks 
@@ -187,20 +181,17 @@ export async function checkEarlyBird(
       return true;
     }
     return false;
-  } finally {
-    client.release();
-  }
+  
 }
 
 // Check LateNightGrind achievement
 export async function checkLateNightGrind(
-  currentAch: UserAchievement
+  currentAch: UserAchievement,
+  client: VercelPoolClient
 ): Promise<boolean> {
   console.log("CHECKING checkLateNightGrind");
 
   if (currentAch.stars === 3) return false;
-  const client = await db.connect();
-  try {
     const countQuery = `
       SELECT COUNT(*) as cnt 
       FROM tasks 
@@ -224,20 +215,17 @@ export async function checkLateNightGrind(
       return true;
     }
     return false;
-  } finally {
-    client.release();
-  }
+  
 }
 
 // Check WorkWorkAndMoreWork achievement
 export async function checkWorkWorkAndMoreWork(
-  currentAch: UserAchievement
+  currentAch: UserAchievement,
+  client: VercelPoolClient
 ): Promise<boolean> {
   console.log("CHECKING checkWorkWorkAndMoreWork");
 
   if (currentAch.stars === 3) return false;
-  const client = await db.connect();
-  try {
     const countQuery = `
       SELECT COUNT(*) as cnt 
       FROM tasks 
@@ -259,20 +247,17 @@ export async function checkWorkWorkAndMoreWork(
       return true;
     }
     return false;
-  } finally {
-    client.release();
-  }
+  
 }
 
 // Check Overworking Achievement
 export async function checkOverworking(
-  currentAch: UserAchievement
+  currentAch: UserAchievement,
+  client: VercelPoolClient
 ): Promise<boolean> {
   console.log("CHECKING checkOverworking");
 
   if (currentAch.stars === 3) return false;
-  const client = await db.connect();
-  try {
     const query = `
       SELECT COUNT(*) as cnt 
       FROM tasks 
@@ -298,20 +283,17 @@ export async function checkOverworking(
       return true;
     }
     return false;
-  } finally {
-    client.release();
-  }
+  
 }
 
 // Check Morning Routine Achievement
 export async function checkMorningRoutine(
-  currentAch: UserAchievement
+  currentAch: UserAchievement,
+  client: VercelPoolClient
 ): Promise<boolean> {
   console.log("CHECKING checkMorningRoutine");
 
   if (currentAch.stars === 3) return false;
-  const client = await db.connect();
-  try {
     const query = `
       SELECT COUNT(*) as total_tasks, 
              SUM(CASE WHEN completed = TRUE THEN 1 ELSE 0 END) as completed_tasks
@@ -338,20 +320,17 @@ export async function checkMorningRoutine(
       }
     }
     return false;
-  } finally {
-    client.release();
-  }
+  
 }
 
 // Check Star Collector Achievement
 export async function checkStarCollector(
-  currentAch: UserAchievement
+  currentAch: UserAchievement,
+  client: VercelPoolClient
 ): Promise<boolean> {
   console.log("CHECKING checkStarCollector");
 
   if (currentAch.stars === 3) return false;
-  const client = await db.connect();
-  try {
     const query = `
       SELECT COALESCE(SUM(stars), 0) as total_stars
       FROM user_achievements
@@ -374,9 +353,7 @@ export async function checkStarCollector(
       return true;
     }
     return false;
-  } finally {
-    client.release();
-  }
+  
 }
 
 export async function checkNewAchievements(
@@ -386,22 +363,22 @@ export async function checkNewAchievements(
 
   const userAchievements = await getUserAchievements(userId);
   // console.log("userAchievements: ", userAchievements);
-
+  const client = await db.connect();
   const newAchievements: UserAchievement[] = [];
   const achievementCheckers: {
-    [key: string]: (currentAch: UserAchievement) => Promise<boolean>;
+    [key: string]: (currentAch: UserAchievement, client: VercelPoolClient) => Promise<boolean>;
   } = {
     Hustler: checkHustler,
     "Early Bird": checkEarlyBird,
-    LateNightGrind: checkLateNightGrind,
-    "Morning Routine": checkMorningRoutine,
-    Overworking: checkOverworking,
+    // LateNightGrind: checkLateNightGrind,
+    // "Morning Routine": checkMorningRoutine,
+    // Overworking: checkOverworking,
     "Party Party": checkPartyParty,
-    "Star Collector": checkStarCollector,
+    // "Star Collector": checkStarCollector,
     "Work Work Work And More Work": checkWorkWorkAndMoreWork,
     "Chore Master": checkChoreMaster,
     Test: checkTest,
-    "Late Night Grind": checkLateNightGrind,
+    // "Late Night Grind": checkLateNightGrind,
   };
 
   for (const achievement of userAchievements) {
@@ -410,7 +387,7 @@ export async function checkNewAchievements(
     const checkerFunction = achievementCheckers[achievement.name];
 
     if (checkerFunction) {
-      const isNew = await checkerFunction(achievement);
+      const isNew = await checkerFunction(achievement, client);
 
       if (isNew) {
         console.log("new achievement!!!!", achievement);
@@ -419,13 +396,11 @@ export async function checkNewAchievements(
     }
   }
   if (newAchievements.length !== 0) {
-    const client = await db.connect();
     for (const achievement of newAchievements) {
       await addUserAchievementXp(achievement, userId, client);
     }
-    client.release();
   }
-
+  client.release();
   console.log("newAchievements array?: ", newAchievements);
   return newAchievements;
 }

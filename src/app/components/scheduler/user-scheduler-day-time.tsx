@@ -1,6 +1,6 @@
 "use client";
 
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, { useState } from "react";
 import colors from "@/app/ui/colors";
 import { useSelector } from "react-redux";
@@ -35,17 +35,25 @@ const TimeTable: React.FC = () => {
               position: "absolute",
               width: "100%",
               top: "100%",
+              fontSize: {
+                xl: "16",
+                lg: "14px",
+                md: "14px",
+                sm: "14px",
+                xs: "12px",
+              },
               left: {
-                lg: "-32px",
-                md: "-32px",
-                sm: "-32px",
+                xl: "-40px",
+                lg: "-36px",
+                md: "-40px",
+                sm: "-38px",
                 xs: "-32px",
               },
               transform: "translateY(-50%)",
               backgroundColor: colors.white,
             }}
-          >
-            {hour}
+          >{hour}
+            
           </Box>
         </Box>
       );

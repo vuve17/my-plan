@@ -1,20 +1,18 @@
-"use server";
+"use server"; 
 
-import { getUserId } from "@/app/lib/auth"; // Your user authentication helper
-import { db } from "@vercel/postgres"; // Vercel Postgres integration
-import { NextRequest, NextResponse } from "next/server"; // Next.js server types
-import { headers } from "next/headers"; // To get headers for token
+import { getUserId } from "@/app/lib/auth";
+import { db } from "@vercel/postgres";
+import { NextRequest, NextResponse } from "next/server";
+import { headers } from "next/headers";
 import {
   ProcessedTaskString,
   Task,
   TaskString,
   TaskType,
-} from "@/app/lib/types"; // Assuming this type exists for tasks
+} from "@/app/lib/types";
 import { addUserTaskXp } from "@/app/lib/user-level-functions";
 import { checkNewAchievements } from "@/app/lib/achievement-requirements";
-// update tasks
-// set processed = false
-// where processed = true
+
 
 export async function GET(request: NextRequest) {
   const client = await db.connect();

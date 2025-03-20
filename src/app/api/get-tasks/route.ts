@@ -1,14 +1,14 @@
 "use server";
 
-import { NextRequest, NextResponse } from "next/server";
-import { db, QueryResultRow } from "@vercel/postgres";
 import { getUserId } from "@/app/lib/auth";
 import type { Task } from "@/app/lib/types";
-import { confirmTaskType } from "@/app/lib/user-tasks-functions";
+import { db, QueryResultRow } from "@vercel/postgres";
+import { NextRequest, NextResponse } from "next/server";
+
 
 function isOverlapping(taskA: Task, taskB: Task): boolean {
   return (
-    // ako je pocetak taskA prije kraja taskaB i 
+    // ako je pocetak taskA prije kraja taskaB i
     // ako je kraj taska A nakon pocetka taskaB
 
     new Date(taskA.startDate) < new Date(taskB.endDate) &&
@@ -22,8 +22,9 @@ function sortTasksByHours(tasks: Task[]): Task[] {
   );
 }
 
-
-function pushSingleTaskObjectFromArray(taskGroups: { [key: string | number]: Task | Task[] }) {
+function pushSingleTaskObjectFromArray(taskGroups: {
+  [key: string | number]: Task | Task[];
+}) {
   Object.keys(taskGroups).forEach((key) => {
     const taskGroup = taskGroups[key];
     if (Array.isArray(taskGroup) && taskGroup.length === 1) {
@@ -81,7 +82,6 @@ function formatTasksByTimeOverlap(tasks: QueryResultRow) {
   return taskGroups;
 }
 
-
 function splitSingleTaskByDays(task: Task): Task[] {
   const splitTasks: Task[] = [];
   let currentStart = new Date(task.startDate);
@@ -134,8 +134,9 @@ function splitMultipleTasksByDays(tasks: Task[]): Task[][] {
   return daySplitGroups;
 }
 
-
-function formatTasksByDayOverlap(tasks: { [key: number]: Task | Task[] }): { [key: number]: Task | Task[] } {
+function formatTasksByDayOverlap(tasks: { [key: number]: Task | Task[] }): {
+  [key: number]: Task | Task[];
+} {
   const taskGroups: { [key: string]: Task | Task[] } = {};
   let uniqueKeyIndex = 0;
 
@@ -177,9 +178,9 @@ export async function GET(request: NextRequest) {
     const jsonFormattedTasksByDay = formatTasksByDayOverlap(jsonFormattedTasks);
     // console.log("jsonFormattedTasksByDay", jsonFormattedTasksByDay);
     return NextResponse.json(
-      { 
+      {
         tasks: jsonFormattedTasksByDay,
-        fullTasks: tasks.rows
+        fullTasks: tasks.rows,
       },
       { status: 200 }
     );
